@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Dashboard - Municipal Services</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top dashboard-nav">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="citizen-dashboard.html">
+                <img src="images/govt.png" alt="Logo" width="32" height="32" class="me-2">
+                Municipal Services
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#citizenNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="citizenNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="citizen-dashboard.html">
+                            <i class="fas fa-th-large"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="citizen-new-complaint.html">
+                            <i class="fas fa-plus-circle"></i> New Complaint
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="citizen-complaint-detail.html">
+                            <i class="fas fa-list-alt"></i> My Complaints
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown ms-lg-3">
+                        <a class="nav-link position-relative" href="#" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge-notification bg-danger rounded-pill">2</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                            <li><h6 class="dropdown-header">Notifications</h6></li>
+                            <li><a class="dropdown-item small" href="#">Complaint #CMPT-130 acknowledged</a></li>
+                            <li><a class="dropdown-item small" href="#">Complaint #CMPT-125 resolved</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar bg-secondary text-white me-2">JD</div>
+                            <div class="d-none d-lg-block">
+                                <div class="small fw-bold">John Doe</div>
+                                <div class="small text-muted" style="font-size: 0.7rem;">Citizen</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid px-4">
+            
+            <!-- Welcome Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="welcome-card p-4" style="background: linear-gradient(135deg, #0f172a 0%, #334155 100%);">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h2 class="fw-bold mb-1">Hello, John!</h2>
+                                <p class="mb-0 opacity-75">Track your complaints and help improve our city.</p>
+                            </div>
+                            <div class="col-md-4 text-end d-none d-md-block">
+                                <a href="citizen-new-complaint.html" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Report Issue
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="stat-label mb-1">Total Complaints</div>
+                                <div class="stat-value">15</div>
+                            </div>
+                            <div class="stat-icon bg-primary-soft" style="background: #eff6ff; color: var(--primary-color);">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="stat-label mb-1">Active</div>
+                                <div class="stat-value">4</div>
+                            </div>
+                            <div class="stat-icon bg-warning-soft">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card p-4">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="stat-label mb-1">Resolved</div>
+                                <div class="stat-value">11</div>
+                            </div>
+                            <div class="stat-icon bg-success-soft">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Complaints -->
+            <div class="table-card">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Recent Activity</h5>
+                    <a href="citizen-complaint-detail.html" class="btn btn-outline-primary btn-sm">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="fw-medium">#CMPT-130</span></td>
+                                <td><span class="status-badge badge-water">Water Leakage</span></td>
+                                <td><span class="badge bg-danger">New</span></td>
+                                <td>Aug 24, 2025</td>
+                                <td class="text-end">
+                                    <button class="btn btn-outline-primary btn-action" onclick="viewDetails('130')">Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="fw-medium">#CMPT-129</span></td>
+                                <td><span class="badge bg-light text-dark border">Waste Mgmt</span></td>
+                                <td><span class="badge bg-info">Acknowledged</span></td>
+                                <td>Aug 22, 2025</td>
+                                <td class="text-end">
+                                    <button class="btn btn-outline-primary btn-action" onclick="viewDetails('129')">Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="fw-medium">#CMPT-128</span></td>
+                                <td><span class="badge bg-light text-dark border">Streetlight</span></td>
+                                <td><span class="badge bg-warning text-dark">In Progress</span></td>
+                                <td>Aug 20, 2025</td>
+                                <td class="text-end">
+                                    <button class="btn btn-outline-primary btn-action" onclick="viewDetails('128')">Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="fw-medium">#CMPT-125</span></td>
+                                <td><span class="status-badge badge-road">Pothole</span></td>
+                                <td><span class="badge bg-success">Resolved</span></td>
+                                <td>Aug 15, 2025</td>
+                                <td class="text-end">
+                                    <button class="btn btn-outline-primary btn-action" onclick="viewDetails('125')">Details</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        function viewDetails(id) {
+            window.location.href = 'citizen-complaint-detail.html?id=' + id;
+        }
+
+        // Check auth
+        document.addEventListener('DOMContentLoaded', function() {
+            const role = sessionStorage.getItem('userRole');
+            if (!role || role !== 'citizen') {
+                // window.location.href = 'index.html';
+                console.log('Auth check: User is not logged in as citizen');
+            }
+        });
+    </script>
+</body>
+</html>

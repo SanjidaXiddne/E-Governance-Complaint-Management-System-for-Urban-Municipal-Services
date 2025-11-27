@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Details - Municipal Services</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top dashboard-nav">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="citizen-dashboard.html">
+                <img src="images/govt.png" alt="Logo" width="32" height="32" class="me-2">
+                Municipal Services
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#citizenNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="citizenNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="citizen-dashboard.html">
+                            <i class="fas fa-th-large"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="citizen-new-complaint.html">
+                            <i class="fas fa-plus-circle"></i> New Complaint
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="citizen-complaint-detail.html">
+                            <i class="fas fa-list-alt"></i> My Complaints
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar bg-secondary text-white me-2">JD</div>
+                            <div class="d-none d-lg-block">
+                                <div class="small fw-bold">John Doe</div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="mb-4">
+                <a href="citizen-dashboard.html" class="btn btn-outline-secondary btn-sm mb-3">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold mb-1">Complaint #CMPT-130</h4>
+                        <span class="badge bg-danger">New</span>
+                        <span class="text-muted small ms-2">Submitted on Aug 24, 2025</span>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-print me-2"></i>Print
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Left Column: Details -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold text-uppercase text-muted small mb-3">Issue Description</h6>
+                            <p class="mb-4">
+                                Major water pipe leakage causing road flooding near the main intersection. The water pressure is very high and it's affecting traffic flow. Please attend to this urgently as it might damage the road surface.
+                            </p>
+                            
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-light p-3 me-3">
+                                            <i class="fas fa-map-marker-alt text-danger fa-lg"></i>
+                                        </div>
+                                        <div>
+                                            <div class="small text-muted">Location</div>
+                                            <div class="fw-medium">Gulshan-2, Dhaka</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-light p-3 me-3">
+                                            <i class="fas fa-tag text-primary fa-lg"></i>
+                                        </div>
+                                        <div>
+                                            <div class="small text-muted">Category</div>
+                                            <div class="fw-medium">Water Leakage</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h6 class="fw-bold text-uppercase text-muted small mb-3">Attached Photos</h6>
+                            <div class="row g-2">
+                                <div class="col-4 col-md-3">
+                                    <img src="images/u1.jpg" class="img-fluid rounded border" alt="Evidence 1">
+                                </div>
+                                <div class="col-4 col-md-3">
+                                    <img src="images/u2.jpg" class="img-fluid rounded border" alt="Evidence 2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Timeline -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom p-3">
+                            <h6 class="fw-bold mb-0">Status Timeline</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-date">Aug 24, 10:30 AM</div>
+                                    <div class="timeline-content">
+                                        <div class="fw-medium">Complaint Submitted</div>
+                                        <div class="small text-muted">Your complaint has been received and is pending review.</div>
+                                    </div>
+                                </div>
+                                <!-- Future timeline items will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
