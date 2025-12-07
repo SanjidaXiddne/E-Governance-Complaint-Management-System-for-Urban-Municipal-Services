@@ -1,338 +1,1200 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Officer Dashboard - Municipal Services</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="dashboard.css">
-</head>
-<body>
-
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="dashboard.css" />
+    <style>
+      .stat-update {
+        animation: statPulse 0.6s ease;
+      }
+      @keyframes statPulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.08);
+          box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .new-complaint-row {
+        animation: highlightNew 0.5s ease;
+        background: linear-gradient(90deg, #fef3c7 0%, #fff 100%) !important;
+      }
+      @keyframes highlightNew {
+        from {
+          transform: translateX(-30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        animation: livePulse 2s infinite;
+      }
+      @keyframes livePulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(0.8);
+        }
+      }
+      .new-complaint-alert {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        max-width: 400px;
+        animation: slideUp 0.4s ease;
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(100px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .badge-new-count {
+        animation: bounce 0.5s ease;
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.3);
+        }
+      }
+      .refresh-spin {
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .priority-indicator {
+        width: 4px;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 4px 0 0 4px;
+      }
+      .priority-high {
+        background: #ef4444;
+      }
+      .priority-medium {
+        background: #f59e0b;
+      }
+      .priority-normal {
+        background: #3b82f6;
+      }
+      .priority-low {
+        background: #10b981;
+      }
+    </style>
+  </head>
+  <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top dashboard-nav">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center" href="officer-dashboard.html">
-                <img src="images/govt.png" alt="Logo" width="32" height="32" class="me-2">
-                Municipal Services
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#officerNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="officerNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="officer-dashboard.html">
-                            <i class="fas fa-th-large"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="officer-complaint-detail.html">
-                            <i class="fas fa-file-alt"></i> Complaints
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown ms-lg-3">
-                        <a class="nav-link position-relative" href="#" data-bs-toggle="dropdown">
-                            <i class="fas fa-bell"></i>
-                            <span class="badge-notification bg-danger rounded-pill">3</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-                            <li><h6 class="dropdown-header">Notifications</h6></li>
-                            <li><a class="dropdown-item small" href="#">New urgent complaint assigned</a></li>
-                            <li><a class="dropdown-item small" href="#">Verification required #CMPT-130</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item ms-lg-3">
-                        <div class="d-flex align-items-center">
-                            <div class="user-avatar bg-primary text-white me-2">OJ</div>
-                            <div class="d-none d-lg-block">
-                                <div class="small fw-bold">Officer Jane</div>
-                                <div class="small text-muted" style="font-size: 0.7rem;">ID: OFF-001</div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <button class="btn btn-outline-danger btn-sm" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </li>
-                </ul>
-            </div>
+      <div class="container-fluid px-4">
+        <a
+          class="navbar-brand d-flex align-items-center"
+          href="officer-dashboard.html"
+        >
+          <img
+            src="images/govt.png"
+            alt="Logo"
+            width="32"
+            height="32"
+            class="me-2"
+          />
+          Municipal Services
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#officerNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="officerNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link active" href="officer-dashboard.html">
+                <i class="fas fa-th-large"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="officer-complaint-detail.html">
+                <i class="fas fa-file-alt"></i> Complaints
+              </a>
+            </li>
+            <li class="nav-item dropdown ms-lg-3">
+              <a
+                class="nav-link position-relative"
+                href="#"
+                data-bs-toggle="dropdown"
+                id="notificationToggle"
+              >
+                <i class="fas fa-bell"></i>
+                <span
+                  class="badge-notification bg-danger rounded-pill"
+                  id="notificationBadge"
+                  >0</span
+                >
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-end shadow-sm border-0"
+                style="min-width: 320px"
+                id="notificationDropdown"
+              >
+                <li>
+                  <h6
+                    class="dropdown-header d-flex justify-content-between align-items-center"
+                  >
+                    <span>Notifications</span>
+                    <button
+                      class="btn btn-link btn-sm p-0 text-decoration-none"
+                      onclick="clearNotifications()"
+                    >
+                      Clear all
+                    </button>
+                  </h6>
+                </li>
+                <li id="noNotifications">
+                  <div class="dropdown-item small text-muted text-center py-3">
+                    <i class="fas fa-bell-slash me-2"></i>No new notifications
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item ms-lg-3">
+              <div class="d-flex align-items-center">
+                <div class="user-avatar bg-primary text-white me-2">OJ</div>
+                <div class="d-none d-lg-block">
+                  <div class="small fw-bold" id="officerName">Officer Jane</div>
+                  <div class="small text-muted" style="font-size: 0.7rem">
+                    ID: OFF-001
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item ms-3">
+              <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="container-fluid px-4">
-            
-            <!-- Welcome Section -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="welcome-card p-4">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <h2 class="fw-bold mb-1">Welcome back, Officer Jane!</h2>
-                                <p class="mb-0 opacity-75">You have 5 new complaints requiring your attention today.</p>
+      <div class="container-fluid px-4">
+        <!-- Welcome Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="welcome-card p-4">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <h2 class="fw-bold mb-1">
+                    Welcome back, <span id="welcomeName">Officer Jane</span>!
+                  </h2>
+                  <p class="mb-0 opacity-75">
+                    You have
+                    <span class="fw-bold" id="pendingCount">0</span> new
+                    complaints requiring your attention.
+                  </p>
+                </div>
+                <div class="col-md-4 text-end d-none d-md-block">
+                  <div
+                    class="d-flex align-items-center justify-content-end gap-3"
+                  >
+                    <div class="live-indicator">
+                      <div class="live-dot"></div>
+                      <span>Real-time Updates Active</span>
+                    </div>
+                    <div
+                      class="bg-white bg-opacity-20 d-inline-block p-3 rounded-3"
+                    >
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-calendar-check fa-2x me-3"></i>
+                        <div class="text-start">
+                          <div class="small opacity-75">Today's Date</div>
+                          <div class="fw-bold" id="currentDate">Loading...</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="row g-4 mb-4">
+          <div class="col-xl-3 col-md-6">
+            <div class="stat-card p-4" id="statNew">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="stat-label mb-1">New Complaints</div>
+                  <div class="stat-value" id="newCount">0</div>
+                </div>
+                <div class="stat-icon bg-danger-soft">
+                  <i class="fas fa-exclamation-circle"></i>
+                </div>
+              </div>
+              <div class="mt-3 small" id="newTrend">
+                <span class="text-muted">Awaiting review</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-md-6">
+            <div class="stat-card p-4" id="statProgress">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="stat-label mb-1">In Progress</div>
+                  <div class="stat-value" id="progressCount">0</div>
+                </div>
+                <div class="stat-icon bg-warning-soft">
+                  <i class="fas fa-spinner"></i>
+                </div>
+              </div>
+              <div class="mt-3 small text-muted">Active tasks</div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-md-6">
+            <div class="stat-card p-4" id="statVerify">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="stat-label mb-1">Acknowledged</div>
+                  <div class="stat-value" id="acknowledgedCount">0</div>
+                </div>
+                <div class="stat-icon bg-info-soft">
+                  <i class="fas fa-check-double"></i>
+                </div>
+              </div>
+              <div class="mt-3 small text-info fw-medium">
+                Pending assignment
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-md-6">
+            <div class="stat-card p-4" id="statResolved">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="stat-label mb-1">Resolved</div>
+                  <div class="stat-value" id="resolvedCount">0</div>
+                </div>
+                <div class="stat-icon bg-success-soft">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+              </div>
+              <div class="mt-3 small text-success fw-medium">
+                <i class="fas fa-arrow-up me-1"></i>Completed
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Table Section -->
+        <div class="table-card">
+          <!-- Header & Filters -->
+          <div class="p-4 border-bottom">
+            <div
+              class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4"
+            >
+              <div class="d-flex align-items-center gap-3">
+                <h5 class="fw-bold mb-0">Complaint Management</h5>
+                <span class="badge bg-primary" id="totalBadge">0 total</span>
+              </div>
+              <div class="d-flex gap-2">
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  onclick="refreshData()"
+                  id="refreshBtn"
+                >
+                  <i class="fas fa-sync-alt me-2"></i>Refresh
+                </button>
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  onclick="exportData()"
+                >
+                  <i class="fas fa-download me-2"></i>Export
+                </button>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control search-input"
+                  placeholder="Search complaints..."
+                  id="searchInput"
+                  oninput="filterComplaints()"
+                />
+              </div>
+              <div class="col-md-3">
+                <select
+                  class="form-select"
+                  id="categoryFilter"
+                  onchange="filterComplaints()"
+                >
+                  <option value="">All Categories</option>
+                  <option value="Water">Water Supply</option>
+                  <option value="Road">Road & Potholes</option>
+                  <option value="Light">Street Lighting</option>
+                  <option value="Waste">Waste Management</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select
+                  class="form-select"
+                  id="priorityFilter"
+                  onchange="filterComplaints()"
+                >
+                  <option value="">All Priorities</option>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="normal">Normal</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <ul class="nav nav-tabs custom-tabs" role="tablist">
+            <li class="nav-item">
+              <button
+                class="nav-link active"
+                data-bs-toggle="tab"
+                data-bs-target="#new"
+                onclick="setActiveTab('new')"
+              >
+                New
+                <span class="badge bg-danger tab-badge" id="tabNewBadge"
+                  >0</span
+                >
+              </button>
+            </li>
+            <li class="nav-item">
+              <button
+                class="nav-link"
+                data-bs-toggle="tab"
+                data-bs-target="#progress"
+                onclick="setActiveTab('in-progress')"
+              >
+                In Progress
+                <span
+                  class="badge bg-warning text-dark tab-badge"
+                  id="tabProgressBadge"
+                  >0</span
+                >
+              </button>
+            </li>
+            <li class="nav-item">
+              <button
+                class="nav-link"
+                data-bs-toggle="tab"
+                data-bs-target="#acknowledged"
+                onclick="setActiveTab('acknowledged')"
+              >
+                Acknowledged
+                <span class="badge bg-info tab-badge" id="tabAckBadge">0</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button
+                class="nav-link"
+                data-bs-toggle="tab"
+                data-bs-target="#closed"
+                onclick="setActiveTab('resolved')"
+              >
+                Resolved
+              </button>
+            </li>
+          </ul>
+
+          <!-- Table Content -->
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="new">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <thead>
+                    <tr>
+                      <th style="width: 4px"></th>
+                      <th>ID</th>
+                      <th>Citizen</th>
+                      <th>Category</th>
+                      <th>Priority</th>
+                      <th>Date</th>
+                      <th class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="newComplaintsBody">
+                    <tr>
+                      <td colspan="7" class="text-center py-4 text-muted">
+                        <i class="fas fa-spinner fa-spin me-2"></i>Loading...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="progress">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <thead>
+                    <tr>
+                      <th style="width: 4px"></th>
+                      <th>ID</th>
+                      <th>Citizen</th>
+                      <th>Category</th>
+                      <th>Assigned To</th>
+                      <th>Date</th>
+                      <th class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="progressComplaintsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="acknowledged">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <thead>
+                    <tr>
+                      <th style="width: 4px"></th>
+                      <th>ID</th>
+                      <th>Citizen</th>
+                      <th>Category</th>
+                      <th>Priority</th>
+                      <th>Date</th>
+                      <th class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="acknowledgedComplaintsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="closed">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <thead>
+                    <tr>
+                      <th style="width: 4px"></th>
+                      <th>ID</th>
+                      <th>Citizen</th>
+                      <th>Category</th>
+                      <th>Resolved Date</th>
+                      <th class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="resolvedComplaintsBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div
+            class="p-3 border-top d-flex justify-content-between align-items-center"
+          >
+            <div class="small text-muted">
+              Showing <span id="showingCount">0</span> complaints
+            </div>
+            <div class="live-indicator">
+              <div class="live-dot"></div>
+              <span>Auto-refreshing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Complaint Alert Toast -->
+    <div
+      id="newComplaintToast"
+      class="new-complaint-alert"
+      style="display: none"
+    >
+      <div class="card border-0 shadow-lg">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-start">
+            <div class="rounded-circle bg-danger text-white p-2 me-3">
+              <i class="fas fa-bell"></i>
+            </div>
+            <div class="flex-grow-1">
+              <div class="fw-bold mb-1">New Complaint Received!</div>
+              <div class="small text-muted" id="toastMessage">
+                A citizen has filed a new complaint.
+              </div>
+              <div class="mt-2">
+                <button
+                  class="btn btn-sm btn-primary me-2"
+                  onclick="viewNewComplaint()"
+                >
+                  <i class="fas fa-eye me-1"></i>View
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  onclick="dismissToast()"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+            <button class="btn-close" onclick="dismissToast()"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Real-time Complaint Service -->
+    <script src="complaint-service.js"></script>
+    <script>
+      // Dashboard state
+      let allComplaints = [];
+      let filteredComplaints = [];
+      let activeTab = "new";
+      let notifications = [];
+      let latestNewComplaintId = null;
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set current date
+        const now = new Date();
+        document.getElementById("currentDate").textContent =
+          now.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+
+        // Set officer name
+        const officerName =
+          sessionStorage.getItem("userName") || "Officer Jane";
+        document.getElementById("officerName").textContent = officerName;
+        document.getElementById("welcomeName").textContent = officerName;
+
+        // Load initial data
+        loadDashboardData();
+
+        // Subscribe to real-time updates
+        ComplaintService.subscribe(handleRealtimeUpdate);
+
+        // Play notification sound if available
+        setupNotificationSound();
+      });
+
+      // Load all dashboard data
+      function loadDashboardData() {
+        allComplaints = ComplaintService.getAllComplaints();
+        updateStats();
+        renderAllTables();
+      }
+
+      // Update statistics
+      function updateStats(animate = false) {
+        const stats = ComplaintService.getStats();
+
+        const updates = [
+          { id: "newCount", value: stats.new, card: "statNew" },
+          {
+            id: "progressCount",
+            value: stats.inProgress,
+            card: "statProgress",
+          },
+          {
+            id: "acknowledgedCount",
+            value: stats.acknowledged,
+            card: "statVerify",
+          },
+          { id: "resolvedCount", value: stats.resolved, card: "statResolved" },
+        ];
+
+        updates.forEach(({ id, value, card }) => {
+          const el = document.getElementById(id);
+          const oldValue = parseInt(el.textContent) || 0;
+
+          if (value !== oldValue) {
+            el.textContent = value;
+            if (animate) {
+              const cardEl = document.getElementById(card);
+              cardEl.classList.add("stat-update");
+              setTimeout(() => cardEl.classList.remove("stat-update"), 600);
+            }
+          }
+        });
+
+        // Update other counts
+        document.getElementById("pendingCount").textContent = stats.new;
+        document.getElementById("totalBadge").textContent =
+          stats.total + " total";
+        document.getElementById("tabNewBadge").textContent = stats.new;
+        document.getElementById("tabProgressBadge").textContent =
+          stats.inProgress;
+        document.getElementById("tabAckBadge").textContent = stats.acknowledged;
+
+        // Animate new badge if increased
+        if (animate && stats.new > 0) {
+          document
+            .getElementById("tabNewBadge")
+            .classList.add("badge-new-count");
+          setTimeout(
+            () =>
+              document
+                .getElementById("tabNewBadge")
+                .classList.remove("badge-new-count"),
+            500
+          );
+        }
+      }
+
+      // Render all tables
+      function renderAllTables(newIds = []) {
+        const newComplaints = allComplaints.filter((c) => c.status === "new");
+        const progressComplaints = allComplaints.filter(
+          (c) => c.status === "in-progress"
+        );
+        const acknowledgedComplaints = allComplaints.filter(
+          (c) => c.status === "acknowledged"
+        );
+        const resolvedComplaints = allComplaints.filter(
+          (c) => c.status === "resolved"
+        );
+
+        renderTable("newComplaintsBody", newComplaints, "new", newIds);
+        renderTable(
+          "progressComplaintsBody",
+          progressComplaints,
+          "progress",
+          newIds
+        );
+        renderTable(
+          "acknowledgedComplaintsBody",
+          acknowledgedComplaints,
+          "acknowledged",
+          newIds
+        );
+        renderTable(
+          "resolvedComplaintsBody",
+          resolvedComplaints,
+          "resolved",
+          newIds
+        );
+
+        // Update showing count
+        const activeComplaints = {
+          new: newComplaints,
+          "in-progress": progressComplaints,
+          acknowledged: acknowledgedComplaints,
+          resolved: resolvedComplaints,
+        };
+        document.getElementById("showingCount").textContent = (
+          activeComplaints[activeTab] || []
+        ).length;
+      }
+
+      // Render a single table
+      function renderTable(bodyId, complaints, type, newIds = []) {
+        const tbody = document.getElementById(bodyId);
+
+        if (complaints.length === 0) {
+          tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="fas fa-inbox fa-2x mb-3"></i>
+                            <p class="mb-0">No ${type} complaints</p>
+                        </td>
+                    </tr>
+                `;
+          return;
+        }
+
+        // Sort by date, newest first
+        const sorted = [...complaints].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        tbody.innerHTML = sorted
+          .map((c) => {
+            const isNew = newIds.includes(c.id);
+            const priorityClass = `priority-${c.priority || "normal"}`;
+
+            return `
+                    <tr class="${
+                      isNew ? "new-complaint-row" : ""
+                    }" style="position: relative;">
+                        <td><div class="priority-indicator ${priorityClass}"></div></td>
+                        <td><span class="fw-medium">#${c.id}</span></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2" style="background: ${getAvatarColor(
+                                  c.citizen.name
+                                )}; color: white;">
+                                    ${c.citizen.initials}
+                                </div>
+                                <div>
+                                    <div class="fw-medium">${
+                                      c.citizen.name
+                                    }</div>
+                                    <div class="small text-muted">${
+                                      c.citizen.email
+                                    }</div>
+                                </div>
                             </div>
-                            <div class="col-md-4 text-end d-none d-md-block">
-                                <div class="bg-white bg-opacity-20 d-inline-block p-3 rounded-3">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-calendar-check fa-2x me-3"></i>
-                                        <div class="text-start">
-                                            <div class="small opacity-75">Today's Date</div>
-                                            <div class="fw-bold">Aug 24, 2025</div>
-                                        </div>
+                        </td>
+                        <td><span class="${ComplaintService.getCategoryBadgeClass(
+                          c.category
+                        )}">${c.categoryLabel}</span></td>
+                        ${
+                          type === "progress"
+                            ? `
+                            <td>
+                                <div class="small">
+                                    <i class="fas fa-user-hard-hat me-1 text-primary"></i>
+                                    ${
+                                      c.assignedTo
+                                        ? c.assignedTo.name
+                                        : "Unassigned"
+                                    }
+                                </div>
+                            </td>
+                        `
+                            : type === "resolved"
+                            ? `
+                            <td>${
+                              c.resolvedAt
+                                ? ComplaintService.formatDate(c.resolvedAt)
+                                : ComplaintService.formatDate(c.updatedAt)
+                            }</td>
+                        `
+                            : `
+                            <td><span class="badge ${getPriorityBadgeClass(
+                              c.priority
+                            )}">${capitalize(
+                                c.priority || "Normal"
+                              )}</span></td>
+                        `
+                        }
+                        <td>${ComplaintService.formatDateTime(c.createdAt)}</td>
+                        <td class="text-end">
+                            <a href="officer-complaint-detail.html?id=${
+                              c.id
+                            }" class="btn btn-primary btn-action">
+                                ${type === "new" ? "Review" : "View"}
+                            </a>
+                        </td>
+                    </tr>
+                `;
+          })
+          .join("");
+
+        // Remove highlight after animation
+        setTimeout(() => {
+          document.querySelectorAll(".new-complaint-row").forEach((row) => {
+            row.classList.remove("new-complaint-row");
+          });
+        }, 3000);
+      }
+
+      // Handle real-time updates
+      function handleRealtimeUpdate(type, data) {
+        console.log("Officer Dashboard - Real-time update:", type, data);
+
+        switch (type) {
+          case "NEW_COMPLAINT":
+            // Reload data with animation
+            allComplaints = ComplaintService.getAllComplaints();
+            updateStats(true);
+            renderAllTables([data.id]);
+
+            // Store for toast
+            latestNewComplaintId = data.id;
+
+            // Show toast notification
+            showNewComplaintToast(data);
+
+            // Add to notification dropdown
+            addNotification(
+              `New complaint #${data.id} from ${data.citizen.name}`,
+              "danger"
+            );
+
+            // Play sound
+            playNotificationSound();
+            break;
+
+          case "COMPLAINT_UPDATED":
+            allComplaints = ComplaintService.getAllComplaints();
+            updateStats(false);
+            renderAllTables();
+            addNotification(
+              `Complaint #${
+                data.id
+              } updated to ${ComplaintService.getStatusLabel(data.status)}`,
+              "info"
+            );
+            break;
+
+          case "STATUS_CHANGED":
+            allComplaints = ComplaintService.getAllComplaints();
+            updateStats(true);
+            renderAllTables();
+            addNotification(
+              `Complaint #${
+                data.complaintId
+              } status changed to ${ComplaintService.getStatusLabel(
+                data.newStatus
+              )}`,
+              "info"
+            );
+            break;
+
+          case "TASK_ASSIGNED":
+          case "TASK_REASSIGNED":
+            allComplaints = ComplaintService.getAllComplaints();
+            updateStats(false);
+            renderAllTables();
+            addNotification(
+              `Task #${data.complaintId} ${
+                type === "TASK_REASSIGNED" ? "reassigned" : "assigned"
+              } to ${data.technician?.name || data.newTechnician?.name}`,
+              "success"
+            );
+            break;
+
+          case "TASK_STARTED":
+            allComplaints = ComplaintService.getAllComplaints();
+            updateStats(false);
+            renderAllTables();
+            addNotification(
+              `Technician started working on #${data.complaintId}`,
+              "info"
+            );
+            break;
+
+          case "PROGRESS_UPDATE":
+            allComplaints = ComplaintService.getAllComplaints();
+            renderAllTables();
+            addNotification(`Progress update on #${data.complaintId}`, "info");
+            break;
+
+          case "TASK_COMPLETED":
+            allComplaints = ComplaintService.getAllComplaints();
+            updateStats(true);
+            renderAllTables();
+            addNotification(
+              `🎉 Task #${data.complaintId} completed by technician!`,
+              "success"
+            );
+            playNotificationSound();
+            break;
+
+          case "STATS_UPDATED":
+          case "DATA_RESET":
+            loadDashboardData();
+            break;
+        }
+      }
+
+      // Show new complaint toast
+      function showNewComplaintToast(complaint) {
+        const toast = document.getElementById("newComplaintToast");
+        const message = document.getElementById("toastMessage");
+
+        message.innerHTML = `
+                <strong>${
+                  complaint.citizen.name
+                }</strong> filed a ${complaint.categoryLabel.toLowerCase()} complaint.<br>
+                <small class="text-muted">Location: ${
+                  complaint.location
+                }</small>
+            `;
+
+        toast.style.display = "block";
+
+        // Auto-dismiss after 10 seconds
+        setTimeout(() => {
+          dismissToast();
+        }, 10000);
+      }
+
+      // Dismiss toast
+      function dismissToast() {
+        const toast = document.getElementById("newComplaintToast");
+        toast.style.animation = "slideUp 0.3s ease reverse";
+        setTimeout(() => {
+          toast.style.display = "none";
+          toast.style.animation = "slideUp 0.4s ease";
+        }, 300);
+      }
+
+      // View new complaint
+      function viewNewComplaint() {
+        if (latestNewComplaintId) {
+          window.location.href =
+            "officer-complaint-detail.html?id=" + latestNewComplaintId;
+        }
+        dismissToast();
+      }
+
+      // Add notification to dropdown
+      function addNotification(message, type = "info") {
+        notifications.unshift({ message, type, time: new Date() });
+        updateNotificationDropdown();
+      }
+
+      // Update notification dropdown
+      function updateNotificationDropdown() {
+        const badge = document.getElementById("notificationBadge");
+        const dropdown = document.getElementById("notificationDropdown");
+        const noNotif = document.getElementById("noNotifications");
+
+        badge.textContent = notifications.length;
+        badge.style.display = notifications.length > 0 ? "flex" : "none";
+
+        if (notifications.length > 0) {
+          noNotif.style.display = "none";
+
+          // Clear old items (keep header)
+          const items = dropdown.querySelectorAll(".notification-item");
+          items.forEach((item) => item.remove());
+
+          // Add new items
+          notifications.slice(0, 5).forEach((notif) => {
+            const li = document.createElement("li");
+            li.className = "notification-item";
+            li.innerHTML = `
+                        <div class="dropdown-item small py-2">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-circle text-${
+                                  notif.type
+                                } me-2 mt-1" style="font-size: 0.5rem;"></i>
+                                <div>
+                                    <div>${notif.message}</div>
+                                    <div class="text-muted" style="font-size: 0.7rem;">
+                                        ${formatTimeAgo(notif.time)}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats Grid -->
-            <div class="row g-4 mb-4">
-                <div class="col-xl-3 col-md-6">
-                    <div class="stat-card p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <div class="stat-label mb-1">New Complaints</div>
-                                <div class="stat-value">5</div>
-                            </div>
-                            <div class="stat-icon bg-danger-soft">
-                                <i class="fas fa-exclamation-circle"></i>
-                            </div>
-                        </div>
-                        <div class="mt-3 small text-danger fw-medium">
-                            <i class="fas fa-arrow-up me-1"></i> +2 from yesterday
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="stat-card p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <div class="stat-label mb-1">In Progress</div>
-                                <div class="stat-value">12</div>
-                            </div>
-                            <div class="stat-icon bg-warning-soft">
-                                <i class="fas fa-spinner"></i>
-                            </div>
-                        </div>
-                        <div class="mt-3 small text-muted">
-                            Active tasks
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="stat-card p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <div class="stat-label mb-1">To Verify</div>
-                                <div class="stat-value">3</div>
-                            </div>
-                            <div class="stat-icon bg-info-soft">
-                                <i class="fas fa-check-double"></i>
-                            </div>
-                        </div>
-                        <div class="mt-3 small text-info fw-medium">
-                            Action required
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="stat-card p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <div class="stat-label mb-1">Resolved</div>
-                                <div class="stat-value">8</div>
-                            </div>
-                            <div class="stat-icon bg-success-soft">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                        </div>
-                        <div class="mt-3 small text-success fw-medium">
-                            Today's completions
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Table Section -->
-            <div class="table-card">
-                <!-- Header & Filters -->
-                <div class="p-4 border-bottom">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-                        <h5 class="fw-bold mb-0">Complaint Management</h5>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-secondary btn-sm">
-                                <i class="fas fa-download me-2"></i>Export
-                            </button>
-                            <button class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus me-2"></i>Assign Task
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <input type="text" class="form-control search-input" placeholder="Search complaints...">
-                        </div>
-                        <div class="col-md-3">
-                            <select class="form-select">
-                                <option>All Categories</option>
-                                <option>Water</option>
-                                <option>Road</option>
-                                <option>Electricity</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select class="form-select">
-                                <option>All Priorities</option>
-                                <option>High</option>
-                                <option>Medium</option>
-                                <option>Low</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tabs -->
-                <ul class="nav nav-tabs custom-tabs" role="tablist">
-                    <li class="nav-item">
-                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#new">
-                            New <span class="badge bg-danger tab-badge">5</span>
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#progress">
-                            In Progress <span class="badge bg-warning text-dark tab-badge">12</span>
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#verify">
-                            Verification <span class="badge bg-info tab-badge">3</span>
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#closed">
-                            Closed
-                        </button>
-                    </li>
-                </ul>
-
-                <!-- Table Content -->
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="new">
-                        <div class="table-responsive">
-                            <table class="table mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Citizen</th>
-                                        <th>Category</th>
-                                        <th>Priority</th>
-                                        <th>Date</th>
-                                        <th class="text-end">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><span class="fw-medium">#CMPT-130</span></td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="user-avatar">JD</div>
-                                                <div>
-                                                    <div class="fw-medium">John Doe</div>
-                                                    <div class="small text-muted">john@example.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td><span class="status-badge badge-water">Water Leakage</span></td>
-                                        <td><span class="badge bg-secondary">Normal</span></td>
-                                        <td>Aug 24, 10:30 AM</td>
-                                        <td class="text-end">
-                                            <a href="officer-complaint-detail.html" class="btn btn-primary btn-action">Review</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="fw-medium">#CMPT-131</span></td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="user-avatar bg-success text-white">MS</div>
-                                                <div>
-                                                    <div class="fw-medium">Maria Santos</div>
-                                                    <div class="small text-muted">maria@example.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td><span class="status-badge badge-road">Pothole</span></td>
-                                        <td><span class="status-badge badge-high">High</span></td>
-                                        <td>Aug 24, 09:15 AM</td>
-                                        <td class="text-end">
-                                            <a href="officer-complaint-detail.html" class="btn btn-primary btn-action">Review</a>
-                                        </td>
-                                    </tr>
-                                    <!-- More rows can be added here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- Other tabs placeholders -->
-                    <div class="tab-pane fade" id="progress">
-                        <div class="p-5 text-center text-muted">
-                            <i class="fas fa-spinner fa-2x mb-3"></i>
-                            <p>Loading in-progress complaints...</p>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="verify">
-                        <div class="p-5 text-center text-muted">
-                            <i class="fas fa-check-double fa-2x mb-3"></i>
-                            <p>Loading complaints for verification...</p>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="closed">
-                        <div class="p-5 text-center text-muted">
-                            <i class="fas fa-archive fa-2x mb-3"></i>
-                            <p>No closed complaints to show.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Pagination -->
-                <div class="p-3 border-top">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-end mb-0">
-                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = 'index.html';
+                    `;
+            dropdown.appendChild(li);
+          });
+        } else {
+          noNotif.style.display = "block";
         }
+      }
 
-        // Check auth
-        document.addEventListener('DOMContentLoaded', function() {
-            const role = sessionStorage.getItem('userRole');
-            if (!role || role !== 'officer') {
-                // In a real app, redirect to login
-                // window.location.href = 'index.html';
-                console.log('Auth check: User is not logged in as officer');
-            }
+      // Clear notifications
+      function clearNotifications() {
+        notifications = [];
+        updateNotificationDropdown();
+      }
+
+      // Filter complaints
+      function filterComplaints() {
+        const search = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const category = document.getElementById("categoryFilter").value;
+        const priority = document.getElementById("priorityFilter").value;
+
+        filteredComplaints = allComplaints.filter((c) => {
+          const matchesSearch =
+            !search ||
+            c.id.toLowerCase().includes(search) ||
+            c.citizen.name.toLowerCase().includes(search) ||
+            c.description.toLowerCase().includes(search);
+
+          const matchesCategory = !category || c.category === category;
+          const matchesPriority = !priority || c.priority === priority;
+
+          return matchesSearch && matchesCategory && matchesPriority;
         });
+
+        // Re-render with filtered data
+        const newComplaints = filteredComplaints.filter(
+          (c) => c.status === "new"
+        );
+        const progressComplaints = filteredComplaints.filter(
+          (c) => c.status === "in-progress"
+        );
+        const acknowledgedComplaints = filteredComplaints.filter(
+          (c) => c.status === "acknowledged"
+        );
+        const resolvedComplaints = filteredComplaints.filter(
+          (c) => c.status === "resolved"
+        );
+
+        renderTable("newComplaintsBody", newComplaints, "new");
+        renderTable("progressComplaintsBody", progressComplaints, "progress");
+        renderTable(
+          "acknowledgedComplaintsBody",
+          acknowledgedComplaints,
+          "acknowledged"
+        );
+        renderTable("resolvedComplaintsBody", resolvedComplaints, "resolved");
+      }
+
+      // Set active tab
+      function setActiveTab(tab) {
+        activeTab = tab;
+        const counts = {
+          new: allComplaints.filter((c) => c.status === "new").length,
+          "in-progress": allComplaints.filter((c) => c.status === "in-progress")
+            .length,
+          acknowledged: allComplaints.filter((c) => c.status === "acknowledged")
+            .length,
+          resolved: allComplaints.filter((c) => c.status === "resolved").length,
+        };
+        document.getElementById("showingCount").textContent = counts[tab] || 0;
+      }
+
+      // Refresh data
+      function refreshData() {
+        const btn = document.getElementById("refreshBtn");
+        const icon = btn.querySelector("i");
+        icon.classList.add("refresh-spin");
+
+        setTimeout(() => {
+          loadDashboardData();
+          icon.classList.remove("refresh-spin");
+          ComplaintService.showNotification("Dashboard refreshed!", "success");
+        }, 500);
+      }
+
+      // Export data placeholder
+      function exportData() {
+        ComplaintService.showNotification("Generating export file...", "info");
+      }
+
+      // Notification sound
+      let notificationSound = null;
+      function setupNotificationSound() {
+        // Create a simple beep sound using Web Audio API
+        try {
+          const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
+          notificationSound = audioContext;
+        } catch (e) {
+          console.log("Web Audio not supported");
+        }
+      }
+
+      function playNotificationSound() {
+        if (notificationSound) {
+          try {
+            const oscillator = notificationSound.createOscillator();
+            const gainNode = notificationSound.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(notificationSound.destination);
+            oscillator.frequency.value = 800;
+            oscillator.type = "sine";
+            gainNode.gain.setValueAtTime(0.3, notificationSound.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(
+              0.01,
+              notificationSound.currentTime + 0.3
+            );
+            oscillator.start(notificationSound.currentTime);
+            oscillator.stop(notificationSound.currentTime + 0.3);
+          } catch (e) {}
+        }
+      }
+
+      // Utility functions
+      function getAvatarColor(name) {
+        const colors = [
+          "#3b82f6",
+          "#10b981",
+          "#f59e0b",
+          "#ef4444",
+          "#8b5cf6",
+          "#ec4899",
+        ];
+        const index = name.charCodeAt(0) % colors.length;
+        return colors[index];
+      }
+
+      function getPriorityBadgeClass(priority) {
+        const classes = {
+          high: "bg-danger",
+          medium: "bg-warning text-dark",
+          normal: "bg-secondary",
+          low: "bg-success",
+        };
+        return classes[priority] || "bg-secondary";
+      }
+
+      function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      }
+
+      function formatTimeAgo(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+        if (seconds < 60) return "Just now";
+        if (seconds < 3600) return Math.floor(seconds / 60) + " min ago";
+        if (seconds < 86400) return Math.floor(seconds / 3600) + " hours ago";
+        return Math.floor(seconds / 86400) + " days ago";
+      }
+
+      // Logout
+      function logout() {
+        sessionStorage.clear();
+        window.location.href = "index.html";
+      }
     </script>
-</body>
+  </body>
 </html>

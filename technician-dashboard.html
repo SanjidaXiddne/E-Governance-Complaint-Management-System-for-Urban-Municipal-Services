@@ -1,117 +1,1982 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Technician Dashboard - Municipal Services</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="dashboard.css">
-</head>
-<body>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #06b6d4;
+        --dark: #1e293b;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+      }
 
+      * {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          #f0f4ff 0%,
+          #fef3f2 50%,
+          #f0fdf4 100%
+        );
+        min-height: 100vh;
+      }
+
+      /* Navbar */
+      .tech-navbar {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--gray-200);
+        padding: 0.75rem 0;
+      }
+
+      .tech-navbar .navbar-brand {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--dark);
+      }
+
+      .tech-navbar .navbar-brand img {
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.875rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-dark) 100%
+        );
+        color: white;
+      }
+
+      /* Main Content */
+      .main-content {
+        padding-top: 90px;
+        padding-bottom: 40px;
+      }
+
+      /* Stats Cards */
+      .stat-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-100);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+      }
+
+      .stat-card.active::before {
+        background: var(--warning);
+      }
+      .stat-card.completed::before {
+        background: var(--success);
+      }
+      .stat-card.total::before {
+        background: var(--primary);
+      }
+      .stat-card.time::before {
+        background: var(--info);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+      }
+
+      .stat-card.active .stat-icon {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+      .stat-card.completed .stat-icon {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+      .stat-card.total .stat-icon {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary);
+      }
+      .stat-card.time .stat-icon {
+        background: rgba(6, 182, 212, 0.1);
+        color: var(--info);
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1;
+      }
+
+      .stat-label {
+        color: var(--gray-500);
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      /* Task Cards */
+      .task-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--gray-100);
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+
+      .task-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+      }
+
+      .task-card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--gray-100);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .task-id {
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 0.875rem;
+      }
+
+      .task-priority {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .priority-high {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+      }
+      .priority-medium {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+      .priority-normal {
+        background: rgba(107, 114, 128, 0.1);
+        color: var(--gray-500);
+      }
+      .priority-low {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+
+      .task-card-body {
+        padding: 1.5rem;
+      }
+
+      .task-category {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.375rem 0.875rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+      }
+
+      .category-water {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+      }
+      .category-road {
+        background: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+      .category-waste {
+        background: rgba(34, 197, 94, 0.1);
+        color: #22c55e;
+      }
+      .category-light {
+        background: rgba(234, 179, 8, 0.1);
+        color: #eab308;
+      }
+
+      .task-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+      }
+
+      .task-description {
+        color: var(--gray-500);
+        font-size: 0.875rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .task-location {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--gray-600);
+        font-size: 0.875rem;
+        padding: 0.75rem;
+        background: var(--gray-50);
+        border-radius: var(--radius-sm);
+        margin-bottom: 1rem;
+      }
+
+      .task-location i {
+        color: var(--danger);
+      }
+
+      .task-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.8125rem;
+        color: var(--gray-500);
+        padding-top: 1rem;
+        border-top: 1px solid var(--gray-100);
+      }
+
+      .task-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+      }
+
+      .task-card-actions {
+        padding: 1rem 1.5rem;
+        background: var(--gray-50);
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      /* Buttons */
+      .btn-tech-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-dark) 100%
+        );
+        color: white;
+        border: none;
+        padding: 0.625rem 1.25rem;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        font-size: 0.875rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-tech-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        color: white;
+      }
+
+      .btn-tech-success {
+        background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        color: white;
+        border: none;
+        padding: 0.625rem 1.25rem;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        font-size: 0.875rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-tech-success:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        color: white;
+      }
+
+      .btn-tech-warning {
+        background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+        color: white;
+        border: none;
+        padding: 0.625rem 1.25rem;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        font-size: 0.875rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-tech-warning:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        color: white;
+      }
+
+      .btn-tech-outline {
+        background: white;
+        color: var(--gray-700);
+        border: 1px solid var(--gray-300);
+        padding: 0.625rem 1.25rem;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        font-size: 0.875rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-tech-outline:hover {
+        background: var(--gray-50);
+        border-color: var(--gray-400);
+      }
+
+      /* Section Headers */
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .section-title .badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+      }
+
+      /* Filter Pills */
+      .filter-pills {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .filter-pill {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: white;
+        color: var(--gray-600);
+        border: 1px solid var(--gray-200);
+      }
+
+      .filter-pill:hover {
+        background: var(--gray-50);
+      }
+
+      .filter-pill.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      /* Modal Styles */
+      .modal-content {
+        border-radius: var(--radius-xl);
+        border: none;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .modal-header {
+        border-bottom: 1px solid var(--gray-100);
+        padding: 1.5rem;
+      }
+
+      .modal-title {
+        font-weight: 700;
+        color: var(--dark);
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      .modal-footer {
+        border-top: 1px solid var(--gray-100);
+        padding: 1rem 1.5rem;
+      }
+
+      .form-label {
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+      }
+
+      .form-control,
+      .form-select {
+        border-radius: var(--radius-md);
+        border: 1px solid var(--gray-200);
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      /* Photo Upload */
+      .photo-upload-area {
+        border: 2px dashed var(--gray-300);
+        border-radius: var(--radius-md);
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: var(--gray-50);
+      }
+
+      .photo-upload-area:hover {
+        border-color: var(--primary);
+        background: rgba(99, 102, 241, 0.05);
+      }
+
+      .photo-upload-area i {
+        font-size: 2rem;
+        color: var(--gray-400);
+        margin-bottom: 0.5rem;
+      }
+
+      .photo-preview {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+
+      .photo-preview-item {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+      }
+
+      .photo-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .photo-preview-item .remove-photo {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      /* Timeline in Modal */
+      .task-timeline {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+      }
+
+      .timeline-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--gray-100);
+      }
+
+      .timeline-item:last-child {
+        border-bottom: none;
+      }
+
+      .timeline-marker {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .timeline-content {
+        flex: 1;
+      }
+
+      .timeline-date {
+        font-size: 0.75rem;
+        color: var(--gray-400);
+        margin-bottom: 0.25rem;
+      }
+
+      .timeline-title {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.25rem;
+      }
+
+      .timeline-description {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+      }
+
+      .empty-state i {
+        font-size: 4rem;
+        color: var(--gray-300);
+        margin-bottom: 1rem;
+      }
+
+      .empty-state h5 {
+        font-weight: 600;
+        color: var(--gray-600);
+        margin-bottom: 0.5rem;
+      }
+
+      .empty-state p {
+        color: var(--gray-400);
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in-up {
+        animation: fadeInUp 0.4s ease forwards;
+      }
+
+      .task-card {
+        animation: fadeInUp 0.4s ease forwards;
+      }
+
+      /* Task Status Badge */
+      .task-status {
+        padding: 0.375rem 0.875rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .status-in-progress {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+
+      .status-resolved {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+
+      .status-new {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+      }
+
+      /* Loading Spinner */
+      .btn-loading {
+        position: relative;
+        pointer-events: none;
+      }
+
+      .btn-loading::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        right: 12px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* New task highlight */
+      .task-card.new-highlight {
+        animation: highlightPulse 2s ease;
+      }
+
+      @keyframes highlightPulse {
+        0%,
+        100% {
+          box-shadow: var(--shadow-md);
+        }
+        50% {
+          box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3), var(--shadow-lg);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .section-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .filter-pills {
+          width: 100%;
+          overflow-x: auto;
+          flex-wrap: nowrap;
+          padding-bottom: 0.5rem;
+        }
+
+        .stat-value {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg fixed-top dashboard-nav">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center" href="technician-dashboard.html">
-                <img src="images/govt.png" alt="Logo" width="32" height="32" class="me-2">
-                Technician Portal
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#techNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="techNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="technician-dashboard.html">
-                            <i class="fas fa-clipboard-list"></i> My Tasks
-                        </a>
-                    </li>
-                    <li class="nav-item ms-lg-3">
-                        <div class="d-flex align-items-center">
-                            <div class="user-avatar bg-dark text-white me-2">T1</div>
-                            <div class="d-none d-lg-block">
-                                <div class="small fw-bold">Tech Team 1</div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <button class="btn btn-outline-danger btn-sm" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </li>
-                </ul>
-            </div>
+    <nav class="navbar navbar-expand-lg fixed-top tech-navbar">
+      <div class="container-fluid px-4">
+        <a
+          class="navbar-brand d-flex align-items-center"
+          href="technician-dashboard.html"
+        >
+          <img
+            src="images/govt.png"
+            alt="Logo"
+            width="36"
+            height="36"
+            class="me-2"
+          />
+          <span>Technician Portal</span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#techNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="techNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link active" href="technician-dashboard.html">
+                <i class="fas fa-clipboard-list me-1"></i> My Tasks
+              </a>
+            </li>
+            <li class="nav-item ms-lg-3">
+              <div class="d-flex align-items-center">
+                <div class="user-avatar me-2" id="userAvatar">FR</div>
+                <div class="d-none d-lg-block">
+                  <div class="fw-bold small" id="userName">Fazlur Rahman</div>
+                  <div class="text-muted small" id="techId">TECH-003</div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item ms-3">
+              <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="container-fluid px-4">
-            
-            <h4 class="fw-bold mb-4">Assigned Tasks</h4>
-
-            <div class="row g-4">
-                <!-- Task Card 1 -->
-                <div class="col-md-6 col-xl-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between mb-3">
-                                <span class="badge bg-warning text-dark">In Progress</span>
-                                <span class="text-muted small">Due Today</span>
-                            </div>
-                            <h5 class="fw-bold mb-2">Repair Street Light</h5>
-                            <p class="text-muted small mb-3">Sector 7, Road 4, House 12</p>
-                            
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="rounded-circle bg-light p-2 me-2">
-                                    <i class="fas fa-map-marker-alt text-danger"></i>
-                                </div>
-                                <span class="small">Uttara Model Town</span>
-                            </div>
-
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-primary">Update Status</button>
-                                <button class="btn btn-outline-secondary">View Details</button>
-                            </div>
-                        </div>
-                    </div>
+      <div class="container-fluid px-4">
+        <!-- Stats Row -->
+        <div class="row g-4 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card active">
+              <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon">
+                  <i class="fas fa-spinner"></i>
                 </div>
-
-                <!-- Task Card 2 -->
-                <div class="col-md-6 col-xl-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between mb-3">
-                                <span class="badge bg-danger">High Priority</span>
-                                <span class="text-muted small">Due Tomorrow</span>
-                            </div>
-                            <h5 class="fw-bold mb-2">Water Pipe Leakage</h5>
-                            <p class="text-muted small mb-3">Main Road Intersection</p>
-                            
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="rounded-circle bg-light p-2 me-2">
-                                    <i class="fas fa-map-marker-alt text-danger"></i>
-                                </div>
-                                <span class="small">Mirpur 10 Circle</span>
-                            </div>
-
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-outline-primary">Accept Task</button>
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                  <div class="stat-value" id="activeTasks">0</div>
+                  <div class="stat-label">Active Tasks</div>
                 </div>
+              </div>
             </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card completed">
+              <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon">
+                  <i class="fas fa-check-double"></i>
+                </div>
+                <div>
+                  <div class="stat-value" id="completedTasks">0</div>
+                  <div class="stat-label">Completed</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card total">
+              <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon">
+                  <i class="fas fa-tasks"></i>
+                </div>
+                <div>
+                  <div class="stat-value" id="totalTasks">0</div>
+                  <div class="stat-label">Total Tasks</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card time">
+              <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div>
+                  <div class="stat-value" id="totalTime">0h</div>
+                  <div class="stat-label">Time Spent</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- Filter Section -->
+        <div class="section-header">
+          <h5 class="section-title">
+            <i class="fas fa-clipboard-list text-primary"></i>
+            My Assigned Tasks
+            <span class="badge bg-primary" id="taskCount">0</span>
+          </h5>
+          <div class="filter-pills">
+            <span class="filter-pill active" data-filter="all">All Tasks</span>
+            <span class="filter-pill" data-filter="in-progress"
+              >In Progress</span
+            >
+            <span class="filter-pill" data-filter="resolved">Completed</span>
+          </div>
+        </div>
+
+        <!-- Tasks Grid -->
+        <div class="row g-4" id="tasksContainer">
+          <!-- Tasks will be loaded here dynamically -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state d-none" id="emptyState">
+          <i class="fas fa-clipboard-check"></i>
+          <h5>No tasks assigned</h5>
+          <p>You don't have any tasks assigned yet. Check back later!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div class="modal fade" id="taskDetailModal" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>
+              <h5 class="modal-title mb-1" id="modalTaskId">CMPT-128</h5>
+              <span class="task-category category-light" id="modalCategory">
+                <i class="fas fa-lightbulb"></i> Street Lighting
+              </span>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-lg-7">
+                <h6 class="fw-bold mb-2">Issue Description</h6>
+                <p class="text-muted mb-3" id="modalDescription">
+                  Multiple street lights not working on the road.
+                </p>
+
+                <div class="task-location mb-4">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span id="modalLocation">Uttara Sector-7, Dhaka</span>
+                </div>
+
+                <div class="row g-3 mb-4">
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                      <div class="small text-muted mb-1">Status</div>
+                      <span
+                        class="task-status status-in-progress"
+                        id="modalStatus"
+                        >In Progress</span
+                      >
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                      <div class="small text-muted mb-1">Priority</div>
+                      <span
+                        class="task-priority priority-medium"
+                        id="modalPriority"
+                        >Medium</span
+                      >
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                      <div class="small text-muted mb-1">Assigned On</div>
+                      <div class="fw-medium" id="modalAssignedDate">
+                        Aug 21, 2025
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                      <div class="small text-muted mb-1">Time Spent</div>
+                      <div class="fw-medium" id="modalTimeSpent">0 hours</div>
+                    </div>
+                  </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Citizen Information</h6>
+                <div
+                  class="d-flex align-items-center gap-3 p-3 bg-light rounded-3 mb-4"
+                >
+                  <div class="user-avatar" id="modalCitizenAvatar">JD</div>
+                  <div>
+                    <div class="fw-bold" id="modalCitizenName">John Doe</div>
+                    <div class="small text-muted" id="modalCitizenPhone">
+                      +880 1700 000000
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-5">
+                <h6 class="fw-bold mb-3">Status Timeline</h6>
+                <div class="task-timeline" id="modalTimeline">
+                  <!-- Timeline items will be loaded here -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button
+              type="button"
+              class="btn-tech-outline"
+              data-bs-dismiss="modal"
+            >
+              <i class="fas fa-times"></i> Close
+            </button>
+            <div class="d-flex gap-2" id="modalActions">
+              <button
+                type="button"
+                class="btn-tech-warning"
+                onclick="openProgressModal()"
+              >
+                <i class="fas fa-edit"></i> Post Update
+              </button>
+              <button
+                type="button"
+                class="btn-tech-success"
+                onclick="openCompleteModal()"
+              >
+                <i class="fas fa-check"></i> Mark Complete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Update Modal -->
+    <div class="modal fade" id="progressModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-edit text-warning me-2"></i>
+              Post Progress Update
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="progressForm">
+              <div class="mb-3">
+                <label class="form-label"
+                  >Work Notes <span class="text-danger">*</span></label
+                >
+                <textarea
+                  class="form-control"
+                  id="progressNotes"
+                  rows="4"
+                  placeholder="Describe the work done, materials used, issues encountered..."
+                ></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Time Spent (hours)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="progressTime"
+                  step="0.5"
+                  min="0"
+                  placeholder="e.g., 2.5"
+                />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Attach Photos</label>
+                <div
+                  class="photo-upload-area"
+                  onclick="document.getElementById('progressPhotos').click()"
+                >
+                  <i class="fas fa-camera d-block"></i>
+                  <span class="text-muted">Click to upload photos</span>
+                  <input
+                    type="file"
+                    id="progressPhotos"
+                    class="d-none"
+                    accept="image/*"
+                    multiple
+                    onchange="handlePhotoUpload(this, 'progressPreview')"
+                  />
+                </div>
+                <div class="photo-preview" id="progressPreview"></div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-tech-outline"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn-tech-primary"
+              id="submitProgressBtn"
+              onclick="submitProgressUpdate()"
+            >
+              <i class="fas fa-paper-plane"></i> Post Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Complete Task Modal -->
+    <div class="modal fade" id="completeModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-check-circle text-success me-2"></i>
+              Mark Task as Complete
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-info d-flex align-items-start gap-2 mb-4">
+              <i class="fas fa-info-circle mt-1"></i>
+              <div>
+                <strong>Important:</strong> Once marked complete, this task will
+                be moved to resolved status and the citizen will be notified.
+              </div>
+            </div>
+
+            <form id="completeForm">
+              <div class="mb-3">
+                <label class="form-label"
+                  >Completion Notes <span class="text-danger">*</span></label
+                >
+                <textarea
+                  class="form-control"
+                  id="completeNotes"
+                  rows="4"
+                  placeholder="Describe the resolution, what was fixed, final remarks..."
+                ></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Final Time Spent (hours)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="completeTime"
+                  step="0.5"
+                  min="0"
+                  placeholder="Additional time for completion"
+                />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Completion Photos</label>
+                <div
+                  class="photo-upload-area"
+                  onclick="document.getElementById('completePhotos').click()"
+                >
+                  <i class="fas fa-camera d-block"></i>
+                  <span class="text-muted">Click to upload final photos</span>
+                  <input
+                    type="file"
+                    id="completePhotos"
+                    class="d-none"
+                    accept="image/*"
+                    multiple
+                    onchange="handlePhotoUpload(this, 'completePreview')"
+                  />
+                </div>
+                <div class="photo-preview" id="completePreview"></div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-tech-outline"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn-tech-success"
+              id="submitCompleteBtn"
+              onclick="submitCompletion()"
+            >
+              <i class="fas fa-check-double"></i> Mark as Complete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Start Work Modal -->
+    <div class="modal fade" id="startWorkModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-play-circle text-warning me-2"></i>
+              Start Working on Task
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body text-center py-4">
+            <div class="mb-4">
+              <i class="fas fa-tools fa-3x text-warning mb-3"></i>
+              <h5>Ready to start working?</h5>
+              <p class="text-muted">
+                This will update the task status to "In Progress" and notify the
+                citizen.
+              </p>
+            </div>
+            <div class="bg-light rounded-3 p-3">
+              <div class="small text-muted">Task ID</div>
+              <div class="fw-bold" id="startWorkTaskId">CMPT-128</div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button
+              type="button"
+              class="btn-tech-outline"
+              data-bs-dismiss="modal"
+            >
+              Not Now
+            </button>
+            <button
+              type="button"
+              class="btn-tech-warning"
+              id="confirmStartBtn"
+              onclick="confirmStartWork()"
+            >
+              <i class="fas fa-play"></i> Start Work
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="complaint-service.js"></script>
     <script>
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = 'index.html';
+      // ============================================
+      // TECHNICIAN STATE
+      // ============================================
+      const technicianState = {
+        id: "TECH-003",
+        name: "Fazlur Rahman",
+        initials: "FR",
+        currentFilter: "all",
+        selectedTask: null,
+        uploadedPhotos: [],
+      };
+
+      // Modal instances
+      let taskDetailModal, progressModal, completeModal, startWorkModal;
+
+      // ============================================
+      // INITIALIZATION
+      // ============================================
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize modals
+        taskDetailModal = new bootstrap.Modal(
+          document.getElementById("taskDetailModal")
+        );
+        progressModal = new bootstrap.Modal(
+          document.getElementById("progressModal")
+        );
+        completeModal = new bootstrap.Modal(
+          document.getElementById("completeModal")
+        );
+        startWorkModal = new bootstrap.Modal(
+          document.getElementById("startWorkModal")
+        );
+
+        // Load technician info from session
+        loadTechnicianInfo();
+
+        // Load tasks
+        loadTasks();
+
+        // Setup filter pills
+        setupFilterPills();
+
+        // Subscribe to real-time updates
+        ComplaintService.subscribe(handleRealTimeUpdate);
+
+        console.log("Technician Dashboard initialized");
+      });
+
+      function loadTechnicianInfo() {
+        const storedId = sessionStorage.getItem("technicianId");
+        const storedName = sessionStorage.getItem("userName");
+
+        if (storedId) technicianState.id = storedId;
+        if (storedName) {
+          technicianState.name = storedName;
+          technicianState.initials = ComplaintService.getInitials(storedName);
         }
+
+        document.getElementById("userName").textContent = technicianState.name;
+        document.getElementById("techId").textContent = technicianState.id;
+        document.getElementById("userAvatar").textContent =
+          technicianState.initials;
+      }
+
+      // ============================================
+      // LOAD AND RENDER TASKS
+      // ============================================
+      function loadTasks() {
+        const tasks = ComplaintService.getTasksForTechnician(
+          technicianState.id
+        );
+        updateStats(tasks);
+        renderTasks(tasks);
+      }
+
+      function updateStats(tasks) {
+        const active = tasks.filter((t) => t.status === "in-progress").length;
+        const completed = tasks.filter((t) => t.status === "resolved").length;
+        const totalTime = tasks.reduce(
+          (sum, t) => sum + (t.totalTimeSpent || 0),
+          0
+        );
+
+        document.getElementById("activeTasks").textContent = active;
+        document.getElementById("completedTasks").textContent = completed;
+        document.getElementById("totalTasks").textContent = tasks.length;
+        document.getElementById("totalTime").textContent =
+          totalTime.toFixed(1) + "h";
+        document.getElementById("taskCount").textContent = tasks.length;
+      }
+
+      function renderTasks(tasks) {
+        const container = document.getElementById("tasksContainer");
+        const emptyState = document.getElementById("emptyState");
+
+        // Filter tasks based on current filter
+        let filteredTasks = tasks;
+        if (technicianState.currentFilter !== "all") {
+          filteredTasks = tasks.filter(
+            (t) => t.status === technicianState.currentFilter
+          );
+        }
+
+        if (filteredTasks.length === 0) {
+          container.innerHTML = "";
+          emptyState.classList.remove("d-none");
+          return;
+        }
+
+        emptyState.classList.add("d-none");
+
+        container.innerHTML = filteredTasks
+          .map(
+            (task, index) => `
+                <div class="col-md-6 col-xl-4" style="animation-delay: ${
+                  index * 0.1
+                }s">
+                    ${renderTaskCard(task)}
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function renderTaskCard(task) {
+        const categoryIcons = {
+          Water: "fa-tint",
+          Road: "fa-road",
+          Waste: "fa-trash",
+          Light: "fa-lightbulb",
+        };
+
+        const categoryClasses = {
+          Water: "category-water",
+          Road: "category-road",
+          Waste: "category-waste",
+          Light: "category-light",
+        };
+
+        const priorityClass = `priority-${task.priority || "normal"}`;
+        const statusClass = `status-${task.status}`;
+        const icon = categoryIcons[task.category] || "fa-wrench";
+        const catClass = categoryClasses[task.category] || "";
+
+        const isInProgress = task.status === "in-progress";
+        const isResolved = task.status === "resolved";
+
+        return `
+                <div class="task-card" data-task-id="${task.id}">
+                    <div class="task-card-header">
+                        <span class="task-id">${task.id}</span>
+                        <div class="d-flex gap-2 align-items-center">
+                            <span class="task-priority ${priorityClass}">${
+          task.priority || "Normal"
+        }</span>
+                            <span class="task-status ${statusClass}">${ComplaintService.getStatusLabel(
+          task.status
+        )}</span>
+                        </div>
+                    </div>
+                    <div class="task-card-body">
+                        <span class="task-category ${catClass}">
+                            <i class="fas ${icon}"></i>
+                            ${task.categoryLabel || task.category}
+                        </span>
+                        <h6 class="task-title">${
+                          task.categoryLabel || task.category
+                        } Issue</h6>
+                        <p class="task-description">${truncateText(
+                          task.description,
+                          100
+                        )}</p>
+                        <div class="task-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${task.location}</span>
+                        </div>
+                        <div class="task-meta">
+                            <div class="task-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                ${ComplaintService.formatDate(task.createdAt)}
+                            </div>
+                            ${
+                              task.totalTimeSpent
+                                ? `
+                            <div class="task-meta-item">
+                                <i class="fas fa-clock"></i>
+                                ${task.totalTimeSpent}h spent
+                            </div>
+                            `
+                                : ""
+                            }
+                            <div class="task-meta-item">
+                                <i class="fas fa-user"></i>
+                                ${task.citizen.name}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="task-card-actions">
+                        <button class="btn-tech-outline flex-grow-1" onclick="viewTaskDetail('${
+                          task.id
+                        }')">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        ${
+                          !isResolved
+                            ? `
+                            ${
+                              isInProgress
+                                ? `
+                                <button class="btn-tech-warning" onclick="quickUpdate('${task.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-tech-success" onclick="quickComplete('${task.id}')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            `
+                                : `
+                                <button class="btn-tech-primary" onclick="startWork('${task.id}')">
+                                    <i class="fas fa-play"></i> Start
+                                </button>
+                            `
+                            }
+                        `
+                            : `
+                            <span class="text-success d-flex align-items-center gap-1">
+                                <i class="fas fa-check-circle"></i> Completed
+                            </span>
+                        `
+                        }
+                    </div>
+                </div>
+            `;
+      }
+
+      // ============================================
+      // FILTER FUNCTIONALITY
+      // ============================================
+      function setupFilterPills() {
+        document.querySelectorAll(".filter-pill").forEach((pill) => {
+          pill.addEventListener("click", function () {
+            document
+              .querySelectorAll(".filter-pill")
+              .forEach((p) => p.classList.remove("active"));
+            this.classList.add("active");
+            technicianState.currentFilter = this.dataset.filter;
+            loadTasks();
+          });
+        });
+      }
+
+      // ============================================
+      // TASK DETAIL VIEW
+      // ============================================
+      function viewTaskDetail(taskId) {
+        const task = ComplaintService.getComplaintById(taskId);
+        if (!task) return;
+
+        technicianState.selectedTask = task;
+
+        // Update modal content
+        document.getElementById("modalTaskId").textContent = task.id;
+        document.getElementById("modalDescription").textContent =
+          task.description;
+        document.getElementById("modalLocation").textContent = task.location;
+
+        // Category
+        const categoryIcons = {
+          Water: "fa-tint",
+          Road: "fa-road",
+          Waste: "fa-trash",
+          Light: "fa-lightbulb",
+        };
+        const categoryClasses = {
+          Water: "category-water",
+          Road: "category-road",
+          Waste: "category-waste",
+          Light: "category-light",
+        };
+        const catEl = document.getElementById("modalCategory");
+        catEl.className = `task-category ${
+          categoryClasses[task.category] || ""
+        }`;
+        catEl.innerHTML = `<i class="fas ${
+          categoryIcons[task.category] || "fa-wrench"
+        }"></i> ${task.categoryLabel || task.category}`;
+
+        // Status
+        const statusEl = document.getElementById("modalStatus");
+        statusEl.className = `task-status status-${task.status}`;
+        statusEl.textContent = ComplaintService.getStatusLabel(task.status);
+
+        // Priority
+        const priorityEl = document.getElementById("modalPriority");
+        priorityEl.className = `task-priority priority-${
+          task.priority || "normal"
+        }`;
+        priorityEl.textContent =
+          (task.priority || "normal").charAt(0).toUpperCase() +
+          (task.priority || "normal").slice(1);
+
+        // Dates
+        document.getElementById("modalAssignedDate").textContent =
+          ComplaintService.formatDate(task.updatedAt || task.createdAt);
+        document.getElementById("modalTimeSpent").textContent =
+          (task.totalTimeSpent || 0) + " hours";
+
+        // Citizen info
+        document.getElementById("modalCitizenAvatar").textContent =
+          task.citizen.initials;
+        document.getElementById("modalCitizenName").textContent =
+          task.citizen.name;
+        document.getElementById("modalCitizenPhone").textContent =
+          task.citizen.phone;
+
+        // Timeline
+        renderModalTimeline(task.id);
+
+        // Action buttons visibility
+        const actionsEl = document.getElementById("modalActions");
+        if (task.status === "resolved") {
+          actionsEl.innerHTML = `
+                    <span class="text-success d-flex align-items-center gap-2">
+                        <i class="fas fa-check-circle"></i>
+                        This task has been completed
+                    </span>
+                `;
+        } else if (task.status === "in-progress") {
+          actionsEl.innerHTML = `
+                    <button type="button" class="btn-tech-warning" onclick="openProgressModal()">
+                        <i class="fas fa-edit"></i> Post Update
+                    </button>
+                    <button type="button" class="btn-tech-success" onclick="openCompleteModal()">
+                        <i class="fas fa-check"></i> Mark Complete
+                    </button>
+                `;
+        } else {
+          actionsEl.innerHTML = `
+                    <button type="button" class="btn-tech-primary" onclick="startWorkFromDetail()">
+                        <i class="fas fa-play"></i> Start Working
+                    </button>
+                `;
+        }
+
+        taskDetailModal.show();
+      }
+
+      function renderModalTimeline(taskId) {
+        const timeline = ComplaintService.getTimeline(taskId);
+        const container = document.getElementById("modalTimeline");
+
+        if (timeline.length === 0) {
+          container.innerHTML = `
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
+                        <p class="mb-0 small">No timeline entries yet</p>
+                    </div>
+                `;
+          return;
+        }
+
+        container.innerHTML = timeline
+          .map((entry) => {
+            const config = ComplaintService.getTimelineTypeConfig(entry.type);
+            return `
+                    <div class="timeline-item">
+                        <div class="timeline-marker" style="background: ${
+                          config.bgColor
+                        };">
+                            <i class="fas ${config.icon}" style="color: ${
+              config.color
+            }; font-size: 12px;"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">${ComplaintService.formatDateTime(
+                              entry.timestamp
+                            )}</div>
+                            <div class="timeline-title">${entry.title}</div>
+                            <div class="timeline-description">${
+                              entry.description
+                            }</div>
+                            ${
+                              entry.actor
+                                ? `<div class="small text-muted mt-1"><i class="fas fa-user me-1"></i>${entry.actor}</div>`
+                                : ""
+                            }
+                        </div>
+                    </div>
+                `;
+          })
+          .join("");
+      }
+
+      // ============================================
+      // START WORK
+      // ============================================
+      function startWork(taskId) {
+        const task = ComplaintService.getComplaintById(taskId);
+        if (!task) return;
+
+        technicianState.selectedTask = task;
+        document.getElementById("startWorkTaskId").textContent = task.id;
+        startWorkModal.show();
+      }
+
+      function startWorkFromDetail() {
+        if (!technicianState.selectedTask) return;
+        taskDetailModal.hide();
+        setTimeout(() => {
+          document.getElementById("startWorkTaskId").textContent =
+            technicianState.selectedTask.id;
+          startWorkModal.show();
+        }, 300);
+      }
+
+      function confirmStartWork() {
+        if (!technicianState.selectedTask) return;
+
+        const btn = document.getElementById("confirmStartBtn");
+        btn.classList.add("btn-loading");
+        btn.disabled = true;
+
+        // Simulate API call
+        setTimeout(() => {
+          const result = ComplaintService.startTask(
+            technicianState.selectedTask.id,
+            technicianState.name
+          );
+
+          if (result) {
+            ComplaintService.showNotification(
+              `Started working on task ${technicianState.selectedTask.id}`,
+              "success"
+            );
+            startWorkModal.hide();
+            loadTasks();
+          } else {
+            ComplaintService.showNotification("Failed to start task", "danger");
+          }
+
+          btn.classList.remove("btn-loading");
+          btn.disabled = false;
+        }, 1000);
+      }
+
+      // ============================================
+      // PROGRESS UPDATE
+      // ============================================
+      function openProgressModal() {
+        // Clear form
+        document.getElementById("progressNotes").value = "";
+        document.getElementById("progressTime").value = "";
+        document.getElementById("progressPreview").innerHTML = "";
+        technicianState.uploadedPhotos = [];
+
+        taskDetailModal.hide();
+        setTimeout(() => progressModal.show(), 300);
+      }
+
+      function quickUpdate(taskId) {
+        const task = ComplaintService.getComplaintById(taskId);
+        if (!task) return;
+        technicianState.selectedTask = task;
+        openProgressModal();
+      }
+
+      function submitProgressUpdate() {
+        const notes = document.getElementById("progressNotes").value.trim();
+        const time =
+          parseFloat(document.getElementById("progressTime").value) || 0;
+
+        if (!notes) {
+          ComplaintService.showNotification(
+            "Please enter work notes",
+            "warning"
+          );
+          return;
+        }
+
+        const btn = document.getElementById("submitProgressBtn");
+        btn.classList.add("btn-loading");
+        btn.disabled = true;
+
+        setTimeout(() => {
+          const result = ComplaintService.addProgressUpdate(
+            technicianState.selectedTask.id,
+            {
+              notes: notes,
+              timeSpent: time,
+              photos: technicianState.uploadedPhotos,
+              technician: technicianState.name,
+            }
+          );
+
+          if (result) {
+            ComplaintService.showNotification(
+              "Progress update posted successfully!",
+              "success"
+            );
+            progressModal.hide();
+            loadTasks();
+
+            // Refresh detail modal if it was open
+            if (technicianState.selectedTask) {
+              technicianState.selectedTask = result.complaint;
+            }
+          } else {
+            ComplaintService.showNotification(
+              "Failed to post update",
+              "danger"
+            );
+          }
+
+          btn.classList.remove("btn-loading");
+          btn.disabled = false;
+        }, 1000);
+      }
+
+      // ============================================
+      // COMPLETE TASK
+      // ============================================
+      function openCompleteModal() {
+        // Clear form
+        document.getElementById("completeNotes").value = "";
+        document.getElementById("completeTime").value = "";
+        document.getElementById("completePreview").innerHTML = "";
+        technicianState.uploadedPhotos = [];
+
+        taskDetailModal.hide();
+        setTimeout(() => completeModal.show(), 300);
+      }
+
+      function quickComplete(taskId) {
+        const task = ComplaintService.getComplaintById(taskId);
+        if (!task) return;
+        technicianState.selectedTask = task;
+        openCompleteModal();
+      }
+
+      function submitCompletion() {
+        const notes = document.getElementById("completeNotes").value.trim();
+        const time =
+          parseFloat(document.getElementById("completeTime").value) || 0;
+
+        if (!notes) {
+          ComplaintService.showNotification(
+            "Please enter completion notes",
+            "warning"
+          );
+          return;
+        }
+
+        const btn = document.getElementById("submitCompleteBtn");
+        btn.classList.add("btn-loading");
+        btn.disabled = true;
+
+        setTimeout(() => {
+          const result = ComplaintService.markTaskCompleted(
+            technicianState.selectedTask.id,
+            {
+              notes: notes,
+              timeSpent: time,
+              photos: technicianState.uploadedPhotos,
+              technician: technicianState.name,
+            }
+          );
+
+          if (result) {
+            ComplaintService.showNotification(
+              `Task ${technicianState.selectedTask.id} marked as complete! 🎉`,
+              "success"
+            );
+            completeModal.hide();
+            loadTasks();
+            technicianState.selectedTask = null;
+          } else {
+            ComplaintService.showNotification(
+              "Failed to complete task",
+              "danger"
+            );
+          }
+
+          btn.classList.remove("btn-loading");
+          btn.disabled = false;
+        }, 1000);
+      }
+
+      // ============================================
+      // PHOTO UPLOAD
+      // ============================================
+      function handlePhotoUpload(input, previewId) {
+        const preview = document.getElementById(previewId);
+        const files = input.files;
+
+        Array.from(files).forEach((file, index) => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const photoId = "photo-" + Date.now() + "-" + index;
+            technicianState.uploadedPhotos.push({
+              id: photoId,
+              data: e.target.result,
+              name: file.name,
+            });
+
+            preview.innerHTML += `
+                        <div class="photo-preview-item" id="${photoId}">
+                            <img src="${e.target.result}" alt="Preview">
+                            <button class="remove-photo" onclick="removePhoto('${photoId}', '${previewId}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function removePhoto(photoId, previewId) {
+        technicianState.uploadedPhotos = technicianState.uploadedPhotos.filter(
+          (p) => p.id !== photoId
+        );
+        document.getElementById(photoId)?.remove();
+      }
+
+      // ============================================
+      // REAL-TIME UPDATES
+      // ============================================
+      function handleRealTimeUpdate(type, data) {
+        console.log("Real-time update:", type, data);
+
+        switch (type) {
+          case "TASK_ASSIGNED":
+            // New task assigned to this technician
+            if (data.technician && data.technician.id === technicianState.id) {
+              loadTasks();
+              ComplaintService.showNotification(
+                `🆕 New task assigned: ${
+                  data.complaint.categoryLabel || data.complaint.category
+                } - ${data.complaint.location}`,
+                "info"
+              );
+              // Highlight the new task card
+              setTimeout(() => {
+                const taskCard = document.querySelector(
+                  `[data-task-id="${data.complaintId}"]`
+                );
+                if (taskCard) {
+                  taskCard.classList.add("new-highlight");
+                  taskCard.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                  });
+                }
+              }, 500);
+            }
+            break;
+
+          case "TASK_REASSIGNED":
+            // Task reassigned - check if we're the old or new technician
+            if (
+              data.newTechnician &&
+              data.newTechnician.id === technicianState.id
+            ) {
+              // New task assigned to us
+              loadTasks();
+              ComplaintService.showNotification(
+                `🔄 Task reassigned to you: ${
+                  data.complaint.categoryLabel || data.complaint.category
+                }`,
+                "info"
+              );
+            } else if (
+              data.oldTechnician &&
+              data.oldTechnician.id === technicianState.id
+            ) {
+              // Task removed from us
+              loadTasks();
+              ComplaintService.showNotification(
+                `Task ${data.complaintId} has been reassigned to another technician`,
+                "warning"
+              );
+              // Close modal if viewing this task
+              if (
+                technicianState.selectedTask &&
+                technicianState.selectedTask.id === data.complaintId
+              ) {
+                taskDetailModal.hide();
+                technicianState.selectedTask = null;
+              }
+            }
+            break;
+
+          case "COMPLAINT_UPDATED":
+          case "STATUS_CHANGED":
+            // Check if this affects our tasks
+            if (
+              data.complaint &&
+              data.complaint.assignedTo &&
+              data.complaint.assignedTo.id === technicianState.id
+            ) {
+              loadTasks();
+              // Update selected task if viewing it
+              if (
+                technicianState.selectedTask &&
+                technicianState.selectedTask.id ===
+                  (data.complaintId || data.complaint.id)
+              ) {
+                technicianState.selectedTask = data.complaint;
+                viewTaskDetail(data.complaint.id);
+              }
+            }
+            break;
+
+          case "TASK_STARTED":
+          case "TASK_COMPLETED":
+          case "PROGRESS_UPDATE":
+            // Check if this affects our tasks
+            if (
+              data.complaint &&
+              data.complaint.assignedTo &&
+              data.complaint.assignedTo.id === technicianState.id
+            ) {
+              loadTasks();
+            }
+            break;
+
+          case "TIMELINE_UPDATED":
+            // Refresh timeline in modal if viewing the same task
+            if (
+              technicianState.selectedTask &&
+              data.complaintId === technicianState.selectedTask.id
+            ) {
+              renderModalTimeline(data.complaintId);
+            }
+            break;
+
+          case "STATS_UPDATED":
+          case "DATA_RESET":
+            loadTasks();
+            break;
+        }
+      }
+
+      // ============================================
+      // UTILITIES
+      // ============================================
+      function truncateText(text, maxLength) {
+        if (text.length <= maxLength) return text;
+        return text.substr(0, maxLength) + "...";
+      }
+
+      function logout() {
+        sessionStorage.clear();
+        window.location.href = "index.html";
+      }
     </script>
-</body>
+  </body>
 </html>

@@ -1,208 +1,597 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New Complaint - Municipal Services</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="dashboard.css">
-</head>
-<body>
-
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="dashboard.css" />
+    <style>
+      .custom-card-radio .form-check-input:checked + .form-check-label {
+        border-color: var(--primary-color) !important;
+        background-color: #eff6ff;
+      }
+      .custom-card-radio .form-check-label {
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .custom-card-radio .form-check-label:hover {
+        border-color: #cbd5e1;
+        transform: translateY(-2px);
+      }
+      .success-animation {
+        animation: successPop 0.5s ease;
+      }
+      @keyframes successPop {
+        0% {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .file-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+      .file-preview-item {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid #e2e8f0;
+      }
+      .file-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .file-preview-item .remove-btn {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top dashboard-nav">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center" href="citizen-dashboard.html">
-                <img src="images/govt.png" alt="Logo" width="32" height="32" class="me-2">
-                Municipal Services
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#citizenNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="citizenNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="citizen-dashboard.html">
-                            <i class="fas fa-th-large"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="citizen-new-complaint.html">
-                            <i class="fas fa-plus-circle"></i> New Complaint
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="citizen-complaint-detail.html">
-                            <i class="fas fa-list-alt"></i> My Complaints
-                        </a>
-                    </li>
-                    <li class="nav-item ms-lg-3">
-                        <div class="d-flex align-items-center">
-                            <div class="user-avatar bg-secondary text-white me-2">JD</div>
-                            <div class="d-none d-lg-block">
-                                <div class="small fw-bold">John Doe</div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <button class="btn btn-outline-danger btn-sm" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </li>
-                </ul>
-            </div>
+      <div class="container-fluid px-4">
+        <a
+          class="navbar-brand d-flex align-items-center"
+          href="citizen-dashboard.html"
+        >
+          <img
+            src="images/govt.png"
+            alt="Logo"
+            width="32"
+            height="32"
+            class="me-2"
+          />
+          Municipal Services
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#citizenNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="citizenNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="citizen-dashboard.html">
+                <i class="fas fa-th-large"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="citizen-new-complaint.html">
+                <i class="fas fa-plus-circle"></i> New Complaint
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="citizen-complaint-detail.html">
+                <i class="fas fa-list-alt"></i> My Complaints
+              </a>
+            </li>
+            <li class="nav-item ms-lg-3">
+              <div class="d-flex align-items-center">
+                <div
+                  class="user-avatar bg-secondary text-white me-2"
+                  id="userInitials"
+                >
+                  JD
+                </div>
+                <div class="d-none d-lg-block">
+                  <div class="small fw-bold" id="userName">John Doe</div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item ms-3">
+              <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="d-flex align-items-center mb-4">
-                        <a href="citizen-dashboard.html" class="btn btn-outline-secondary btn-sm me-3">
-                            <i class="fas fa-arrow-left"></i>
-                        </a>
-                        <h4 class="fw-bold mb-0">Report a New Issue</h4>
-                    </div>
-
-                    <div class="form-card">
-                        <form id="complaintForm" onsubmit="submitComplaint(event)">
-                            <div class="mb-4">
-                                <label class="form-label">Complaint Category</label>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="form-check custom-card-radio">
-                                            <input class="form-check-input d-none" type="radio" name="category" id="cat1" value="Road" checked>
-                                            <label class="form-check-label card p-3 h-100 border-2" for="cat1">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="rounded-circle bg-warning bg-opacity-10 p-2 me-3 text-warning">
-                                                        <i class="fas fa-road"></i>
-                                                    </div>
-                                                    <span class="fw-medium">Road & Potholes</span>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check custom-card-radio">
-                                            <input class="form-check-input d-none" type="radio" name="category" id="cat2" value="Water">
-                                            <label class="form-check-label card p-3 h-100 border-2" for="cat2">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="rounded-circle bg-info bg-opacity-10 p-2 me-3 text-info">
-                                                        <i class="fas fa-tint"></i>
-                                                    </div>
-                                                    <span class="fw-medium">Water Supply</span>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check custom-card-radio">
-                                            <input class="form-check-input d-none" type="radio" name="category" id="cat3" value="Waste">
-                                            <label class="form-check-label card p-3 h-100 border-2" for="cat3">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="rounded-circle bg-success bg-opacity-10 p-2 me-3 text-success">
-                                                        <i class="fas fa-trash"></i>
-                                                    </div>
-                                                    <span class="fw-medium">Waste Management</span>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check custom-card-radio">
-                                            <input class="form-check-input d-none" type="radio" name="category" id="cat4" value="Light">
-                                            <label class="form-check-label card p-3 h-100 border-2" for="cat4">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="rounded-circle bg-warning bg-opacity-10 p-2 me-3 text-warning">
-                                                        <i class="fas fa-lightbulb"></i>
-                                                    </div>
-                                                    <span class="fw-medium">Street Lighting</span>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Issue Description</label>
-                                <textarea class="form-control" rows="4" placeholder="Please describe the issue in detail..." required></textarea>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Location</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0">
-                                        <i class="fas fa-map-marker-alt text-danger"></i>
-                                    </span>
-                                    <input type="text" class="form-control border-start-0" placeholder="Enter address or landmark" required>
-                                    <button class="btn btn-outline-secondary" type="button">
-                                        <i class="fas fa-crosshairs"></i> Detect
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Upload Photos</label>
-                                <div class="border-2 border-dashed border-secondary border-opacity-25 rounded-3 p-4 text-center" style="border-style: dashed;">
-                                    <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
-                                    <p class="mb-1 text-muted">Drag and drop images here or click to browse</p>
-                                    <input type="file" class="d-none" id="fileUpload" multiple accept="image/*">
-                                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="document.getElementById('fileUpload').click()">
-                                        Select Files
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-end gap-3">
-                                <a href="citizen-dashboard.html" class="btn btn-light">Cancel</a>
-                                <button type="submit" class="btn btn-primary px-4">Submit Complaint</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="d-flex align-items-center mb-4">
+              <a
+                href="citizen-dashboard.html"
+                class="btn btn-outline-secondary btn-sm me-3"
+              >
+                <i class="fas fa-arrow-left"></i>
+              </a>
+              <h4 class="fw-bold mb-0">Report a New Issue</h4>
             </div>
+
+            <!-- Success Message (Hidden by default) -->
+            <div
+              class="card border-0 shadow-sm mb-4 success-animation"
+              id="successCard"
+              style="display: none"
+            >
+              <div class="card-body p-4 text-center">
+                <div
+                  class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3"
+                  style="width: 80px; height: 80px"
+                >
+                  <i class="fas fa-check-circle text-success fa-3x"></i>
+                </div>
+                <h4 class="fw-bold text-success mb-2">Complaint Submitted!</h4>
+                <p class="text-muted mb-3">
+                  Your complaint has been registered successfully.
+                </p>
+                <div class="alert alert-light border mb-3">
+                  <div class="small text-muted">Reference Number</div>
+                  <div class="fw-bold fs-5" id="complaintRefId">#CMPT-XXX</div>
+                </div>
+                <p class="small text-muted mb-4">
+                  <i class="fas fa-info-circle me-1"></i>
+                  You can track the status of your complaint from your
+                  dashboard.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                  <a href="citizen-dashboard.html" class="btn btn-primary">
+                    <i class="fas fa-th-large me-2"></i>Go to Dashboard
+                  </a>
+                  <button
+                    class="btn btn-outline-secondary"
+                    onclick="resetForm()"
+                  >
+                    <i class="fas fa-plus me-2"></i>Submit Another
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Complaint Form -->
+            <div class="form-card" id="complaintFormCard">
+              <form id="complaintForm" onsubmit="submitComplaint(event)">
+                <div class="mb-4">
+                  <label class="form-label fw-bold"
+                    >Complaint Category
+                    <span class="text-danger">*</span></label
+                  >
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="form-check custom-card-radio">
+                        <input
+                          class="form-check-input d-none"
+                          type="radio"
+                          name="category"
+                          id="cat1"
+                          value="Road"
+                          checked
+                        />
+                        <label
+                          class="form-check-label card p-3 h-100 border-2"
+                          for="cat1"
+                        >
+                          <div class="d-flex align-items-center">
+                            <div
+                              class="rounded-circle bg-warning bg-opacity-10 p-2 me-3 text-warning"
+                            >
+                              <i class="fas fa-road"></i>
+                            </div>
+                            <span class="fw-medium">Road & Potholes</span>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check custom-card-radio">
+                        <input
+                          class="form-check-input d-none"
+                          type="radio"
+                          name="category"
+                          id="cat2"
+                          value="Water"
+                        />
+                        <label
+                          class="form-check-label card p-3 h-100 border-2"
+                          for="cat2"
+                        >
+                          <div class="d-flex align-items-center">
+                            <div
+                              class="rounded-circle bg-info bg-opacity-10 p-2 me-3 text-info"
+                            >
+                              <i class="fas fa-tint"></i>
+                            </div>
+                            <span class="fw-medium">Water Supply</span>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check custom-card-radio">
+                        <input
+                          class="form-check-input d-none"
+                          type="radio"
+                          name="category"
+                          id="cat3"
+                          value="Waste"
+                        />
+                        <label
+                          class="form-check-label card p-3 h-100 border-2"
+                          for="cat3"
+                        >
+                          <div class="d-flex align-items-center">
+                            <div
+                              class="rounded-circle bg-success bg-opacity-10 p-2 me-3 text-success"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </div>
+                            <span class="fw-medium">Waste Management</span>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check custom-card-radio">
+                        <input
+                          class="form-check-input d-none"
+                          type="radio"
+                          name="category"
+                          id="cat4"
+                          value="Light"
+                        />
+                        <label
+                          class="form-check-label card p-3 h-100 border-2"
+                          for="cat4"
+                        >
+                          <div class="d-flex align-items-center">
+                            <div
+                              class="rounded-circle bg-warning bg-opacity-10 p-2 me-3 text-warning"
+                            >
+                              <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <span class="fw-medium">Street Lighting</span>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label fw-bold">Priority Level</label>
+                  <select class="form-select" id="priority">
+                    <option value="low">Low - Can wait a few days</option>
+                    <option value="normal" selected>
+                      Normal - Standard processing
+                    </option>
+                    <option value="medium">
+                      Medium - Needs attention soon
+                    </option>
+                    <option value="high">High - Urgent issue</option>
+                  </select>
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label fw-bold"
+                    >Issue Description <span class="text-danger">*</span></label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="description"
+                    rows="4"
+                    placeholder="Please describe the issue in detail. Include any relevant information that would help us understand and resolve the problem faster..."
+                    required
+                  ></textarea>
+                  <div class="form-text">Minimum 20 characters</div>
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label fw-bold"
+                    >Location <span class="text-danger">*</span></label
+                  >
+                  <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                      <i class="fas fa-map-marker-alt text-danger"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control border-start-0"
+                      id="location"
+                      placeholder="Enter address or landmark (e.g., Gulshan-2, Near City Bank)"
+                      required
+                    />
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      onclick="detectLocation()"
+                    >
+                      <i class="fas fa-crosshairs"></i> Detect
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label fw-bold"
+                    >Upload Photos (Optional)</label
+                  >
+                  <div
+                    class="border-2 border-dashed border-secondary border-opacity-25 rounded-3 p-4 text-center"
+                    style="border-style: dashed"
+                    id="dropZone"
+                  >
+                    <i
+                      class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"
+                    ></i>
+                    <p class="mb-1 text-muted">
+                      Drag and drop images here or click to browse
+                    </p>
+                    <input
+                      type="file"
+                      class="d-none"
+                      id="fileUpload"
+                      multiple
+                      accept="image/*"
+                      onchange="handleFileSelect(event)"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary mt-2"
+                      onclick="document.getElementById('fileUpload').click()"
+                    >
+                      Select Files
+                    </button>
+                  </div>
+                  <div class="file-preview" id="filePreview"></div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3">
+                  <a href="citizen-dashboard.html" class="btn btn-light"
+                    >Cancel</a
+                  >
+                  <button
+                    type="submit"
+                    class="btn btn-primary px-4"
+                    id="submitBtn"
+                  >
+                    <span class="btn-text">
+                      <i class="fas fa-paper-plane me-2"></i>Submit Complaint
+                    </span>
+                    <span class="btn-loading" style="display: none">
+                      <i class="fas fa-spinner fa-spin me-2"></i>Submitting...
+                    </span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
-    <style>
-        .custom-card-radio .form-check-input:checked + .form-check-label {
-            border-color: var(--primary-color) !important;
-            background-color: #eff6ff;
-        }
-        .custom-card-radio .form-check-label {
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .custom-card-radio .form-check-label:hover {
-            border-color: #cbd5e1;
-            transform: translateY(-2px);
-        }
-    </style>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Real-time Complaint Service -->
+    <script src="complaint-service.js"></script>
     <script>
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = 'index.html';
+      // File upload handling
+      let selectedFiles = [];
+
+      function handleFileSelect(event) {
+        const files = Array.from(event.target.files);
+        selectedFiles = selectedFiles.concat(files).slice(0, 5); // Max 5 files
+        updateFilePreview();
+      }
+
+      function updateFilePreview() {
+        const preview = document.getElementById("filePreview");
+        preview.innerHTML = "";
+
+        selectedFiles.forEach((file, index) => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const div = document.createElement("div");
+            div.className = "file-preview-item";
+            div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <button type="button" class="remove-btn" onclick="removeFile(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+            preview.appendChild(div);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        updateFilePreview();
+      }
+
+      // Location detection
+      function detectLocation() {
+        const btn = event.target.closest("button");
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              // Simulate reverse geocoding
+              const locations = [
+                "Gulshan-2, Dhaka",
+                "Dhanmondi-27, Dhaka",
+                "Banani Block-C, Dhaka",
+                "Uttara Sector-7, Dhaka",
+                "Mirpur-10, Dhaka",
+              ];
+              const randomLocation =
+                locations[Math.floor(Math.random() * locations.length)];
+              document.getElementById("location").value = randomLocation;
+              btn.innerHTML = originalHTML;
+              btn.disabled = false;
+              ComplaintService.showNotification(
+                "Location detected successfully!",
+                "success"
+              );
+            },
+            function (error) {
+              btn.innerHTML = originalHTML;
+              btn.disabled = false;
+              ComplaintService.showNotification(
+                "Could not detect location. Please enter manually.",
+                "warning"
+              );
+            },
+            { timeout: 10000 }
+          );
+        } else {
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+          ComplaintService.showNotification(
+            "Geolocation not supported by your browser.",
+            "warning"
+          );
+        }
+      }
+
+      // Form submission
+      function submitComplaint(e) {
+        e.preventDefault();
+
+        // Validate
+        const description = document.getElementById("description").value.trim();
+        const location = document.getElementById("location").value.trim();
+        const category = document.querySelector(
+          'input[name="category"]:checked'
+        ).value;
+        const priority = document.getElementById("priority").value;
+
+        if (description.length < 20) {
+          ComplaintService.showNotification(
+            "Please provide a more detailed description (at least 20 characters).",
+            "warning"
+          );
+          return;
         }
 
-        function submitComplaint(e) {
-            e.preventDefault();
-            // Simulate submission
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                alert('Complaint submitted successfully! Reference ID: #CMPT-NEW');
-                window.location.href = 'citizen-dashboard.html';
-            }, 1500);
+        if (!location) {
+          ComplaintService.showNotification(
+            "Please enter the location of the issue.",
+            "warning"
+          );
+          return;
         }
+
+        // Show loading state
+        const btn = document.getElementById("submitBtn");
+        btn.querySelector(".btn-text").style.display = "none";
+        btn.querySelector(".btn-loading").style.display = "inline";
+        btn.disabled = true;
+
+        // Simulate API call delay
+        setTimeout(() => {
+          // Create complaint using the service
+          const newComplaint = ComplaintService.addComplaint({
+            category: category,
+            description: description,
+            location: location,
+            priority: priority,
+            citizenName: sessionStorage.getItem("userName") || "John Doe",
+            citizenEmail:
+              sessionStorage.getItem("userEmail") || "john@example.com",
+          });
+
+          // Show success
+          document.getElementById("complaintRefId").textContent =
+            "#" + newComplaint.id;
+          document.getElementById("complaintFormCard").style.display = "none";
+          document.getElementById("successCard").style.display = "block";
+
+          // Show notification
+          ComplaintService.showNotification(
+            `Complaint ${newComplaint.id} submitted successfully! Officers have been notified.`,
+            "success"
+          );
+
+          // Reset button
+          btn.querySelector(".btn-text").style.display = "inline";
+          btn.querySelector(".btn-loading").style.display = "none";
+          btn.disabled = false;
+        }, 1500);
+      }
+
+      // Reset form for new submission
+      function resetForm() {
+        document.getElementById("complaintForm").reset();
+        document.getElementById("complaintFormCard").style.display = "block";
+        document.getElementById("successCard").style.display = "none";
+        selectedFiles = [];
+        updateFilePreview();
+      }
+
+      // Logout
+      function logout() {
+        sessionStorage.clear();
+        window.location.href = "index.html";
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set user info
+        const userName = sessionStorage.getItem("userName") || "John Doe";
+        document.getElementById("userName").textContent = userName;
+        document.getElementById("userInitials").textContent =
+          ComplaintService.getInitials(userName);
+      });
     </script>
-</body>
+  </body>
 </html>

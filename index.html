@@ -1,375 +1,717 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Municipal Services Portal - Government of Bangladesh</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="landing-page.css">
-</head>
-<body>
-
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="landing-page.css" />
+  </head>
+  <body>
     <!-- Background Animation -->
     <div class="bg-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
     </div>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg landing-nav">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <div class="govt-logo-sm">
-                    <img src="images/govt.png" alt="BD Govt" style="width: 100%; height: 100%; object-fit: contain;">
-                </div>
-                <div class="brand-text">
-                    <h1>E-Governance</h1>
-                    <p>Municipal Services Portal</p>
-                </div>
-            </a>
-        </div>
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <div class="govt-logo-sm">
+            <img
+              src="images/govt.png"
+              alt="BD Govt"
+              style="width: 100%; height: 100%; object-fit: contain"
+            />
+          </div>
+          <div class="brand-text">
+            <h1>E-Governance</h1>
+            <p>Municipal Services Portal</p>
+          </div>
+        </a>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <div class="container hero-container">
-        <div class="row align-items-center">
-            <!-- Left Column: Hero Text & Features -->
-            <div class="col-lg-7 hero-content">
-                <h1 class="hero-title">Empowering Citizens,<br>Building Better Cities</h1>
-                <p class="hero-subtitle">
-                    Welcome to the official digital platform for municipal services. Report issues, track progress, and contribute to your community's development with our transparent and efficient complaint management system.
-                </p>
+      <div class="row align-items-center">
+        <!-- Left Column: Hero Text & Features -->
+        <div class="col-lg-7 hero-content">
+          <h1 class="hero-title">
+            Empowering Citizens,<br />
+            <span class="text-gradient">Building Better Cities</span>
+          </h1>
+          <p class="hero-subtitle">
+            Welcome to the official digital platform for municipal services.
+            Report issues, track progress, and contribute to your community's
+            development with our transparent and efficient complaint management
+            system.
+          </p>
 
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <h3>Quick Reporting</h3>
-                        <p>Submit complaints in seconds with our streamlined process.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-tasks"></i>
-                        </div>
-                        <h3>Real-time Tracking</h3>
-                        <p>Monitor the status of your complaints every step of the way.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h3>Secure & Private</h3>
-                        <p>Your data is protected with enterprise-grade security.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h3>Community Impact</h3>
-                        <p>See how your contributions improve the neighborhood.</p>
-                    </div>
-                </div>
-
-                <div class="map-preview">
-                    <div class="map-icon">
-                        <i class="fas fa-map-marked-alt"></i>
-                    </div>
-                    <div>
-                        <h5 class="mb-1 fw-bold text-white">Nationwide Coverage</h5>
-                        <p class="mb-0 text-white-50 small">Serving all municipalities across Bangladesh</p>
-                    </div>
-                </div>
+          <div class="feature-grid">
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-bolt"></i>
+              </div>
+              <h3>Quick Reporting</h3>
+              <p>
+                Submit complaints in seconds with our streamlined, intuitive
+                process.
+              </p>
             </div>
-
-            <!-- Right Column: Login Card -->
-            <div class="col-lg-5">
-                <div class="login-wrapper">
-                    <div class="login-card">
-                        <div class="login-header text-center mb-4">
-                            <div class="login-icon mb-3">
-                                <i class="fas fa-user-circle"></i>
-                            </div>
-                            <h4 class="fw-bold mb-1">Welcome Back!</h4>
-                            <p class="text-muted">Access your dashboard</p>
-                        </div>
-
-                        <!-- Role Selector -->
-                        <div class="role-selector">
-                            <button class="role-btn active" id="btn-citizen" onclick="switchRole('citizen')">
-                                <i class="fas fa-user"></i> Citizen
-                            </button>
-                            <button class="role-btn" id="btn-officer" onclick="switchRole('officer')">
-                                <i class="fas fa-user-shield"></i> Officer
-                            </button>
-                            <button class="role-btn" id="btn-admin" onclick="switchRole('admin')">
-                                <i class="fas fa-user-cog"></i> Admin
-                            </button>
-                        </div>
-
-                        <!-- Forms Container -->
-                        <div id="loginForms">
-                            <!-- Citizen Login -->
-                            <div id="citizenForm" class="login-form">
-                                <form>
-                                    <div class="form-floating mb-3">
-                                        <input type="email" class="form-control" id="citizenEmail" placeholder="name@example.com">
-                                        <label for="citizenEmail">Email Address</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="password" class="form-control" id="citizenPassword" placeholder="Password">
-                                        <label for="citizenPassword">Password</label>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="rememberMe">
-                                            <label class="form-check-label text-muted small" for="rememberMe">Remember me</label>
-                                        </div>
-                                        <a href="#" class="small text-decoration-none" onclick="showForgotPassword('citizen')">Forgot password?</a>
-                                    </div>
-                                    <button type="button" onclick="loginAsCitizen()" class="btn-primary-custom">
-                                        Sign In
-                                    </button>
-                                    <div class="text-center mt-3">
-                                        <span class="text-muted small">New here? </span>
-                                        <a href="#" class="small fw-bold text-decoration-none" onclick="toggleForm('signup')">Create Account</a>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <!-- Officer Login -->
-                            <div id="officerForm" class="login-form" style="display: none;">
-                                <form>
-                                    <div class="form-floating mb-3">
-                                        <input type="email" class="form-control" id="officerEmail" placeholder="officer@municipal.gov">
-                                        <label for="officerEmail">Official Email</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="password" class="form-control" id="officerPassword" placeholder="Password">
-                                        <label for="officerPassword">Password</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" id="officerID" placeholder="OFF-123">
-                                        <label for="officerID">Officer ID</label>
-                                    </div>
-                                    <button type="button" onclick="loginAsOfficer()" class="btn-primary-custom btn-officer">
-                                        Officer Login
-                                    </button>
-                                    <div class="text-center mt-3">
-                                        <a href="#" class="small text-decoration-none" onclick="showForgotPassword('officer')">Forgot credentials?</a>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <!-- Admin Login -->
-                            <div id="adminForm" class="login-form" style="display: none;">
-                                <form>
-                                    <div class="form-floating mb-3">
-                                        <input type="email" class="form-control" id="adminEmail" placeholder="admin@municipal.gov">
-                                        <label for="adminEmail">Admin Email</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="password" class="form-control" id="adminPassword" placeholder="Password">
-                                        <label for="adminPassword">Password</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="password" class="form-control" id="securityCode" placeholder="Security Code">
-                                        <label for="securityCode">Security Code</label>
-                                    </div>
-                                    <button type="button" onclick="loginAsAdmin()" class="btn-primary-custom" style="background: #dc2626;">
-                                        Admin Login
-                                    </button>
-                                    <div class="text-center mt-3">
-                                        <a href="#" class="small text-decoration-none" onclick="showForgotPassword('admin')">Contact IT Support</a>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <!-- Signup Form -->
-                            <div id="signupForm" class="login-form" style="display: none;">
-                                <h5 class="text-center mb-3 fw-bold text-primary">Create Account</h5>
-                                <form>
-                                    <div class="form-floating mb-2">
-                                        <input type="text" class="form-control" id="newName" placeholder="Full Name">
-                                        <label for="newName">Full Name</label>
-                                    </div>
-                                    <div class="form-floating mb-2">
-                                        <input type="email" class="form-control" id="newEmail" placeholder="Email">
-                                        <label for="newEmail">Email Address</label>
-                                    </div>
-                                    <div class="form-floating mb-2">
-                                        <input type="tel" class="form-control" id="newPhone" placeholder="Phone">
-                                        <label for="newPhone">Phone Number</label>
-                                    </div>
-                                    <div class="form-floating mb-2">
-                                        <input type="password" class="form-control" id="newPass" placeholder="Password">
-                                        <label for="newPass">Password</label>
-                                    </div>
-                                    <button type="button" onclick="createAccount()" class="btn-primary-custom" style="background: #10b981;">
-                                        Register
-                                    </button>
-                                    <div class="text-center mt-3">
-                                        <span class="text-muted small">Already have an account? </span>
-                                        <a href="#" class="small fw-bold text-decoration-none" onclick="toggleForm('login')">Sign In</a>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <!-- Forgot Password Form -->
-                            <div id="forgotPasswordForm" class="login-form" style="display: none;">
-                                <div class="text-center mb-4">
-                                    <i class="fas fa-lock-open fa-2x text-primary mb-2"></i>
-                                    <h5 class="fw-bold">Reset Password</h5>
-                                    <p class="text-muted small">Enter your email to receive instructions</p>
-                                </div>
-                                <form>
-                                    <div class="form-floating mb-3">
-                                        <input type="email" class="form-control" id="forgotEmail" placeholder="Email">
-                                        <label for="forgotEmail">Email Address</label>
-                                    </div>
-                                    
-                                    <!-- Role Specific Fields (Hidden by default) -->
-                                    <div id="roleSpecificFields" style="display: none;">
-                                        <div class="form-floating mb-3" id="officerIdField" style="display: none;">
-                                            <input type="text" class="form-control" placeholder="Officer ID">
-                                            <label>Officer ID</label>
-                                        </div>
-                                        <div class="form-floating mb-3" id="adminSecurityField" style="display: none;">
-                                            <input type="text" class="form-control" placeholder="Security Answer">
-                                            <label>Security Answer</label>
-                                        </div>
-                                    </div>
-
-                                    <button type="button" onclick="sendResetLink()" class="btn-primary-custom">
-                                        Send Reset Link
-                                    </button>
-                                    <div class="text-center mt-3">
-                                        <a href="#" class="small text-decoration-none" onclick="toggleForm('login')">Back to Sign In</a>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h3>Real-time Tracking</h3>
+              <p>
+                Monitor the status of your complaints every step of the way.
+              </p>
             </div>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-shield-halved"></i>
+              </div>
+              <h3>Secure & Private</h3>
+              <p>
+                Your data is protected with enterprise-grade security measures.
+              </p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <h3>Community Impact</h3>
+              <p>See how your contributions improve your neighborhood.</p>
+            </div>
+          </div>
+
+          <div class="map-preview">
+            <div class="map-icon">
+              <i class="fas fa-map-location-dot"></i>
+            </div>
+            <div>
+              <h5 class="mb-1 fw-bold">Nationwide Coverage</h5>
+              <p class="mb-0 small">
+                Serving all municipalities across Bangladesh
+              </p>
+            </div>
+          </div>
         </div>
+
+        <!-- Right Column: Login Card -->
+        <div class="col-lg-5">
+          <div class="login-wrapper">
+            <div class="login-card">
+              <div class="login-header text-center mb-4">
+                <div class="login-icon">
+                  <i class="fas fa-fingerprint"></i>
+                </div>
+                <h4>Welcome Back!</h4>
+                <p>Access your personalized dashboard</p>
+              </div>
+
+              <!-- Role Selector -->
+              <div class="role-selector">
+                <button
+                  class="role-btn active"
+                  id="btn-citizen"
+                  onclick="switchRole('citizen')"
+                >
+                  <i class="fas fa-user"></i>
+                  <span>Citizen</span>
+                </button>
+                <button
+                  class="role-btn"
+                  id="btn-officer"
+                  onclick="switchRole('officer')"
+                >
+                  <i class="fas fa-id-badge"></i>
+                  <span>Officer</span>
+                </button>
+                <button
+                  class="role-btn"
+                  id="btn-technician"
+                  onclick="switchRole('technician')"
+                >
+                  <i class="fas fa-tools"></i>
+                  <span>Technician</span>
+                </button>
+                <button
+                  class="role-btn"
+                  id="btn-admin"
+                  onclick="switchRole('admin')"
+                >
+                  <i class="fas fa-gear"></i>
+                  <span>Admin</span>
+                </button>
+              </div>
+
+              <!-- Forms Container -->
+              <div id="loginForms">
+                <!-- Citizen Login -->
+                <div id="citizenForm" class="login-form">
+                  <form>
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="citizenEmail"
+                        placeholder="name@example.com"
+                      />
+                      <label for="citizenEmail"
+                        ><i class="fas fa-envelope me-2"></i>Email
+                        Address</label
+                      >
+                    </div>
+                    <div class="form-floating">
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="citizenPassword"
+                        placeholder="Password"
+                      />
+                      <label for="citizenPassword"
+                        ><i class="fas fa-lock me-2"></i>Password</label
+                      >
+                    </div>
+                    <div
+                      class="d-flex justify-content-between align-items-center mb-3"
+                    >
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="rememberMe"
+                        />
+                        <label class="form-check-label" for="rememberMe"
+                          >Remember me</label
+                        >
+                      </div>
+                      <a href="#" onclick="showForgotPassword('citizen')"
+                        >Forgot password?</a
+                      >
+                    </div>
+                    <button
+                      type="button"
+                      onclick="loginAsCitizen()"
+                      class="btn-primary-custom"
+                    >
+                      <i class="fas fa-arrow-right-to-bracket"></i>
+                      Sign In
+                    </button>
+                    <div class="text-center mt-4">
+                      <span class="text-muted">New here? </span>
+                      <a href="#" class="fw-bold" onclick="toggleForm('signup')"
+                        >Create Account</a
+                      >
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Officer Login -->
+                <div id="officerForm" class="login-form" style="display: none">
+                  <form>
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="officerEmail"
+                        placeholder="officer@municipal.gov"
+                      />
+                      <label for="officerEmail"
+                        ><i class="fas fa-envelope me-2"></i>Official
+                        Email</label
+                      >
+                    </div>
+                    <div class="form-floating">
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="officerPassword"
+                        placeholder="Password"
+                      />
+                      <label for="officerPassword"
+                        ><i class="fas fa-lock me-2"></i>Password</label
+                      >
+                    </div>
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="officerID"
+                        placeholder="OFF-123"
+                      />
+                      <label for="officerID"
+                        ><i class="fas fa-id-card me-2"></i>Officer ID</label
+                      >
+                    </div>
+                    <button
+                      type="button"
+                      onclick="loginAsOfficer()"
+                      class="btn-primary-custom btn-officer"
+                    >
+                      <i class="fas fa-shield-halved"></i>
+                      Officer Login
+                    </button>
+                    <div class="text-center mt-4">
+                      <a href="#" onclick="showForgotPassword('officer')"
+                        >Forgot credentials?</a
+                      >
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Technician Login -->
+                <div
+                  id="technicianForm"
+                  class="login-form"
+                  style="display: none"
+                >
+                  <form>
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="technicianEmail"
+                        placeholder="technician@municipal.gov"
+                      />
+                      <label for="technicianEmail"
+                        ><i class="fas fa-envelope me-2"></i>Email
+                        Address</label
+                      >
+                    </div>
+                    <div class="form-floating">
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="technicianPassword"
+                        placeholder="Password"
+                      />
+                      <label for="technicianPassword"
+                        ><i class="fas fa-lock me-2"></i>Password</label
+                      >
+                    </div>
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="technicianID"
+                        placeholder="TECH-001"
+                      />
+                      <label for="technicianID"
+                        ><i class="fas fa-id-card me-2"></i>Technician ID</label
+                      >
+                    </div>
+                    <button
+                      type="button"
+                      onclick="loginAsTechnician()"
+                      class="btn-primary-custom btn-technician"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #6366f1 0%,
+                          #4f46e5 100%
+                        );
+                      "
+                    >
+                      <i class="fas fa-tools"></i>
+                      Technician Login
+                    </button>
+                    <div class="text-center mt-4">
+                      <a href="#" onclick="showForgotPassword('technician')"
+                        >Forgot credentials?</a
+                      >
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Admin Login -->
+                <div id="adminForm" class="login-form" style="display: none">
+                  <form>
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="adminEmail"
+                        placeholder="admin@municipal.gov"
+                      />
+                      <label for="adminEmail"
+                        ><i class="fas fa-envelope me-2"></i>Admin Email</label
+                      >
+                    </div>
+                    <div class="form-floating">
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="adminPassword"
+                        placeholder="Password"
+                      />
+                      <label for="adminPassword"
+                        ><i class="fas fa-lock me-2"></i>Password</label
+                      >
+                    </div>
+                    <div class="form-floating">
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="securityCode"
+                        placeholder="Security Code"
+                      />
+                      <label for="securityCode"
+                        ><i class="fas fa-key me-2"></i>Security Code</label
+                      >
+                    </div>
+                    <button
+                      type="button"
+                      onclick="loginAsAdmin()"
+                      class="btn-primary-custom"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #dc2626 0%,
+                          #991b1b 100%
+                        );
+                      "
+                    >
+                      <i class="fas fa-user-shield"></i>
+                      Admin Login
+                    </button>
+                    <div class="text-center mt-4">
+                      <a href="#" onclick="showForgotPassword('admin')"
+                        >Contact IT Support</a
+                      >
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Signup Form -->
+                <div id="signupForm" class="login-form" style="display: none">
+                  <div class="text-center mb-4">
+                    <div
+                      class="login-icon"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #d1fae5 0%,
+                          #a7f3d0 100%
+                        );
+                        color: #059669;
+                      "
+                    >
+                      <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h4 class="fw-bold mt-3">Create Account</h4>
+                    <p class="text-muted">Join our community today</p>
+                  </div>
+                  <form>
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="newName"
+                        placeholder="Full Name"
+                      />
+                      <label for="newName"
+                        ><i class="fas fa-user me-2"></i>Full Name</label
+                      >
+                    </div>
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="newEmail"
+                        placeholder="Email"
+                      />
+                      <label for="newEmail"
+                        ><i class="fas fa-envelope me-2"></i>Email
+                        Address</label
+                      >
+                    </div>
+                    <div class="form-floating">
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="newPhone"
+                        placeholder="Phone"
+                      />
+                      <label for="newPhone"
+                        ><i class="fas fa-phone me-2"></i>Phone Number</label
+                      >
+                    </div>
+                    <div class="form-floating">
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="newPass"
+                        placeholder="Password"
+                      />
+                      <label for="newPass"
+                        ><i class="fas fa-lock me-2"></i>Password</label
+                      >
+                    </div>
+                    <button
+                      type="button"
+                      onclick="createAccount()"
+                      class="btn-primary-custom"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #10b981 0%,
+                          #059669 100%
+                        );
+                      "
+                    >
+                      <i class="fas fa-check"></i>
+                      Create Account
+                    </button>
+                    <div class="text-center mt-4">
+                      <span class="text-muted">Already have an account? </span>
+                      <a href="#" class="fw-bold" onclick="toggleForm('login')"
+                        >Sign In</a
+                      >
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Forgot Password Form -->
+                <div
+                  id="forgotPasswordForm"
+                  class="login-form"
+                  style="display: none"
+                >
+                  <div class="text-center mb-4">
+                    <div
+                      class="login-icon"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #fef3c7 0%,
+                          #fde68a 100%
+                        );
+                        color: #d97706;
+                      "
+                    >
+                      <i class="fas fa-unlock-keyhole"></i>
+                    </div>
+                    <h4 class="fw-bold mt-3">Reset Password</h4>
+                    <p class="text-muted">
+                      Enter your email to receive instructions
+                    </p>
+                  </div>
+                  <form>
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="forgotEmail"
+                        placeholder="Email"
+                      />
+                      <label for="forgotEmail"
+                        ><i class="fas fa-envelope me-2"></i>Email
+                        Address</label
+                      >
+                    </div>
+
+                    <!-- Role Specific Fields (Hidden by default) -->
+                    <div id="roleSpecificFields" style="display: none">
+                      <div
+                        class="form-floating"
+                        id="officerIdField"
+                        style="display: none"
+                      >
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Officer ID"
+                        />
+                        <label
+                          ><i class="fas fa-id-card me-2"></i>Officer ID</label
+                        >
+                      </div>
+                      <div
+                        class="form-floating"
+                        id="adminSecurityField"
+                        style="display: none"
+                      >
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Security Answer"
+                        />
+                        <label
+                          ><i class="fas fa-shield me-2"></i>Security
+                          Answer</label
+                        >
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onclick="sendResetLink()"
+                      class="btn-primary-custom"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #f59e0b 0%,
+                          #d97706 100%
+                        );
+                      "
+                    >
+                      <i class="fas fa-paper-plane"></i>
+                      Send Reset Link
+                    </button>
+                    <div class="text-center mt-4">
+                      <a href="#" class="fw-bold" onclick="toggleForm('login')">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Back to Sign In
+                      </a>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Script -->
     <script>
-        // Role switching functionality
-        function switchRole(role) {
-            // Hide all forms
-            document.querySelectorAll('.login-form').forEach(form => {
-                form.style.display = 'none';
-            });
-            
-            // Deactivate all buttons
-            document.querySelectorAll('.role-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected form and activate button
-            if (role === 'citizen') {
-                document.getElementById('citizenForm').style.display = 'block';
-                document.getElementById('btn-citizen').classList.add('active');
-            } else if (role === 'officer') {
-                document.getElementById('officerForm').style.display = 'block';
-                document.getElementById('btn-officer').classList.add('active');
-            } else if (role === 'admin') {
-                document.getElementById('adminForm').style.display = 'block';
-                document.getElementById('btn-admin').classList.add('active');
-            }
-        }
-
-        // Form toggle functionality
-        function toggleForm(formType) {
-            document.querySelectorAll('.login-form').forEach(form => {
-                form.style.display = 'none';
-            });
-            
-            if (formType === 'signup') {
-                document.getElementById('signupForm').style.display = 'block';
-            } else if (formType === 'forgot') {
-                document.getElementById('forgotPasswordForm').style.display = 'block';
-            } else {
-                // Return to active role
-                const activeBtn = document.querySelector('.role-btn.active');
-                if (activeBtn) {
-                    const role = activeBtn.id.replace('btn-', '');
-                    switchRole(role);
-                } else {
-                    switchRole('citizen');
-                }
-            }
-        }
-
-        // Show forgot password form with role-specific fields
-        function showForgotPassword(role) {
-            toggleForm('forgot');
-            
-            // Reset fields
-            document.getElementById('roleSpecificFields').style.display = 'none';
-            document.getElementById('officerIdField').style.display = 'none';
-            document.getElementById('adminSecurityField').style.display = 'none';
-            
-            if (role === 'officer') {
-                document.getElementById('roleSpecificFields').style.display = 'block';
-                document.getElementById('officerIdField').style.display = 'block';
-            } else if (role === 'admin') {
-                document.getElementById('roleSpecificFields').style.display = 'block';
-                document.getElementById('adminSecurityField').style.display = 'block';
-            }
-        }
-
-        // Send reset link function
-        function sendResetLink() {
-            const email = document.getElementById('forgotEmail').value;
-            if (!email) {
-                alert('Please enter your email address.');
-                return;
-            }
-            alert('Password reset instructions have been sent to your email address.');
-            toggleForm('login');
-        }
-
-        // Login functions
-        function loginAsCitizen() {
-            sessionStorage.setItem('userRole', 'citizen');
-            sessionStorage.setItem('isLoggedIn', 'true');
-            sessionStorage.setItem('userName', 'John Doe');
-            sessionStorage.setItem('userEmail', 'citizen@demo.com');
-            window.location.href = 'citizen-dashboard.html';
-        }
-
-        function loginAsOfficer() {
-            sessionStorage.setItem('userRole', 'officer');
-            sessionStorage.setItem('isLoggedIn', 'true');
-            sessionStorage.setItem('userName', 'Officer Jane Smith');
-            sessionStorage.setItem('userEmail', 'officer@demo.com');
-            sessionStorage.setItem('officerId', 'officer001');
-            window.location.href = 'officer-dashboard.html';
-        }
-
-        function loginAsAdmin() {
-            sessionStorage.setItem('userRole', 'admin');
-            sessionStorage.setItem('isLoggedIn', 'true');
-            sessionStorage.setItem('userName', 'Administrator');
-            sessionStorage.setItem('userEmail', 'admin@demo.com');
-            window.location.href = 'admin-dashboard.html';
-        }
-
-        function createAccount() {
-            alert('Account created successfully! Please sign in.');
-            toggleForm('login');
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            switchRole('citizen');
+      // Role switching functionality
+      function switchRole(role) {
+        // Hide all forms
+        document.querySelectorAll(".login-form").forEach((form) => {
+          form.style.display = "none";
         });
+
+        // Deactivate all buttons
+        document.querySelectorAll(".role-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+        // Show selected form and activate button
+        if (role === "citizen") {
+          document.getElementById("citizenForm").style.display = "block";
+          document.getElementById("btn-citizen").classList.add("active");
+        } else if (role === "officer") {
+          document.getElementById("officerForm").style.display = "block";
+          document.getElementById("btn-officer").classList.add("active");
+        } else if (role === "technician") {
+          document.getElementById("technicianForm").style.display = "block";
+          document.getElementById("btn-technician").classList.add("active");
+        } else if (role === "admin") {
+          document.getElementById("adminForm").style.display = "block";
+          document.getElementById("btn-admin").classList.add("active");
+        }
+      }
+
+      // Form toggle functionality
+      function toggleForm(formType) {
+        document.querySelectorAll(".login-form").forEach((form) => {
+          form.style.display = "none";
+        });
+
+        if (formType === "signup") {
+          document.getElementById("signupForm").style.display = "block";
+        } else if (formType === "forgot") {
+          document.getElementById("forgotPasswordForm").style.display = "block";
+        } else {
+          // Return to active role
+          const activeBtn = document.querySelector(".role-btn.active");
+          if (activeBtn) {
+            const role = activeBtn.id.replace("btn-", "");
+            switchRole(role);
+          } else {
+            switchRole("citizen");
+          }
+        }
+      }
+
+      // Show forgot password form with role-specific fields
+      function showForgotPassword(role) {
+        toggleForm("forgot");
+
+        // Reset fields
+        document.getElementById("roleSpecificFields").style.display = "none";
+        document.getElementById("officerIdField").style.display = "none";
+        document.getElementById("adminSecurityField").style.display = "none";
+
+        if (role === "officer" || role === "technician") {
+          document.getElementById("roleSpecificFields").style.display = "block";
+          document.getElementById("officerIdField").style.display = "block";
+        } else if (role === "admin") {
+          document.getElementById("roleSpecificFields").style.display = "block";
+          document.getElementById("adminSecurityField").style.display = "block";
+        }
+      }
+
+      // Send reset link function
+      function sendResetLink() {
+        const email = document.getElementById("forgotEmail").value;
+        if (!email) {
+          alert("Please enter your email address.");
+          return;
+        }
+        alert(
+          "Password reset instructions have been sent to your email address."
+        );
+        toggleForm("login");
+      }
+
+      // Login functions
+      function loginAsCitizen() {
+        sessionStorage.setItem("userRole", "citizen");
+        sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("userName", "John Doe");
+        sessionStorage.setItem("userEmail", "citizen@demo.com");
+        window.location.href = "citizen-dashboard.html";
+      }
+
+      function loginAsOfficer() {
+        sessionStorage.setItem("userRole", "officer");
+        sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("userName", "Officer Jane Smith");
+        sessionStorage.setItem("userEmail", "officer@demo.com");
+        sessionStorage.setItem("officerId", "officer001");
+        window.location.href = "officer-dashboard.html";
+      }
+
+      function loginAsTechnician() {
+        sessionStorage.setItem("userRole", "technician");
+        sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("userName", "Fazlur Rahman");
+        sessionStorage.setItem("userEmail", "technician@demo.com");
+        sessionStorage.setItem("technicianId", "TECH-003");
+        window.location.href = "technician-dashboard.html";
+      }
+
+      function loginAsAdmin() {
+        sessionStorage.setItem("userRole", "admin");
+        sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("userName", "Administrator");
+        sessionStorage.setItem("userEmail", "admin@demo.com");
+        window.location.href = "admin-dashboard.html";
+      }
+
+      function createAccount() {
+        alert("Account created successfully! Please sign in.");
+        toggleForm("login");
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        switchRole("citizen");
+      });
     </script>
-</body>
+  </body>
 </html>

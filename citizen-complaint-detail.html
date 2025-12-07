@@ -1,157 +1,837 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Complaint Details - Municipal Services</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="dashboard.css">
-</head>
-<body>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="dashboard.css" />
+    <style>
+      /* Enhanced Timeline Styles */
+      .timeline {
+        position: relative;
+      }
+      .timeline-item {
+        position: relative;
+        padding-left: 40px;
+        padding-bottom: 24px;
+        border-left: 2px solid #e9ecef;
+        margin-left: 10px;
+      }
+      .timeline-item:last-child {
+        border-left: 2px solid transparent;
+        padding-bottom: 0;
+      }
+      .timeline-marker {
+        position: absolute;
+        left: -11px;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+      .timeline-item.submitted .timeline-marker {
+        background: #3b82f6;
+      }
+      .timeline-item.acknowledged .timeline-marker {
+        background: #06b6d4;
+      }
+      .timeline-item.assigned .timeline-marker {
+        background: #8b5cf6;
+      }
+      .timeline-item.in-progress .timeline-marker {
+        background: #f59e0b;
+      }
+      .timeline-item.resolved .timeline-marker {
+        background: #10b981;
+      }
+      .timeline-item.rejected .timeline-marker {
+        background: #ef4444;
+      }
 
+      .timeline-date {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-bottom: 4px;
+      }
+      .timeline-content {
+        background: #f8f9fa;
+        padding: 12px 16px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      .timeline-item:hover .timeline-content {
+        background: #f1f5f9;
+        transform: translateX(4px);
+      }
+      .timeline-new-entry {
+        animation: timelineSlideIn 0.5s ease;
+      }
+      .timeline-new-entry .timeline-content {
+        background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+        border-left: 3px solid #f59e0b;
+      }
+      @keyframes timelineSlideIn {
+        from {
+          transform: translateX(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
+        padding: 3px 8px;
+        border-radius: 12px;
+      }
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        background: #10b981;
+        border-radius: 50%;
+        animation: livePulse 2s infinite;
+      }
+      @keyframes livePulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(0.8);
+        }
+      }
+
+      .status-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      .status-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.5rem;
+      }
+      .status-new .status-icon {
+        background: #fee2e2;
+        color: #ef4444;
+      }
+      .status-acknowledged .status-icon {
+        background: #cffafe;
+        color: #06b6d4;
+      }
+      .status-in-progress .status-icon {
+        background: #fef3c7;
+        color: #f59e0b;
+      }
+      .status-resolved .status-icon {
+        background: #d1fae5;
+        color: #10b981;
+      }
+      .status-rejected .status-icon {
+        background: #f3f4f6;
+        color: #6b7280;
+      }
+
+      .update-toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        display: none;
+        animation: slideUp 0.4s ease;
+      }
+      .update-toast.show {
+        display: flex;
+      }
+      @keyframes slideUp {
+        from {
+          transform: translate(-50%, 50px);
+          opacity: 0;
+        }
+        to {
+          transform: translate(-50%, 0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top dashboard-nav">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center" href="citizen-dashboard.html">
-                <img src="images/govt.png" alt="Logo" width="32" height="32" class="me-2">
-                Municipal Services
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#citizenNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="citizenNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="citizen-dashboard.html">
-                            <i class="fas fa-th-large"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="citizen-new-complaint.html">
-                            <i class="fas fa-plus-circle"></i> New Complaint
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="citizen-complaint-detail.html">
-                            <i class="fas fa-list-alt"></i> My Complaints
-                        </a>
-                    </li>
-                    <li class="nav-item ms-lg-3">
-                        <div class="d-flex align-items-center">
-                            <div class="user-avatar bg-secondary text-white me-2">JD</div>
-                            <div class="d-none d-lg-block">
-                                <div class="small fw-bold">John Doe</div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <button class="btn btn-outline-danger btn-sm" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </li>
-                </ul>
-            </div>
+      <div class="container-fluid px-4">
+        <a
+          class="navbar-brand d-flex align-items-center"
+          href="citizen-dashboard.html"
+        >
+          <img
+            src="images/govt.png"
+            alt="Logo"
+            width="32"
+            height="32"
+            class="me-2"
+          />
+          Municipal Services
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#citizenNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="citizenNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="citizen-dashboard.html">
+                <i class="fas fa-th-large"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="citizen-new-complaint.html">
+                <i class="fas fa-plus-circle"></i> New Complaint
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="citizen-complaint-detail.html">
+                <i class="fas fa-list-alt"></i> My Complaints
+              </a>
+            </li>
+            <li class="nav-item ms-lg-3">
+              <div class="d-flex align-items-center">
+                <div
+                  class="user-avatar bg-secondary text-white me-2"
+                  id="userInitials"
+                >
+                  JD
+                </div>
+                <div class="d-none d-lg-block">
+                  <div class="small fw-bold" id="userName">John Doe</div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item ms-3">
+              <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="container">
-            <div class="mb-4">
-                <a href="citizen-dashboard.html" class="btn btn-outline-secondary btn-sm mb-3">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-                </a>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="fw-bold mb-1">Complaint #CMPT-130</h4>
-                        <span class="badge bg-danger">New</span>
-                        <span class="text-muted small ms-2">Submitted on Aug 24, 2025</span>
-                    </div>
-                    <button class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-print me-2"></i>Print
-                    </button>
-                </div>
+      <div class="container">
+        <div class="mb-4">
+          <a
+            href="citizen-dashboard.html"
+            class="btn btn-outline-secondary btn-sm mb-3"
+          >
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+          </a>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="fw-bold mb-1" id="complaintTitle">
+                Complaint #CMPT-130
+              </h4>
+              <span class="badge bg-danger" id="statusBadge">New</span>
+              <span class="text-muted small ms-2" id="submittedDate"
+                >Submitted on Aug 24, 2025</span
+              >
             </div>
-
-            <div class="row g-4">
-                <!-- Left Column: Details -->
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body p-4">
-                            <h6 class="fw-bold text-uppercase text-muted small mb-3">Issue Description</h6>
-                            <p class="mb-4">
-                                Major water pipe leakage causing road flooding near the main intersection. The water pressure is very high and it's affecting traffic flow. Please attend to this urgently as it might damage the road surface.
-                            </p>
-                            
-                            <div class="row g-4 mb-4">
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-center">
-                                        <div class="rounded-circle bg-light p-3 me-3">
-                                            <i class="fas fa-map-marker-alt text-danger fa-lg"></i>
-                                        </div>
-                                        <div>
-                                            <div class="small text-muted">Location</div>
-                                            <div class="fw-medium">Gulshan-2, Dhaka</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-center">
-                                        <div class="rounded-circle bg-light p-3 me-3">
-                                            <i class="fas fa-tag text-primary fa-lg"></i>
-                                        </div>
-                                        <div>
-                                            <div class="small text-muted">Category</div>
-                                            <div class="fw-medium">Water Leakage</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <h6 class="fw-bold text-uppercase text-muted small mb-3">Attached Photos</h6>
-                            <div class="row g-2">
-                                <div class="col-4 col-md-3">
-                                    <img src="images/u1.jpg" class="img-fluid rounded border" alt="Evidence 1">
-                                </div>
-                                <div class="col-4 col-md-3">
-                                    <img src="images/u2.jpg" class="img-fluid rounded border" alt="Evidence 2">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column: Timeline -->
-                <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white border-bottom p-3">
-                            <h6 class="fw-bold mb-0">Status Timeline</h6>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="timeline">
-                                <div class="timeline-item">
-                                    <div class="timeline-date">Aug 24, 10:30 AM</div>
-                                    <div class="timeline-content">
-                                        <div class="fw-medium">Complaint Submitted</div>
-                                        <div class="small text-muted">Your complaint has been received and is pending review.</div>
-                                    </div>
-                                </div>
-                                <!-- Future timeline items will be added here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <button
+              class="btn btn-outline-primary btn-sm"
+              onclick="window.print()"
+            >
+              <i class="fas fa-print me-2"></i>Print
+            </button>
+          </div>
         </div>
+
+        <div class="row g-4">
+          <!-- Left Column: Details -->
+          <div class="col-lg-8">
+            <!-- Status Card -->
+            <div class="status-card" id="statusCard">
+              <div class="status-icon">
+                <i class="fas fa-clock" id="statusIcon"></i>
+              </div>
+              <h5 class="fw-bold mb-1" id="statusTitle">Pending Review</h5>
+              <p class="text-muted small mb-0" id="statusDescription">
+                Your complaint is being reviewed by our team.
+              </p>
+            </div>
+
+            <!-- Assigned Technician Card (hidden initially) -->
+            <div
+              class="card border-0 shadow-sm mb-4"
+              id="technicianCard"
+              style="display: none"
+            >
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center">
+                  <div class="rounded-circle bg-primary text-white p-3 me-3">
+                    <i class="fas fa-user-hard-hat fa-lg"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="small text-muted">Assigned Technician</div>
+                    <div class="fw-bold fs-5" id="technicianName">-</div>
+                    <div class="small text-muted" id="technicianContact">-</div>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge bg-warning text-dark"
+                      >Working on it</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+              <div class="card-body p-4">
+                <h6 class="fw-bold text-uppercase text-muted small mb-3">
+                  Issue Description
+                </h6>
+                <p class="mb-4" id="complaintDescription">Loading...</p>
+
+                <div class="row g-4 mb-4">
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                      <div class="rounded-circle bg-light p-3 me-3">
+                        <i class="fas fa-map-marker-alt text-danger fa-lg"></i>
+                      </div>
+                      <div>
+                        <div class="small text-muted">Location</div>
+                        <div class="fw-medium" id="complaintLocation">-</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                      <div class="rounded-circle bg-light p-3 me-3">
+                        <i class="fas fa-tag text-primary fa-lg"></i>
+                      </div>
+                      <div>
+                        <div class="small text-muted">Category</div>
+                        <div class="fw-medium" id="complaintCategory">-</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <h6 class="fw-bold text-uppercase text-muted small mb-3">
+                  Attached Photos
+                </h6>
+                <div class="row g-2">
+                  <div class="col-4 col-md-3">
+                    <img
+                      src="images/u1.jpg"
+                      class="img-fluid rounded border"
+                      alt="Evidence 1"
+                    />
+                  </div>
+                  <div class="col-4 col-md-3">
+                    <img
+                      src="images/u2.jpg"
+                      class="img-fluid rounded border"
+                      alt="Evidence 2"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Timeline -->
+          <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-white border-bottom p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h6 class="fw-bold mb-0">Status Timeline</h6>
+                  <div class="live-indicator">
+                    <div class="live-dot"></div>
+                    <span>Live Updates</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-4">
+                <div class="timeline" id="statusTimeline">
+                  <div class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin text-muted"></i>
+                    <p class="small text-muted mb-0 mt-2">
+                      Loading timeline...
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm mt-4">
+              <div class="card-header bg-white border-bottom p-3">
+                <h6 class="fw-bold mb-0">Need Help?</h6>
+              </div>
+              <div class="card-body p-4">
+                <div class="d-grid gap-2">
+                  <button
+                    class="btn btn-outline-primary btn-sm"
+                    onclick="addComment()"
+                  >
+                    <i class="fas fa-comment me-2"></i>Add Comment
+                  </button>
+                  <button
+                    class="btn btn-outline-secondary btn-sm"
+                    onclick="contactSupport()"
+                  >
+                    <i class="fas fa-headset me-2"></i>Contact Support
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update Toast -->
+    <div class="update-toast" id="updateToast">
+      <i class="fas fa-bell me-3"></i>
+      <div>
+        <div class="fw-bold">Status Updated!</div>
+        <div class="small opacity-75" id="updateToastMessage">
+          Your complaint status has been updated.
+        </div>
+      </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div class="modal fade" id="commentModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-comment me-2 text-primary"></i>Add Comment
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Your Comment</label>
+              <textarea
+                class="form-control"
+                id="commentText"
+                rows="4"
+                placeholder="Add additional information or updates about your complaint..."
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="submitComment()"
+            >
+              <i class="fas fa-paper-plane me-2"></i>Submit
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Real-time Complaint Service -->
+    <script src="complaint-service.js"></script>
     <script>
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = 'index.html';
+      // State
+      let currentComplaintId = "CMPT-130";
+      let currentComplaint = null;
+      let commentModal;
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get complaint ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const idFromUrl = urlParams.get("id");
+        if (idFromUrl) {
+          currentComplaintId = idFromUrl.startsWith("CMPT-")
+            ? idFromUrl
+            : "CMPT-" + idFromUrl;
         }
+
+        // Set user info
+        const userName = sessionStorage.getItem("userName") || "John Doe";
+        document.getElementById("userName").textContent = userName;
+        document.getElementById("userInitials").textContent =
+          ComplaintService.getInitials(userName);
+
+        // Initialize modal
+        commentModal = new bootstrap.Modal(
+          document.getElementById("commentModal")
+        );
+
+        // Load complaint data
+        loadComplaintData();
+
+        // Subscribe to real-time updates
+        ComplaintService.subscribe(handleRealtimeUpdate);
+      });
+
+      // Load complaint data
+      function loadComplaintData() {
+        currentComplaint =
+          ComplaintService.getComplaintById(currentComplaintId);
+
+        if (currentComplaint) {
+          updateComplaintDisplay();
+          renderTimeline();
+        } else {
+          document.getElementById("complaintDescription").textContent =
+            "Complaint not found.";
+        }
+      }
+
+      // Update complaint display
+      function updateComplaintDisplay() {
+        document.getElementById("complaintTitle").textContent =
+          "Complaint #" + currentComplaint.id;
+        document.getElementById("submittedDate").textContent =
+          "Submitted on " +
+          ComplaintService.formatDate(currentComplaint.createdAt);
+        document.getElementById("complaintDescription").textContent =
+          currentComplaint.description;
+        document.getElementById("complaintLocation").textContent =
+          currentComplaint.location;
+        document.getElementById("complaintCategory").textContent =
+          currentComplaint.categoryLabel;
+
+        // Update status badge
+        const badge = document.getElementById("statusBadge");
+        badge.className =
+          "badge " +
+          ComplaintService.getStatusBadgeClass(currentComplaint.status);
+        badge.textContent = ComplaintService.getStatusLabel(
+          currentComplaint.status
+        );
+
+        // Update status card
+        updateStatusCard(currentComplaint.status);
+
+        // Show technician info if assigned
+        if (currentComplaint.assignedTo) {
+          showTechnicianCard(currentComplaint.assignedTo);
+        }
+      }
+
+      // Update status card based on status
+      function updateStatusCard(status) {
+        const card = document.getElementById("statusCard");
+        const icon = document.getElementById("statusIcon");
+        const title = document.getElementById("statusTitle");
+        const desc = document.getElementById("statusDescription");
+
+        // Remove all status classes
+        card.className = "status-card status-" + status;
+
+        const statusConfig = {
+          new: {
+            icon: "fa-clock",
+            title: "Pending Review",
+            description:
+              "Your complaint has been received and is waiting for review.",
+          },
+          acknowledged: {
+            icon: "fa-check-circle",
+            title: "Acknowledged",
+            description:
+              "Your complaint has been reviewed and acknowledged by our team.",
+          },
+          "in-progress": {
+            icon: "fa-spinner",
+            title: "Work In Progress",
+            description:
+              "A technician is actively working on resolving your issue.",
+          },
+          resolved: {
+            icon: "fa-check-double",
+            title: "Resolved",
+            description:
+              "Great news! Your complaint has been successfully resolved.",
+          },
+          rejected: {
+            icon: "fa-times-circle",
+            title: "Rejected",
+            description:
+              "Unfortunately, this complaint could not be processed.",
+          },
+        };
+
+        const config = statusConfig[status] || statusConfig["new"];
+        icon.className = "fas " + config.icon;
+        title.textContent = config.title;
+        desc.textContent = config.description;
+      }
+
+      // Show technician card
+      function showTechnicianCard(technician) {
+        const card = document.getElementById("technicianCard");
+        document.getElementById("technicianName").textContent = technician.name;
+        document.getElementById("technicianContact").textContent =
+          technician.id + (technician.phone ? " • " + technician.phone : "");
+        card.style.display = "block";
+      }
+
+      // Render timeline
+      function renderTimeline() {
+        const timeline = ComplaintService.getTimeline(currentComplaintId);
+        const container = document.getElementById("statusTimeline");
+
+        if (timeline.length === 0) {
+          container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
+                        <p class="mb-0 small">No updates yet</p>
+                    </div>
+                `;
+          return;
+        }
+
+        container.innerHTML = timeline
+          .map((entry, index) => {
+            const config = ComplaintService.getTimelineTypeConfig(entry.type);
+            const isNew =
+              index === 0 &&
+              Date.now() - new Date(entry.timestamp).getTime() < 10000;
+
+            return `
+                    <div class="timeline-item ${entry.type} ${
+              isNew ? "timeline-new-entry" : ""
+            }" data-entry-id="${entry.id}">
+                        <div class="timeline-marker" style="background: ${
+                          config.color
+                        };">
+                            <i class="fas ${
+                              config.icon
+                            }" style="color: white; font-size: 8px;"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">${ComplaintService.formatDateTime(
+                              entry.timestamp
+                            )}</div>
+                            <div class="fw-medium">${entry.title}</div>
+                            <div class="small text-muted">${
+                              entry.description
+                            }</div>
+                        </div>
+                    </div>
+                `;
+          })
+          .join("");
+      }
+
+      // Handle real-time updates
+      function handleRealtimeUpdate(type, data) {
+        console.log("Citizen Detail - Real-time update:", type, data);
+
+        switch (type) {
+          case "TIMELINE_UPDATED":
+            if (data.complaintId === currentComplaintId) {
+              renderTimeline();
+              showUpdateToast("New timeline update received!");
+            }
+            break;
+
+          case "STATUS_CHANGED":
+            if (data.complaintId === currentComplaintId) {
+              currentComplaint = data.complaint;
+              updateComplaintDisplay();
+              renderTimeline();
+              showUpdateToast(
+                `Status changed to: ${ComplaintService.getStatusLabel(
+                  data.newStatus
+                )}`
+              );
+              ComplaintService.showNotification(
+                `Your complaint status has been updated to: ${ComplaintService.getStatusLabel(
+                  data.newStatus
+                )}`,
+                "warning"
+              );
+            }
+            break;
+
+          case "COMPLAINT_UPDATED":
+            if (data.id === currentComplaintId) {
+              currentComplaint = data;
+              updateComplaintDisplay();
+              renderTimeline();
+            }
+            break;
+
+          case "TASK_ASSIGNED":
+            if (data.complaintId === currentComplaintId) {
+              currentComplaint = data.complaint;
+              updateComplaintDisplay();
+              renderTimeline();
+              showUpdateToast(
+                `Technician ${data.technician.name} has been assigned!`
+              );
+              ComplaintService.showNotification(
+                `Good news! Technician ${data.technician.name} has been assigned to your complaint.`,
+                "success"
+              );
+            }
+            break;
+
+          case "TASK_STARTED":
+            if (data.complaintId === currentComplaintId) {
+              currentComplaint = data.complaint;
+              updateComplaintDisplay();
+              renderTimeline();
+              showUpdateToast("Technician has started working on your issue!");
+              ComplaintService.showNotification(
+                "🔧 Great news! Work has started on your complaint!",
+                "info"
+              );
+            }
+            break;
+
+          case "PROGRESS_UPDATE":
+            if (data.complaintId === currentComplaintId) {
+              currentComplaint = data.complaint;
+              updateComplaintDisplay();
+              renderTimeline();
+              showUpdateToast("New progress update from technician!");
+              ComplaintService.showNotification(
+                "The technician has posted a progress update on your complaint.",
+                "info"
+              );
+            }
+            break;
+
+          case "TASK_COMPLETED":
+            if (data.complaintId === currentComplaintId) {
+              currentComplaint = data.complaint;
+              updateComplaintDisplay();
+              renderTimeline();
+              showUpdateToast("🎉 Your issue has been resolved!");
+              ComplaintService.showNotification(
+                "🎉 Great news! Your complaint has been resolved!",
+                "success"
+              );
+            }
+            break;
+
+          case "DATA_RESET":
+            loadComplaintData();
+            break;
+        }
+      }
+
+      // Show update toast
+      function showUpdateToast(message) {
+        const toast = document.getElementById("updateToast");
+        document.getElementById("updateToastMessage").textContent = message;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 4000);
+      }
+
+      // Add comment
+      function addComment() {
+        document.getElementById("commentText").value = "";
+        commentModal.show();
+      }
+
+      // Submit comment
+      function submitComment() {
+        const comment = document.getElementById("commentText").value.trim();
+
+        if (!comment) {
+          ComplaintService.showNotification(
+            "Please enter a comment.",
+            "warning"
+          );
+          return;
+        }
+
+        // Add comment to timeline
+        ComplaintService.addTimelineEntry(currentComplaintId, {
+          type: "comment",
+          title: "Citizen Comment",
+          description: comment,
+          actor: sessionStorage.getItem("userName") || "John Doe",
+          actorRole: "citizen",
+        });
+
+        renderTimeline();
+        commentModal.hide();
+        ComplaintService.showNotification(
+          "Comment added successfully!",
+          "success"
+        );
+      }
+
+      // Contact support
+      function contactSupport() {
+        ComplaintService.showNotification(
+          "Support contact: support@municipal.gov.bd | Hotline: 333",
+          "info"
+        );
+      }
+
+      // Logout
+      function logout() {
+        sessionStorage.clear();
+        window.location.href = "index.html";
+      }
     </script>
-</body>
+  </body>
 </html>
