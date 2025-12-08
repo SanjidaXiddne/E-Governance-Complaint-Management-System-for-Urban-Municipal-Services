@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Complaint - Municipal Services</title>
+    <title>New Complaint - Citizen Portal</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -91,7 +91,7 @@
             height="32"
             class="me-2"
           />
-          Municipal Services
+          Citizen Portal
         </a>
         <button
           class="navbar-toggler"
@@ -419,6 +419,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Real-time Complaint Service -->
     <script src="complaint-service.js"></script>
+    <!-- API Service for MongoDB -->
+    <script src="api-service.js"></script>
     <script>
       // File upload handling
       let selectedFiles = [];
@@ -503,8 +505,8 @@
         }
       }
 
-      // Form submission
-      function submitComplaint(e) {
+      // Form submission - saves to MongoDB via API
+      async function submitComplaint(e) {
         e.preventDefault();
 
         // Validate
@@ -537,36 +539,96 @@
         btn.querySelector(".btn-loading").style.display = "inline";
         btn.disabled = true;
 
-        // Simulate API call delay
-        setTimeout(() => {
-          // Create complaint using the service
-          const newComplaint = ComplaintService.addComplaint({
+        // Get category label
+        const categoryLabels = {
+          Water: "Water Leakage",
+          Road: "Pothole",
+          Waste: "Waste Management",
+          Light: "Street Lighting",
+          Drainage: "Drainage Issue",
+          Other: "Other Issue",
+        };
+
+        const citizenName = sessionStorage.getItem("userName") || "John Doe";
+        const citizenEmail = (
+          sessionStorage.getItem("userEmail") || "john@example.com"
+        ).toLowerCase();
+        const citizenPhone = sessionStorage.getItem("userPhone") || "";
+
+        console.log("Creating complaint with email:", citizenEmail);
+
+        try {
+          // Create complaint via API (saves to MongoDB)
+          const result = await ApiService.createComplaint({
             category: category,
+            categoryLabel: categoryLabels[category] || category,
             description: description,
             location: location,
             priority: priority,
-            citizenName: sessionStorage.getItem("userName") || "John Doe",
-            citizenEmail:
-              sessionStorage.getItem("userEmail") || "john@example.com",
+            citizen: {
+              name: citizenName,
+              email: citizenEmail,
+              phone: citizenPhone,
+            },
           });
 
-          // Show success
-          document.getElementById("complaintRefId").textContent =
-            "#" + newComplaint.id;
-          document.getElementById("complaintFormCard").style.display = "none";
-          document.getElementById("successCard").style.display = "block";
+          console.log("Create complaint result:", result);
 
-          // Show notification
+          if (result && result.success) {
+            const newComplaint = result.data;
+            const complaintId =
+              newComplaint.complaintId || newComplaint._id || newComplaint.id;
+
+            console.log("Complaint created successfully:", complaintId);
+
+            // Also add to local storage for real-time sync
+            try {
+              ComplaintService.addComplaint({
+                category: category,
+                description: description,
+                location: location,
+                priority: priority,
+                citizenName: citizenName,
+                citizenEmail: citizenEmail,
+              });
+            } catch (e) {
+              console.log("LocalStorage sync failed (non-critical):", e);
+            }
+
+            // Show success
+            document.getElementById("complaintRefId").textContent =
+              "#" + complaintId;
+            document.getElementById("complaintFormCard").style.display = "none";
+            document.getElementById("successCard").style.display = "block";
+
+            // Show notification
+            ComplaintService.showNotification(
+              `Complaint ${complaintId} submitted successfully! Officers have been notified.`,
+              "success"
+            );
+
+            // Store the new complaint ID so dashboard can highlight it
+            sessionStorage.setItem("lastCreatedComplaint", complaintId);
+          } else {
+            console.error("Failed to create complaint:", result);
+            ComplaintService.showNotification(
+              (result && result.error) ||
+                "Failed to submit complaint. Please try again.",
+              "danger"
+            );
+          }
+        } catch (err) {
+          console.error("Error submitting complaint:", err);
           ComplaintService.showNotification(
-            `Complaint ${newComplaint.id} submitted successfully! Officers have been notified.`,
-            "success"
+            "Failed to submit complaint. Please try again.",
+            "danger"
           );
-
+        } finally {
           // Reset button
           btn.querySelector(".btn-text").style.display = "inline";
           btn.querySelector(".btn-loading").style.display = "none";
           btn.disabled = false;
-        }, 1500);
+        }
       }
 
       // Reset form for new submission

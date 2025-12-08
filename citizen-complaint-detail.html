@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Complaint Details - Municipal Services</title>
+    <title>Complaint Details - Citizen Portal</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -204,7 +204,7 @@
             height="32"
             class="me-2"
           />
-          Municipal Services
+          Citizen Portal
         </a>
         <button
           class="navbar-toggler"
@@ -487,6 +487,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Real-time Complaint Service -->
     <script src="complaint-service.js"></script>
+    <!-- API Service for MongoDB -->
+    <script src="api-service.js"></script>
     <script>
       // State
       let currentComplaintId = "CMPT-130";
@@ -522,17 +524,54 @@
         ComplaintService.subscribe(handleRealtimeUpdate);
       });
 
-      // Load complaint data
-      function loadComplaintData() {
-        currentComplaint =
-          ComplaintService.getComplaintById(currentComplaintId);
+      // Load complaint data from MongoDB via API
+      async function loadComplaintData() {
+        try {
+          // Try to get from MongoDB first
+          let complaint = await ApiService.getComplaintById(currentComplaintId);
 
-        if (currentComplaint) {
-          updateComplaintDisplay();
-          renderTimeline();
-        } else {
-          document.getElementById("complaintDescription").textContent =
-            "Complaint not found.";
+          if (complaint) {
+            // Map to local format
+            currentComplaint = {
+              id: complaint.complaintId || complaint.id,
+              category: complaint.category,
+              categoryLabel: complaint.categoryLabel,
+              description: complaint.description,
+              location: complaint.location,
+              status: complaint.status,
+              priority: complaint.priority,
+              citizen: complaint.citizen,
+              assignedTo: complaint.assignedTo,
+              timeline: complaint.timeline || [],
+              createdAt: complaint.createdAt,
+              updatedAt: complaint.updatedAt,
+              resolvedAt: complaint.resolvedAt,
+            };
+          } else {
+            // Fallback to local storage
+            currentComplaint =
+              ComplaintService.getComplaintById(currentComplaintId);
+          }
+
+          if (currentComplaint) {
+            updateComplaintDisplay();
+            renderTimeline();
+          } else {
+            document.getElementById("complaintDescription").textContent =
+              "Complaint not found.";
+          }
+        } catch (err) {
+          console.error("Error loading complaint:", err);
+          // Fallback to local storage
+          currentComplaint =
+            ComplaintService.getComplaintById(currentComplaintId);
+          if (currentComplaint) {
+            updateComplaintDisplay();
+            renderTimeline();
+          } else {
+            document.getElementById("complaintDescription").textContent =
+              "Complaint not found.";
+          }
         }
       }
 
@@ -626,9 +665,13 @@
         card.style.display = "block";
       }
 
-      // Render timeline
+      // Render timeline - uses timeline from complaint or fallback to ComplaintService
       function renderTimeline() {
-        const timeline = ComplaintService.getTimeline(currentComplaintId);
+        // Use timeline from complaint object (from MongoDB) or fallback to local storage
+        const timeline =
+          currentComplaint.timeline && currentComplaint.timeline.length > 0
+            ? currentComplaint.timeline
+            : ComplaintService.getTimeline(currentComplaintId);
         const container = document.getElementById("statusTimeline");
 
         if (timeline.length === 0) {

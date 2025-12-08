@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Technician Dashboard - Municipal Services</title>
+    <title>Technician Dashboard - Officers Portal</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -90,6 +90,45 @@
           var(--primary-dark) 100%
         );
         color: white;
+      }
+
+      /* Availability Toggle */
+      .availability-toggle {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        transition: all 0.3s ease;
+      }
+      .availability-toggle:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .availability-label {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: white;
+      }
+      .availability-switch {
+        width: 3rem !important;
+        height: 1.5rem !important;
+        cursor: pointer;
+      }
+      .availability-switch:checked {
+        background-color: #22c55e;
+        border-color: #22c55e;
+      }
+      .availability-switch:not(:checked) {
+        background-color: #f59e0b;
+        border-color: #f59e0b;
+      }
+      .availability-status {
+        font-size: 0.6rem;
+      }
+      .availability-status .fa-circle {
+        transition: color 0.3s ease;
+      }
+      .availability-updating {
+        opacity: 0.7;
+        pointer-events: none;
       }
 
       /* Main Content */
@@ -678,6 +717,27 @@
         color: var(--danger);
       }
 
+      .status-assigned {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary);
+      }
+
+      .status-completed {
+        background: rgba(16, 185, 129, 0.15);
+        color: #059669;
+        font-weight: 700;
+      }
+
+      .status-rejected {
+        background: rgba(107, 114, 128, 0.1);
+        color: #6b7280;
+      }
+
+      .status-closed {
+        background: rgba(31, 41, 55, 0.1);
+        color: #374151;
+      }
+
       /* Loading Spinner */
       .btn-loading {
         position: relative;
@@ -736,6 +796,302 @@
           font-size: 1.5rem;
         }
       }
+
+      /* Profile Drawer Styles */
+      .profile-drawer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .profile-drawer-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .profile-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 420px;
+        max-width: 100%;
+        height: 100%;
+        background: white;
+        z-index: 1050;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .profile-drawer.active {
+        transform: translateX(0);
+      }
+
+      .drawer-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-dark) 100%
+        );
+        color: white;
+        padding: 1.5rem;
+        position: relative;
+      }
+
+      .drawer-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .drawer-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .drawer-avatar-large {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 1rem;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+      }
+
+      .drawer-section-title {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--gray-500);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--gray-200);
+      }
+
+      .drawer-form-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .drawer-form-group label {
+        display: block;
+        font-weight: 500;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .drawer-form-group label i {
+        width: 20px;
+        color: var(--gray-500);
+        margin-right: 0.5rem;
+      }
+
+      .drawer-form-group input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .drawer-form-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .drawer-form-group input.is-invalid {
+        border-color: var(--danger);
+      }
+
+      .drawer-form-group input:disabled {
+        background: var(--gray-50);
+        color: var(--gray-500);
+        cursor: not-allowed;
+      }
+
+      .drawer-form-group .invalid-feedback {
+        color: var(--danger);
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        display: none;
+      }
+
+      .drawer-form-group input.is-invalid + .invalid-feedback {
+        display: block;
+      }
+
+      .password-toggle {
+        position: relative;
+      }
+
+      .password-toggle input {
+        padding-right: 45px;
+      }
+
+      .password-toggle button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--gray-500);
+        cursor: pointer;
+        padding: 5px;
+      }
+
+      .password-toggle button:hover {
+        color: var(--primary);
+      }
+
+      .drawer-footer {
+        padding: 1rem 1.5rem;
+        background: var(--gray-50);
+        border-top: 1px solid var(--gray-200);
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .drawer-footer .btn {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .btn-drawer-save {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-dark) 100%
+        );
+        color: white;
+        border: none;
+      }
+
+      .btn-drawer-save:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+      }
+
+      .btn-drawer-save:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn-drawer-cancel {
+        background: white;
+        color: var(--gray-600);
+        border: 1px solid var(--gray-200);
+      }
+
+      .btn-drawer-cancel:hover {
+        background: var(--gray-50);
+        color: var(--gray-700);
+      }
+
+      .user-clickable {
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+      }
+
+      .user-clickable:hover {
+        opacity: 0.8;
+      }
+
+      .btn-drawer-save .spinner-border {
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.5rem;
+      }
+
+      .profile-toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: var(--success);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        z-index: 1060;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
+      .profile-toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .profile-toast.error {
+        background: var(--danger);
+      }
+
+      @media (max-width: 576px) {
+        .profile-drawer {
+          width: 100%;
+        }
+
+        .drawer-header {
+          padding: 1.25rem;
+        }
+
+        .drawer-avatar-large {
+          width: 60px;
+          height: 60px;
+          font-size: 1.5rem;
+        }
+
+        .drawer-body {
+          padding: 1rem;
+        }
+
+        .drawer-footer {
+          padding: 1rem;
+          flex-direction: column;
+        }
+
+        .drawer-footer .btn {
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -770,13 +1126,49 @@
                 <i class="fas fa-clipboard-list me-1"></i> My Tasks
               </a>
             </li>
+            <!-- Availability Toggle -->
+            <li class="nav-item ms-lg-2">
+              <div
+                class="availability-toggle d-flex align-items-center"
+                title="Toggle your availability status"
+              >
+                <span
+                  class="availability-label me-2 d-none d-md-inline"
+                  id="availabilityLabel"
+                  >Available</span
+                >
+                <div class="form-check form-switch mb-0">
+                  <input
+                    class="form-check-input availability-switch"
+                    type="checkbox"
+                    id="availabilitySwitch"
+                    checked
+                    onchange="toggleAvailability()"
+                  />
+                </div>
+                <span class="availability-status ms-1" id="availabilityStatus">
+                  <i
+                    class="fas fa-circle text-success"
+                    id="availabilityIcon"
+                  ></i>
+                </span>
+              </div>
+            </li>
             <li class="nav-item ms-lg-3">
-              <div class="d-flex align-items-center">
+              <div
+                class="d-flex align-items-center user-clickable"
+                onclick="openProfileDrawer()"
+                title="Click to edit profile"
+              >
                 <div class="user-avatar me-2" id="userAvatar">FR</div>
                 <div class="d-none d-lg-block">
                   <div class="fw-bold small" id="userName">Fazlur Rahman</div>
                   <div class="text-muted small" id="techId">TECH-003</div>
                 </div>
+                <i
+                  class="fas fa-chevron-right ms-2 d-none d-lg-inline text-muted"
+                  style="font-size: 0.7rem"
+                ></i>
               </div>
             </li>
             <li class="nav-item ms-3">
@@ -857,10 +1249,11 @@
           </h5>
           <div class="filter-pills">
             <span class="filter-pill active" data-filter="all">All Tasks</span>
+            <span class="filter-pill" data-filter="assigned">Assigned</span>
             <span class="filter-pill" data-filter="in-progress"
               >In Progress</span
             >
-            <span class="filter-pill" data-filter="resolved">Completed</span>
+            <span class="filter-pill" data-filter="completed">Complete</span>
           </div>
         </div>
 
@@ -1220,8 +1613,267 @@
       </div>
     </div>
 
+    <!-- Profile Drawer Overlay -->
+    <div
+      class="profile-drawer-overlay"
+      id="profileDrawerOverlay"
+      onclick="closeProfileDrawer()"
+    ></div>
+
+    <!-- Profile Drawer -->
+    <div class="profile-drawer" id="profileDrawer">
+      <div class="drawer-header">
+        <button
+          class="drawer-close"
+          onclick="closeProfileDrawer()"
+          aria-label="Close"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="drawer-avatar-large" id="drawerAvatar">FR</div>
+        <h5 class="mb-1" id="drawerName">Fazlur Rahman</h5>
+        <p class="mb-0 opacity-75" style="font-size: 0.9rem">
+          <i class="fas fa-hard-hat me-1"></i>Technician Account
+        </p>
+      </div>
+
+      <div class="drawer-body">
+        <form id="profileForm" novalidate>
+          <!-- Personal Information -->
+          <h6 class="drawer-section-title">
+            <i class="fas fa-user me-2"></i>Personal Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileName">
+              <i class="fas fa-id-card"></i>Full Name
+            </label>
+            <input
+              type="text"
+              id="profileName"
+              name="name"
+              placeholder="Enter your full name"
+              required
+              minlength="2"
+              maxlength="50"
+            />
+            <div class="invalid-feedback">
+              Please enter a valid name (2-50 characters)
+            </div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileEmail">
+              <i class="fas fa-envelope"></i>Email Address
+            </label>
+            <input
+              type="email"
+              id="profileEmail"
+              name="email"
+              placeholder="Enter your email"
+              disabled
+              title="Email cannot be changed"
+            />
+            <small class="text-muted"
+              ><i class="fas fa-lock me-1"></i>Email cannot be changed</small
+            >
+          </div>
+
+          <!-- Contact Information -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-phone me-2"></i>Contact Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profilePhone">
+              <i class="fas fa-mobile-alt"></i>Phone Number
+            </label>
+            <input
+              type="tel"
+              id="profilePhone"
+              name="phone"
+              placeholder="Enter your phone number"
+              pattern="[\+]?[0-9\s\-]{10,15}"
+            />
+            <div class="invalid-feedback">
+              Please enter a valid phone number
+            </div>
+          </div>
+
+          <!-- Technician Information -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-tools me-2"></i>Technician Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileTechId">
+              <i class="fas fa-id-badge"></i>Technician ID
+            </label>
+            <input
+              type="text"
+              id="profileTechId"
+              name="technicianId"
+              disabled
+            />
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileDepartment">
+              <i class="fas fa-briefcase"></i>Department
+            </label>
+            <input
+              type="text"
+              id="profileDepartment"
+              name="department"
+              placeholder="Enter your department"
+            />
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileSpecialty">
+              <i class="fas fa-certificate"></i>Specialty
+            </label>
+            <input
+              type="text"
+              id="profileSpecialty"
+              name="specialty"
+              placeholder="Enter your specialty"
+            />
+          </div>
+
+          <!-- Security -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-shield-alt me-2"></i>Security
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileCurrentPassword">
+              <i class="fas fa-key"></i>Current Password
+            </label>
+            <div class="password-toggle">
+              <input
+                type="password"
+                id="profileCurrentPassword"
+                name="currentPassword"
+                placeholder="Enter current password"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                onclick="togglePassword('profileCurrentPassword')"
+                aria-label="Toggle password visibility"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">Current password is incorrect</div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileNewPassword">
+              <i class="fas fa-lock"></i>New Password
+            </label>
+            <div class="password-toggle">
+              <input
+                type="password"
+                id="profileNewPassword"
+                name="newPassword"
+                placeholder="Enter new password (leave blank to keep current)"
+                minlength="6"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                onclick="togglePassword('profileNewPassword')"
+                aria-label="Toggle password visibility"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">
+              Password must be at least 6 characters
+            </div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileConfirmPassword">
+              <i class="fas fa-lock"></i>Confirm New Password
+            </label>
+            <div class="password-toggle">
+              <input
+                type="password"
+                id="profileConfirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm new password"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                onclick="togglePassword('profileConfirmPassword')"
+                aria-label="Toggle password visibility"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">Passwords do not match</div>
+          </div>
+
+          <!-- Account Info -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-info-circle me-2"></i>Account Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileUserId">
+              <i class="fas fa-hashtag"></i>User ID
+            </label>
+            <input type="text" id="profileUserId" name="userId" disabled />
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileCreatedAt">
+              <i class="fas fa-calendar-plus"></i>Member Since
+            </label>
+            <input
+              type="text"
+              id="profileCreatedAt"
+              name="createdAt"
+              disabled
+            />
+          </div>
+        </form>
+      </div>
+
+      <div class="drawer-footer">
+        <button
+          type="button"
+          class="btn btn-drawer-cancel"
+          onclick="closeProfileDrawer()"
+        >
+          <i class="fas fa-times me-1"></i>Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-drawer-save"
+          onclick="saveProfile()"
+          id="saveProfileBtn"
+        >
+          <i class="fas fa-save me-1"></i>Save Changes
+        </button>
+      </div>
+    </div>
+
+    <!-- Profile Toast Notification -->
+    <div class="profile-toast" id="profileToast">
+      <i class="fas fa-check-circle me-2"></i>
+      <span id="profileToastMessage">Profile updated successfully!</span>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="user-service.js"></script>
     <script src="complaint-service.js"></script>
+    <!-- API Service for MongoDB -->
+    <script src="api-service.js"></script>
     <script>
       // ============================================
       // TECHNICIAN STATE
@@ -1233,6 +1885,7 @@
         currentFilter: "all",
         selectedTask: null,
         uploadedPhotos: [],
+        isAvailable: true,
       };
 
       // Modal instances
@@ -1285,22 +1938,147 @@
         document.getElementById("techId").textContent = technicianState.id;
         document.getElementById("userAvatar").textContent =
           technicianState.initials;
+
+        // Load availability status from database
+        loadAvailabilityStatus();
+      }
+
+      // ============================================
+      // AVAILABILITY TOGGLE
+      // ============================================
+      async function loadAvailabilityStatus() {
+        const userId = sessionStorage.getItem("userId");
+        if (!userId) return;
+
+        try {
+          const user = await ApiService.getUserById(userId);
+          if (user) {
+            const isAvailable = user.status === "active";
+            updateAvailabilityUI(isAvailable);
+            technicianState.isAvailable = isAvailable;
+          }
+        } catch (err) {
+          console.error("Error loading availability status:", err);
+        }
+      }
+
+      async function toggleAvailability() {
+        const toggle = document.getElementById("availabilitySwitch");
+        const toggleContainer = document.querySelector(".availability-toggle");
+        const userId = sessionStorage.getItem("userId");
+
+        if (!userId) {
+          ComplaintService.showNotification(
+            "User ID not found. Please log in again.",
+            "danger"
+          );
+          toggle.checked = !toggle.checked; // Revert
+          return;
+        }
+
+        const isAvailable = toggle.checked;
+        const newStatus = isAvailable ? "active" : "inactive";
+
+        // Show updating state
+        toggleContainer.classList.add("availability-updating");
+
+        try {
+          // Update in MongoDB immediately
+          const result = await ApiService.updateUser(userId, {
+            status: newStatus,
+          });
+
+          if (result) {
+            console.log("Availability updated in MongoDB:", newStatus);
+            technicianState.isAvailable = isAvailable;
+            updateAvailabilityUI(isAvailable);
+
+            ComplaintService.showNotification(
+              isAvailable
+                ? "✅ You are now Available for tasks"
+                : "⏸️ You are now marked as Busy",
+              isAvailable ? "success" : "warning"
+            );
+          } else {
+            throw new Error("Failed to update availability");
+          }
+        } catch (err) {
+          console.error("Error updating availability:", err);
+          // Revert toggle on error
+          toggle.checked = !isAvailable;
+          ComplaintService.showNotification(
+            "Failed to update availability. Please try again.",
+            "danger"
+          );
+        } finally {
+          toggleContainer.classList.remove("availability-updating");
+        }
+      }
+
+      function updateAvailabilityUI(isAvailable) {
+        const toggle = document.getElementById("availabilitySwitch");
+        const label = document.getElementById("availabilityLabel");
+        const icon = document.getElementById("availabilityIcon");
+
+        toggle.checked = isAvailable;
+        label.textContent = isAvailable ? "Available" : "Busy";
+        icon.className = isAvailable
+          ? "fas fa-circle text-success"
+          : "fas fa-circle text-warning";
       }
 
       // ============================================
       // LOAD AND RENDER TASKS
       // ============================================
-      function loadTasks() {
-        const tasks = ComplaintService.getTasksForTechnician(
-          technicianState.id
-        );
-        updateStats(tasks);
-        renderTasks(tasks);
+      async function loadTasks() {
+        try {
+          // Load tasks from MongoDB
+          const apiTasks = await ApiService.getComplaintsByTechnician(
+            technicianState.id
+          );
+          console.log("Tasks from MongoDB:", apiTasks);
+
+          let tasks = [];
+          if (apiTasks && Array.isArray(apiTasks) && apiTasks.length > 0) {
+            tasks = apiTasks.map((t) => ({
+              id: t.complaintId || t._id || t.id,
+              category: t.category,
+              categoryLabel: t.categoryLabel || t.category,
+              description: t.description,
+              location: t.location,
+              status: t.status,
+              priority: t.priority,
+              citizen: t.citizen,
+              assignedTo: t.assignedTo,
+              timeline: t.timeline,
+              progressUpdates: t.progressUpdates,
+              totalTimeSpent: t.totalTimeSpent || 0,
+              createdAt: t.createdAt,
+              updatedAt: t.updatedAt,
+            }));
+          } else {
+            // Fallback to localStorage
+            tasks = ComplaintService.getTasksForTechnician(technicianState.id);
+          }
+
+          updateStats(tasks);
+          renderTasks(tasks);
+        } catch (err) {
+          console.error("Error loading tasks:", err);
+          // Fallback to localStorage
+          const tasks = ComplaintService.getTasksForTechnician(
+            technicianState.id
+          );
+          updateStats(tasks);
+          renderTasks(tasks);
+        }
       }
 
       function updateStats(tasks) {
         const active = tasks.filter((t) => t.status === "in-progress").length;
-        const completed = tasks.filter((t) => t.status === "resolved").length;
+        const completed = tasks.filter(
+          (t) => t.status === "resolved" || t.status === "completed"
+        ).length;
         const totalTime = tasks.reduce(
           (sum, t) => sum + (t.totalTimeSpent || 0),
           0
@@ -1368,7 +2146,8 @@
         const catClass = categoryClasses[task.category] || "";
 
         const isInProgress = task.status === "in-progress";
-        const isResolved = task.status === "resolved";
+        const isResolved =
+          task.status === "resolved" || task.status === "completed";
 
         return `
                 <div class="task-card" data-task-id="${task.id}">
@@ -1471,6 +2250,23 @@
             loadTasks();
           });
         });
+      }
+
+      // Switch to Complete filter programmatically
+      function switchToCompleteFilter() {
+        // Update UI - remove active from all pills
+        document.querySelectorAll(".filter-pill").forEach((p) => {
+          p.classList.remove("active");
+          if (p.dataset.filter === "completed") {
+            p.classList.add("active");
+          }
+        });
+
+        // Update state
+        technicianState.currentFilter = "completed";
+
+        // Reload tasks with new filter
+        loadTasks();
       }
 
       // ============================================
@@ -1637,34 +2433,47 @@
         }, 300);
       }
 
-      function confirmStartWork() {
+      async function confirmStartWork() {
         if (!technicianState.selectedTask) return;
 
         const btn = document.getElementById("confirmStartBtn");
         btn.classList.add("btn-loading");
         btn.disabled = true;
 
-        // Simulate API call
-        setTimeout(() => {
-          const result = ComplaintService.startTask(
-            technicianState.selectedTask.id,
-            technicianState.name
+        try {
+          // Update status to "in-progress" in MongoDB
+          const taskId = technicianState.selectedTask.id;
+          const result = await ApiService.updateComplaintStatus(
+            taskId,
+            "in-progress",
+            technicianState.name,
+            "technician",
+            `Work started by ${technicianState.name}`
           );
 
-          if (result) {
+          if (result && result.success) {
+            // Also update local storage for sync
+            ComplaintService.startTask(taskId, technicianState.name);
+
             ComplaintService.showNotification(
-              `Started working on task ${technicianState.selectedTask.id}`,
+              `✅ Started working on task ${taskId} - Status: In Progress`,
               "success"
             );
             startWorkModal.hide();
             loadTasks();
           } else {
-            ComplaintService.showNotification("Failed to start task", "danger");
+            throw new Error(result?.error || "Failed to update status");
           }
-
+        } catch (err) {
+          console.error("Error starting work:", err);
+          ComplaintService.showNotification(
+            err.message || "Failed to start task. Please try again.",
+            "danger"
+          );
+        } finally {
           btn.classList.remove("btn-loading");
           btn.disabled = false;
-        }, 1000);
+        }
       }
 
       // ============================================
@@ -1688,7 +2497,7 @@
         openProgressModal();
       }
 
-      function submitProgressUpdate() {
+      async function submitProgressUpdate() {
         const notes = document.getElementById("progressNotes").value.trim();
         const time =
           parseFloat(document.getElementById("progressTime").value) || 0;
@@ -1705,20 +2514,28 @@
         btn.classList.add("btn-loading");
         btn.disabled = true;
 
-        setTimeout(() => {
-          const result = ComplaintService.addProgressUpdate(
-            technicianState.selectedTask.id,
-            {
+        try {
+          const taskId = technicianState.selectedTask.id;
+
+          // Save progress update to MongoDB
+          const result = await ApiService.addProgressUpdate(
+            taskId,
+            notes,
+            time,
+            technicianState.name
+          );
+
+          if (result && result.success) {
+            // Also update local storage for sync
+            ComplaintService.addProgressUpdate(taskId, {
               notes: notes,
               timeSpent: time,
               photos: technicianState.uploadedPhotos,
               technician: technicianState.name,
-            }
-          );
+            });
 
-          if (result) {
             ComplaintService.showNotification(
-              "Progress update posted successfully!",
+              "✅ Progress update saved to database!",
               "success"
             );
             progressModal.hide();
@@ -1726,18 +2543,22 @@
 
             // Refresh detail modal if it was open
             if (technicianState.selectedTask) {
-              technicianState.selectedTask = result.complaint;
+              technicianState.selectedTask =
+                result.data || technicianState.selectedTask;
             }
           } else {
-            ComplaintService.showNotification(
-              "Failed to post update",
-              "danger"
-            );
+            throw new Error(result?.error || "Failed to post update");
           }
-
+        } catch (err) {
+          console.error("Error posting progress:", err);
+          ComplaintService.showNotification(
+            err.message || "Failed to post update. Please try again.",
+            "danger"
+          );
+        } finally {
           btn.classList.remove("btn-loading");
           btn.disabled = false;
-        }, 1000);
+        }
       }
 
       // ============================================
@@ -1761,7 +2582,7 @@
         openCompleteModal();
       }
 
-      function submitCompletion() {
+      async function submitCompletion() {
         const notes = document.getElementById("completeNotes").value.trim();
         const time =
           parseFloat(document.getElementById("completeTime").value) || 0;
@@ -1778,35 +2599,58 @@
         btn.classList.add("btn-loading");
         btn.disabled = true;
 
-        setTimeout(() => {
-          const result = ComplaintService.markTaskCompleted(
-            technicianState.selectedTask.id,
-            {
+        try {
+          const taskId = technicianState.selectedTask.id;
+
+          // First add the progress update to MongoDB
+          await ApiService.addProgressUpdate(
+            taskId,
+            notes,
+            time,
+            technicianState.name
+          );
+
+          // Then update status to "completed" in MongoDB
+          const result = await ApiService.updateComplaintStatus(
+            taskId,
+            "completed",
+            technicianState.name,
+            "technician",
+            `Task completed by ${technicianState.name}. Notes: ${notes}`
+          );
+
+          if (result && result.success) {
+            // Also update local storage for sync
+            ComplaintService.markTaskCompleted(taskId, {
               notes: notes,
               timeSpent: time,
               photos: technicianState.uploadedPhotos,
               technician: technicianState.name,
-            }
-          );
+            });
 
-          if (result) {
             ComplaintService.showNotification(
-              `Task ${technicianState.selectedTask.id} marked as complete! 🎉`,
+              `🎉 Task ${taskId} marked as Complete!`,
               "success"
             );
             completeModal.hide();
-            loadTasks();
+
+            // Switch to "Complete" filter to show the completed task
+            switchToCompleteFilter();
+
             technicianState.selectedTask = null;
           } else {
-            ComplaintService.showNotification(
-              "Failed to complete task",
-              "danger"
-            );
+            throw new Error(result?.error || "Failed to complete task");
           }
-
+        } catch (err) {
+          console.error("Error completing task:", err);
+          ComplaintService.showNotification(
+            err.message || "Failed to complete task. Please try again.",
+            "danger"
+          );
+        } finally {
           btn.classList.remove("btn-loading");
           btn.disabled = false;
-        }, 1000);
+        }
       }
 
       // ============================================
@@ -1977,6 +2821,378 @@
         sessionStorage.clear();
         window.location.href = "index.html";
       }
+
+      // ============================================
+      // PROFILE DRAWER FUNCTIONALITY
+      // ============================================
+
+      let currentUserData = null;
+      let isDrawerOpen = false;
+
+      async function openProfileDrawer() {
+        const drawer = document.getElementById("profileDrawer");
+        const overlay = document.getElementById("profileDrawerOverlay");
+
+        // Load fresh data from MongoDB
+        await loadUserDataToDrawer();
+
+        overlay.classList.add("active");
+        drawer.classList.add("active");
+        isDrawerOpen = true;
+
+        document.body.style.overflow = "hidden";
+        document.addEventListener("keydown", handleEscapeKey);
+      }
+
+      function closeProfileDrawer() {
+        const drawer = document.getElementById("profileDrawer");
+        const overlay = document.getElementById("profileDrawerOverlay");
+
+        drawer.classList.remove("active");
+        overlay.classList.remove("active");
+        isDrawerOpen = false;
+
+        document.body.style.overflow = "";
+        document.removeEventListener("keydown", handleEscapeKey);
+        resetFormValidation();
+      }
+
+      function handleEscapeKey(e) {
+        if (e.key === "Escape" && isDrawerOpen) {
+          closeProfileDrawer();
+        }
+      }
+
+      async function loadUserDataToDrawer() {
+        const userId = sessionStorage.getItem("userId");
+        const userEmail =
+          sessionStorage.getItem("userEmail") || "technician@demo.com";
+        const userName =
+          sessionStorage.getItem("userName") || technicianState.name;
+        const techId =
+          sessionStorage.getItem("technicianId") || technicianState.id;
+
+        // Try to load from MongoDB first
+        if (userId && typeof ApiService !== "undefined") {
+          try {
+            const userData = await ApiService.getUserById(userId);
+            if (userData) {
+              currentUserData = userData;
+              console.log("Loaded user from MongoDB:", currentUserData);
+            }
+          } catch (err) {
+            console.error("Error loading user from API:", err);
+          }
+        }
+
+        // Fallback to session storage data if API fails
+        if (!currentUserData) {
+          currentUserData = {
+            id: userId || "USR-003",
+            name: userName,
+            email: userEmail,
+            phone: sessionStorage.getItem("userPhone") || "",
+            technicianId: techId,
+            department: sessionStorage.getItem("department") || "Electrical",
+            specialty:
+              sessionStorage.getItem("specialty") || "Electrical Specialist",
+            password: "",
+            createdAt:
+              sessionStorage.getItem("userCreatedAt") ||
+              new Date().toISOString(),
+          };
+        }
+
+        document.getElementById("profileName").value =
+          currentUserData.name || "";
+        document.getElementById("profileEmail").value =
+          currentUserData.email || "";
+        document.getElementById("profilePhone").value =
+          currentUserData.phone || "";
+        document.getElementById("profileTechId").value =
+          currentUserData.technicianId || techId || "";
+        document.getElementById("profileDepartment").value =
+          currentUserData.department || "";
+        document.getElementById("profileSpecialty").value =
+          currentUserData.specialty || "";
+        document.getElementById("profileUserId").value =
+          currentUserData.id || currentUserData._id || "";
+        document.getElementById("profileCreatedAt").value = formatMemberSince(
+          currentUserData.createdAt
+        );
+
+        const initials = ApiService.getInitials
+          ? ApiService.getInitials(currentUserData.name)
+          : ComplaintService.getInitials(currentUserData.name);
+        document.getElementById("drawerAvatar").textContent = initials;
+        document.getElementById("drawerName").textContent =
+          currentUserData.name;
+
+        document.getElementById("profileCurrentPassword").value = "";
+        document.getElementById("profileNewPassword").value = "";
+        document.getElementById("profileConfirmPassword").value = "";
+      }
+
+      function formatMemberSince(isoString) {
+        if (!isoString) return "N/A";
+        const date = new Date(isoString);
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        return date.toLocaleDateString("en-US", options);
+      }
+
+      function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = input.nextElementSibling.querySelector("i");
+
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          input.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+      }
+
+      function validateProfileForm() {
+        let isValid = true;
+        resetFormValidation();
+
+        const nameInput = document.getElementById("profileName");
+        const nameValue = nameInput.value.trim();
+        if (!nameValue || nameValue.length < 2 || nameValue.length > 50) {
+          nameInput.classList.add("is-invalid");
+          isValid = false;
+        }
+
+        const phoneInput = document.getElementById("profilePhone");
+        const phoneValue = phoneInput.value.trim();
+        if (
+          phoneValue &&
+          !/^[\+]?[0-9\s\-]{10,15}$/.test(phoneValue.replace(/\s/g, ""))
+        ) {
+          phoneInput.classList.add("is-invalid");
+          isValid = false;
+        }
+
+        const currentPassword = document.getElementById(
+          "profileCurrentPassword"
+        ).value;
+        const newPassword = document.getElementById("profileNewPassword").value;
+        const confirmPassword = document.getElementById(
+          "profileConfirmPassword"
+        ).value;
+
+        if (newPassword || confirmPassword) {
+          if (!currentPassword) {
+            document
+              .getElementById("profileCurrentPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          } else if (
+            currentUserData &&
+            currentPassword !== currentUserData.password
+          ) {
+            document
+              .getElementById("profileCurrentPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          }
+
+          if (newPassword && newPassword.length < 6) {
+            document
+              .getElementById("profileNewPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          }
+
+          if (newPassword !== confirmPassword) {
+            document
+              .getElementById("profileConfirmPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          }
+        }
+
+        return isValid;
+      }
+
+      function resetFormValidation() {
+        const inputs = document.querySelectorAll("#profileForm input");
+        inputs.forEach((input) => {
+          input.classList.remove("is-invalid");
+        });
+      }
+
+      async function saveProfile() {
+        if (!validateProfileForm()) {
+          showProfileToast("Please fix the errors in the form", "error");
+          return;
+        }
+
+        const saveBtn = document.getElementById("saveProfileBtn");
+        const originalContent = saveBtn.innerHTML;
+
+        saveBtn.disabled = true;
+        saveBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status"></span> Saving...';
+
+        const updates = {
+          name: document.getElementById("profileName").value.trim(),
+          phone: document.getElementById("profilePhone").value.trim(),
+          department: document.getElementById("profileDepartment").value.trim(),
+          specialty: document.getElementById("profileSpecialty").value.trim(),
+        };
+
+        const newPassword = document.getElementById("profileNewPassword").value;
+        if (newPassword) {
+          updates.password = newPassword;
+        }
+
+        try {
+          // Get user ID from session
+          const userId = sessionStorage.getItem("userId");
+
+          if (!userId) {
+            throw new Error("User ID not found. Please log in again.");
+          }
+
+          // Update via API (saves to MongoDB)
+          const result = await ApiService.updateUser(userId, updates);
+
+          if (result) {
+            console.log("Profile updated in MongoDB:", result);
+
+            // Update local data
+            if (currentUserData) {
+              currentUserData = { ...currentUserData, ...updates };
+            }
+
+            sessionStorage.setItem("userName", updates.name);
+            if (updates.phone) {
+              sessionStorage.setItem("userPhone", updates.phone);
+            }
+            if (updates.department) {
+              sessionStorage.setItem("department", updates.department);
+            }
+            if (updates.specialty) {
+              sessionStorage.setItem("specialty", updates.specialty);
+            }
+
+            // Update technician state
+            technicianState.name = updates.name;
+            technicianState.initials = ApiService.getInitials
+              ? ApiService.getInitials(updates.name)
+              : ComplaintService.getInitials(updates.name);
+
+            // Update UI elements
+            document.getElementById("userName").textContent = updates.name;
+            document.getElementById("userAvatar").textContent =
+              technicianState.initials;
+            document.getElementById("drawerAvatar").textContent =
+              technicianState.initials;
+            document.getElementById("drawerName").textContent = updates.name;
+
+            showProfileToast(
+              "Profile saved to database successfully!",
+              "success"
+            );
+
+            document.getElementById("profileCurrentPassword").value = "";
+            document.getElementById("profileNewPassword").value = "";
+            document.getElementById("profileConfirmPassword").value = "";
+
+            setTimeout(() => {
+              closeProfileDrawer();
+            }, 1000);
+          } else {
+            throw new Error("Failed to update profile in database");
+          }
+        } catch (error) {
+          console.error("Error saving profile:", error);
+          showProfileToast(
+            error.message || "Failed to save profile. Please try again.",
+            "error"
+          );
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = originalContent;
+        }
+      }
+
+      function showProfileToast(message, type = "success") {
+        const toast = document.getElementById("profileToast");
+        const toastMessage = document.getElementById("profileToastMessage");
+        const toastIcon = toast.querySelector("i");
+
+        toastMessage.textContent = message;
+
+        toast.classList.remove("error");
+        toastIcon.className = "fas fa-check-circle me-2";
+
+        if (type === "error") {
+          toast.classList.add("error");
+          toastIcon.className = "fas fa-exclamation-circle me-2";
+        }
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // Real-time validation listeners for profile form
+      (function setupProfileValidation() {
+        document.addEventListener("DOMContentLoaded", function () {
+          const nameInput = document.getElementById("profileName");
+          if (nameInput) {
+            nameInput.addEventListener("input", function () {
+              if (this.value.trim().length >= 2) {
+                this.classList.remove("is-invalid");
+              }
+            });
+          }
+
+          const phoneInput = document.getElementById("profilePhone");
+          if (phoneInput) {
+            phoneInput.addEventListener("input", function () {
+              const value = this.value.trim().replace(/\s/g, "");
+              if (!value || /^[\+]?[0-9\s\-]{10,15}$/.test(value)) {
+                this.classList.remove("is-invalid");
+              }
+            });
+          }
+
+          const newPasswordInput =
+            document.getElementById("profileNewPassword");
+          const confirmPasswordInput = document.getElementById(
+            "profileConfirmPassword"
+          );
+
+          if (newPasswordInput) {
+            newPasswordInput.addEventListener("input", function () {
+              if (!this.value || this.value.length >= 6) {
+                this.classList.remove("is-invalid");
+              }
+              if (confirmPasswordInput && confirmPasswordInput.value) {
+                if (this.value === confirmPasswordInput.value) {
+                  confirmPasswordInput.classList.remove("is-invalid");
+                }
+              }
+            });
+          }
+
+          if (confirmPasswordInput) {
+            confirmPasswordInput.addEventListener("input", function () {
+              if (newPasswordInput && this.value === newPasswordInput.value) {
+                this.classList.remove("is-invalid");
+              }
+            });
+          }
+        });
+      })();
     </script>
   </body>
 </html>

@@ -1,195 +1,1519 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management - Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="dashboard.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Management - Admin Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="dashboard.css" />
+    <style>
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .stat-mini-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .stat-mini-card .stat-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+      }
+      .stat-mini-card .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1e293b;
+      }
+      .stat-mini-card .stat-label {
+        color: #64748b;
+        font-size: 0.875rem;
+      }
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+      .table-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+      }
+      .badge-citizen {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+      }
+      .badge-officer {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+      }
+      .badge-technician {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+      }
+      .badge-admin {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+      }
+      .new-user-badge {
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        margin-left: 8px;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.6;
+        }
+      }
+      .empty-state {
+        padding: 3rem;
+        text-align: center;
+        color: #64748b;
+      }
+      .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
 
+      /* Profile Drawer Styles */
+      .profile-drawer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .profile-drawer-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .profile-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 420px;
+        max-width: 100%;
+        height: 100%;
+        background: #fff;
+        z-index: 1050;
+        transform: translateX(100%);
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .profile-drawer.active {
+        transform: translateX(0);
+      }
+
+      .drawer-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .drawer-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .drawer-close-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .drawer-close-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg);
+      }
+
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+      }
+
+      .drawer-profile-header {
+        text-align: center;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 1.5rem;
+      }
+
+      .drawer-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 auto 1rem;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      }
+
+      .drawer-user-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+      }
+
+      .drawer-user-email {
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+
+      .drawer-form-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .drawer-form-group label {
+        display: block;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+      }
+
+      .drawer-form-group label .required {
+        color: #ef4444;
+      }
+
+      .drawer-form-group .form-control {
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 0.625rem 0.875rem;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+      }
+
+      .drawer-form-group .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+      }
+
+      .drawer-form-group .form-control.is-invalid {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+      }
+
+      .drawer-form-group .invalid-feedback {
+        display: none;
+        color: #ef4444;
+        font-size: 0.8rem;
+        margin-top: 0.35rem;
+      }
+
+      .drawer-form-group .form-control.is-invalid + .invalid-feedback {
+        display: block;
+      }
+
+      .drawer-form-group .input-group-text {
+        background: #f8fafc;
+        border: 1px solid #d1d5db;
+        border-radius: 8px 0 0 8px;
+        color: #64748b;
+      }
+
+      .drawer-form-group .input-group .form-control {
+        border-radius: 0 8px 8px 0;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #64748b;
+        z-index: 10;
+      }
+
+      .password-toggle:hover {
+        color: #374151;
+      }
+
+      .drawer-footer {
+        padding: 1.25rem 1.5rem;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        gap: 0.75rem;
+        background: #f8fafc;
+      }
+
+      .drawer-footer .btn {
+        flex: 1;
+        padding: 0.625rem 1rem;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+
+      .drawer-footer .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+      }
+
+      .drawer-footer .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+      }
+
+      .drawer-footer .btn-secondary {
+        background: #e2e8f0;
+        border: none;
+        color: #475569;
+      }
+
+      .drawer-footer .btn-secondary:hover {
+        background: #cbd5e1;
+      }
+
+      .drawer-info-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: #f0f9ff;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        color: #0369a1;
+        margin-bottom: 1rem;
+        width: 100%;
+      }
+
+      .drawer-info-badge i {
+        color: #0ea5e9;
+      }
+
+      .clickable-name {
+        cursor: pointer;
+        color: #3b82f6;
+        transition: color 0.2s ease;
+      }
+
+      .clickable-name:hover {
+        color: #1d4ed8;
+        text-decoration: underline;
+      }
+
+      /* Responsive styles for drawer */
+      @media (max-width: 576px) {
+        .profile-drawer {
+          width: 100%;
+        }
+
+        .drawer-footer {
+          flex-direction: column;
+        }
+
+        .drawer-footer .btn {
+          width: 100%;
+        }
+      }
+
+      /* Loading spinner for save button */
+      .btn-loading {
+        position: relative;
+        color: transparent !important;
+      }
+
+      .btn-loading::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 50%;
+        left: 50%;
+        margin-top: -8px;
+        margin-left: -8px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top dashboard-nav">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center" href="admin-dashboard.html">
-                <img src="images/govt.png" alt="Logo" width="32" height="32" class="me-2">
-                Municipal Admin
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="adminNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin-dashboard.html">
-                            <i class="fas fa-chart-pie"></i> Overview
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="admin-user-management.html">
-                            <i class="fas fa-users-cog"></i> Users
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin-reporting.html">
-                            <i class="fas fa-file-invoice"></i> Reports
-                        </a>
-                    </li>
-                    <li class="nav-item ms-lg-3">
-                        <div class="d-flex align-items-center">
-                            <div class="user-avatar bg-danger text-white me-2">AD</div>
-                            <div class="d-none d-lg-block">
-                                <div class="small fw-bold">Administrator</div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <button class="btn btn-outline-danger btn-sm" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </li>
-                </ul>
-            </div>
+      <div class="container-fluid px-4">
+        <a
+          class="navbar-brand d-flex align-items-center"
+          href="admin-dashboard.html"
+        >
+          <img
+            src="images/govt.png"
+            alt="Logo"
+            width="32"
+            height="32"
+            class="me-2"
+          />
+          Admin Portal
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#adminNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="adminNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="admin-dashboard.html">
+                <i class="fas fa-chart-pie"></i> Overview
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="admin-user-management.html">
+                <i class="fas fa-users-cog"></i> Users
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="admin-reporting.html">
+                <i class="fas fa-file-invoice"></i> Reports
+              </a>
+            </li>
+            <li class="nav-item ms-lg-3">
+              <div class="d-flex align-items-center">
+                <div class="user-avatar bg-danger text-white me-2">AD</div>
+                <div class="d-none d-lg-block">
+                  <div class="small fw-bold" id="adminName">Administrator</div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item ms-3">
+              <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="container-fluid px-4">
-            
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold mb-0">User Management</h4>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                    <i class="fas fa-plus me-2"></i>Add New User
-                </button>
-            </div>
-
-            <div class="table-card">
-                <div class="p-4 border-bottom">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <input type="text" class="form-control search-input" placeholder="Search users...">
-                        </div>
-                        <div class="col-md-3">
-                            <select class="form-select">
-                                <option>All Roles</option>
-                                <option>Officer</option>
-                                <option>Supervisor</option>
-                                <option>Technician</option>
-                                <option>Citizen</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table mb-0">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Role</th>
-                                <th>Department</th>
-                                <th>Status</th>
-                                <th class="text-end">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-avatar bg-primary text-white me-2">OJ</div>
-                                        <div>
-                                            <div class="fw-medium">Officer Jane</div>
-                                            <div class="small text-muted">jane@municipal.gov</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-primary bg-opacity-10 text-primary">Officer</span></td>
-                                <td>Water Works</td>
-                                <td><span class="badge bg-success">Active</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-outline-secondary btn-sm me-1"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-avatar bg-warning text-dark me-2">TS</div>
-                                        <div>
-                                            <div class="fw-medium">Tom Smith</div>
-                                            <div class="small text-muted">tom@municipal.gov</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="badge bg-warning bg-opacity-10 text-warning">Technician</span></td>
-                                <td>Road Maintenance</td>
-                                <td><span class="badge bg-success">Active</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-outline-secondary btn-sm me-1"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <!-- Add more rows as needed -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+      <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="fw-bold mb-1">User Management</h4>
+            <p class="text-muted mb-0">
+              Manage all registered users across the platform
+            </p>
+          </div>
+          <button
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#addUserModal"
+          >
+            <i class="fas fa-plus me-2"></i>Add New User
+          </button>
         </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+          <div class="stat-mini-card">
+            <div class="d-flex align-items-center">
+              <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3">
+                <i class="fas fa-users"></i>
+              </div>
+              <div>
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">Total Users</div>
+              </div>
+            </div>
+          </div>
+          <div class="stat-mini-card">
+            <div class="d-flex align-items-center">
+              <div class="stat-icon bg-success bg-opacity-10 text-success me-3">
+                <i class="fas fa-user"></i>
+              </div>
+              <div>
+                <div class="stat-number" id="totalCitizens">0</div>
+                <div class="stat-label">Citizens</div>
+              </div>
+            </div>
+          </div>
+          <div class="stat-mini-card">
+            <div class="d-flex align-items-center">
+              <div class="stat-icon bg-info bg-opacity-10 text-info me-3">
+                <i class="fas fa-id-badge"></i>
+              </div>
+              <div>
+                <div class="stat-number" id="totalOfficers">0</div>
+                <div class="stat-label">Officers</div>
+              </div>
+            </div>
+          </div>
+          <div class="stat-mini-card">
+            <div class="d-flex align-items-center">
+              <div class="stat-icon bg-warning bg-opacity-10 text-warning me-3">
+                <i class="fas fa-tools"></i>
+              </div>
+              <div>
+                <div class="stat-number" id="totalTechnicians">0</div>
+                <div class="stat-label">Technicians</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="p-4 border-bottom">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control search-input"
+                  id="searchInput"
+                  placeholder="Search users by name or email..."
+                />
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" id="roleFilter">
+                  <option value="all">All Roles</option>
+                  <option value="citizen">Citizens</option>
+                  <option value="officer">Officers</option>
+                  <option value="technician">Technicians</option>
+                  <option value="admin">Admins</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" id="statusFilter">
+                  <option value="all">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <button
+                  class="btn btn-outline-secondary w-100"
+                  onclick="refreshUsers()"
+                >
+                  <i class="fas fa-sync-alt me-1"></i> Refresh
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table mb-0" id="usersTable">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Department/Phone</th>
+                  <th>Registered</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <!-- Users will be dynamically loaded here -->
+              </tbody>
+            </table>
+          </div>
+          <div id="emptyState" class="empty-state" style="display: none">
+            <i class="fas fa-users-slash"></i>
+            <h5>No users found</h5>
+            <p class="mb-0">No users match your current filters.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Add User Modal -->
     <div class="modal fade" id="addUserModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-user-plus me-2"></i>Add New User
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="addUserForm">
+              <div class="mb-3">
+                <label class="form-label"
+                  >Full Name <span class="text-danger">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="newUserName"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label"
+                  >Email <span class="text-danger">*</span></label
+                >
+                <input
+                  type="email"
+                  class="form-control"
+                  id="newUserEmail"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="newUserPhone" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label"
+                  >Role <span class="text-danger">*</span></label
+                >
+                <select
+                  class="form-select"
+                  id="newUserRole"
+                  onchange="toggleRoleFields()"
+                >
+                  <option value="citizen">Citizen</option>
+                  <option value="officer">Officer</option>
+                  <option value="technician">Technician</option>
+                </select>
+              </div>
+              <div id="staffFields" style="display: none">
+                <div class="mb-3">
+                  <label class="form-label">Department</label>
+                  <select class="form-select" id="newUserDepartment">
+                    <option value="Water Works">Water Works</option>
+                    <option value="Road Maintenance">Road Maintenance</option>
+                    <option value="Waste Management">Waste Management</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="General">General</option>
+                  </select>
                 </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Role</label>
-                            <select class="form-select">
-                                <option>Officer</option>
-                                <option>Supervisor</option>
-                                <option>Technician</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Department</label>
-                            <select class="form-select">
-                                <option>Water Works</option>
-                                <option>Road Maintenance</option>
-                                <option>Waste Management</option>
-                                <option>Electrical</option>
-                            </select>
-                        </div>
-                    </form>
+                <div class="mb-3" id="specialtyField" style="display: none">
+                  <label class="form-label">Specialty</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="newUserSpecialty"
+                    placeholder="e.g., Plumbing, Electrical"
+                  />
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Create User</button>
-                </div>
-            </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label"
+                  >Password <span class="text-danger">*</span></label
+                >
+                <input
+                  type="password"
+                  class="form-control"
+                  id="newUserPassword"
+                  value="password123"
+                />
+                <small class="text-muted">Default password: password123</small>
+              </div>
+              <div
+                id="addUserError"
+                class="alert alert-danger"
+                style="display: none"
+              ></div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="addNewUser()"
+            >
+              <i class="fas fa-plus me-1"></i> Create User
+            </button>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-user-edit me-2"></i>Edit User
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="editUserForm">
+              <input type="hidden" id="editUserId" />
+              <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editUserName"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="editUserEmail"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="editUserPhone" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Role</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editUserRole"
+                  readonly
+                />
+              </div>
+              <div class="mb-3" id="editDepartmentField">
+                <label class="form-label">Department</label>
+                <select class="form-select" id="editUserDepartment">
+                  <option value="Water Works">Water Works</option>
+                  <option value="Road Maintenance">Road Maintenance</option>
+                  <option value="Waste Management">Waste Management</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+              <div
+                id="editUserError"
+                class="alert alert-danger"
+                style="display: none"
+              ></div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="saveUserChanges()"
+            >
+              <i class="fas fa-save me-1"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">
+              <i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="deleteUserId" />
+            <p>
+              Are you sure you want to delete user
+              <strong id="deleteUserName"></strong>?
+            </p>
+            <p class="text-muted small mb-0">This action cannot be undone.</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              onclick="confirmDeleteUser()"
+            >
+              <i class="fas fa-trash me-1"></i> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Drawer Overlay -->
+    <div
+      class="profile-drawer-overlay"
+      id="profileDrawerOverlay"
+      onclick="closeProfileDrawer()"
+    ></div>
+
+    <!-- Profile Drawer -->
+    <div class="profile-drawer" id="profileDrawer">
+      <div class="drawer-header">
+        <h5><i class="fas fa-user-edit me-2"></i>Edit Citizen Profile</h5>
+        <button class="drawer-close-btn" onclick="closeProfileDrawer()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+        <div class="drawer-profile-header">
+          <div class="drawer-avatar" id="drawerAvatar">JD</div>
+          <div class="drawer-user-name" id="drawerUserName">John Doe</div>
+          <div class="drawer-user-email" id="drawerUserEmail">
+            citizen@demo.com
+          </div>
+        </div>
+
+        <div class="drawer-info-badge">
+          <i class="fas fa-info-circle"></i>
+          <span>Edit citizen details below and click Save to update.</span>
+        </div>
+
+        <form id="profileDrawerForm">
+          <input type="hidden" id="drawerUserId" />
+
+          <div class="drawer-form-group">
+            <label>Full Name <span class="required">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                id="drawerName"
+                placeholder="Enter full name"
+                required
+              />
+            </div>
+            <div class="invalid-feedback">Full name is required</div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label>Username (Email) <span class="required">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fas fa-envelope"></i
+              ></span>
+              <input
+                type="email"
+                class="form-control"
+                id="drawerEmail"
+                placeholder="Enter email address"
+                required
+              />
+            </div>
+            <div class="invalid-feedback">
+              Please enter a valid email address
+            </div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label>Password</label>
+            <div class="input-group position-relative">
+              <span class="input-group-text"><i class="fas fa-lock"></i></span>
+              <input
+                type="password"
+                class="form-control"
+                id="drawerPassword"
+                placeholder="Enter new password (leave blank to keep current)"
+              />
+              <span class="password-toggle" onclick="toggleDrawerPassword()">
+                <i class="fas fa-eye" id="drawerPasswordIcon"></i>
+              </span>
+            </div>
+            <div class="invalid-feedback">
+              Password must be at least 6 characters
+            </div>
+            <small class="text-muted"
+              >Leave blank to keep current password</small
+            >
+          </div>
+
+          <div class="drawer-form-group">
+            <label>Phone Number</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-phone"></i></span>
+              <input
+                type="tel"
+                class="form-control"
+                id="drawerPhone"
+                placeholder="Enter phone number"
+              />
+            </div>
+            <div class="invalid-feedback">
+              Please enter a valid phone number
+            </div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label>Address</label>
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fas fa-map-marker-alt"></i
+              ></span>
+              <input
+                type="text"
+                class="form-control"
+                id="drawerAddress"
+                placeholder="Enter address"
+              />
+            </div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label>Status</label>
+            <select class="form-control" id="drawerStatus">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
+          <div class="drawer-form-group">
+            <label>Registered On</label>
+            <input
+              type="text"
+              class="form-control"
+              id="drawerCreatedAt"
+              readonly
+              disabled
+              style="background: #f1f5f9; cursor: not-allowed"
+            />
+          </div>
+
+          <div
+            id="drawerError"
+            class="alert alert-danger"
+            style="display: none"
+          ></div>
+          <div
+            id="drawerSuccess"
+            class="alert alert-success"
+            style="display: none"
+          ></div>
+        </form>
+      </div>
+
+      <div class="drawer-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="closeProfileDrawer()"
+        >
+          <i class="fas fa-times me-1"></i> Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="drawerSaveBtn"
+          onclick="saveProfileDrawer()"
+        >
+          <i class="fas fa-save me-1"></i> Save Changes
+        </button>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="user-service.js"></script>
+    <script src="api-service.js"></script>
     <script>
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = 'index.html';
+      // Check authentication
+      document.addEventListener("DOMContentLoaded", function () {
+        const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+        const userRole = sessionStorage.getItem("userRole");
+
+        if (!isLoggedIn || userRole !== "admin") {
+          window.location.href = "index.html";
+          return;
         }
+
+        // Set admin name
+        const adminName = sessionStorage.getItem("userName") || "Administrator";
+        document.getElementById("adminName").textContent = adminName;
+
+        // Load users
+        loadUsers();
+        updateStats();
+
+        // Subscribe to user events for real-time updates
+        ApiService.subscribe(handleUserEvent);
+
+        // Setup filters
+        document
+          .getElementById("searchInput")
+          .addEventListener("input", filterUsers);
+        document
+          .getElementById("roleFilter")
+          .addEventListener("change", filterUsers);
+        document
+          .getElementById("statusFilter")
+          .addEventListener("change", filterUsers);
+      });
+
+      function handleUserEvent(type, data) {
+        console.log("User event:", type, data);
+        if (
+          [
+            "USER_REGISTERED",
+            "STAFF_REGISTERED",
+            "USER_UPDATED",
+            "USER_DELETED",
+            "USER_STATUS_CHANGED",
+          ].includes(type)
+        ) {
+          loadUsers();
+          updateStats();
+        }
+      }
+
+      async function loadUsers() {
+        try {
+          const users = await ApiService.getAllUsers();
+          renderUsersTable(users);
+        } catch (err) {
+          console.error("Error loading users:", err);
+          showToast("Failed to load users", "danger");
+        }
+      }
+
+      async function updateStats() {
+        try {
+          const stats = await ApiService.getStats();
+          document.getElementById("totalUsers").textContent = stats.total;
+          document.getElementById("totalCitizens").textContent = stats.citizens;
+          document.getElementById("totalOfficers").textContent = stats.officers;
+          document.getElementById("totalTechnicians").textContent =
+            stats.technicians;
+        } catch (err) {
+          console.error("Error loading stats:", err);
+        }
+      }
+
+      function renderUsersTable(users) {
+        const tbody = document.getElementById("usersTableBody");
+        const emptyState = document.getElementById("emptyState");
+        const table = document.getElementById("usersTable");
+
+        if (users.length === 0) {
+          tbody.innerHTML = "";
+          table.style.display = "none";
+          emptyState.style.display = "block";
+          return;
+        }
+
+        table.style.display = "table";
+        emptyState.style.display = "none";
+
+        // Sort by creation date (newest first)
+        users.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        tbody.innerHTML = users
+          .map((user) => {
+            const initials = ApiService.getInitials(user.name);
+            const avatarColors = {
+              citizen: "bg-success",
+              officer: "bg-primary",
+              technician: "bg-warning text-dark",
+              admin: "bg-danger",
+            };
+            const avatarClass = avatarColors[user.role] || "bg-secondary";
+
+            // Check if user was created in last 24 hours
+            const isNew =
+              new Date() - new Date(user.createdAt) < 24 * 60 * 60 * 1000;
+
+            const departmentOrPhone = user.department || user.phone || "-";
+            const roleSpecificId = user.officerId || user.technicianId || "";
+
+            return `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar ${avatarClass} text-white me-2">${initials}</div>
+                                <div>
+                                    <div class="fw-medium">
+                                        ${user.name}
+                                        ${
+                                          isNew
+                                            ? '<span class="badge bg-info new-user-badge">NEW</span>'
+                                            : ""
+                                        }
+                                        ${
+                                          user.isDefault
+                                            ? '<span class="badge bg-secondary ms-1" style="font-size: 0.6rem;">System</span>'
+                                            : ""
+                                        }
+                                    </div>
+                                    <div class="small text-muted">${
+                                      user.email
+                                    }</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-${
+                              user.role
+                            }">${capitalizeFirst(user.role)}</span>
+                            ${
+                              roleSpecificId
+                                ? `<div class="small text-muted mt-1">${roleSpecificId}</div>`
+                                : ""
+                            }
+                        </td>
+                        <td>${departmentOrPhone}</td>
+                        <td>
+                            <div class="small">${UserService.formatDate(
+                              user.createdAt
+                            )}</div>
+                        </td>
+                        <td>
+                            <span class="badge ${
+                              user.status === "active"
+                                ? "bg-success"
+                                : "bg-secondary"
+                            }">${capitalizeFirst(user.status)}</span>
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-outline-secondary btn-sm me-1" onclick="editUser('${
+                              user.id
+                            }')" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline-${
+                              user.status === "active" ? "warning" : "success"
+                            } btn-sm me-1" 
+                                    onclick="toggleStatus('${user.id}')" 
+                                    title="${
+                                      user.status === "active"
+                                        ? "Deactivate"
+                                        : "Activate"
+                                    }">
+                                <i class="fas fa-${
+                                  user.status === "active" ? "ban" : "check"
+                                }"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteUser('${
+                              user.id
+                            }', '${user.name}')" 
+                                    title="Delete" ${
+                                      user.isDefault ? "disabled" : ""
+                                    }>
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+          })
+          .join("");
+      }
+
+      function filterUsers() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const roleFilter = document.getElementById("roleFilter").value;
+        const statusFilter = document.getElementById("statusFilter").value;
+
+        let users = UserService.getAllUsers();
+
+        // Apply search filter
+        if (searchTerm) {
+          users = users.filter(
+            (u) =>
+              u.name.toLowerCase().includes(searchTerm) ||
+              u.email.toLowerCase().includes(searchTerm)
+          );
+        }
+
+        // Apply role filter
+        if (roleFilter !== "all") {
+          users = users.filter((u) => u.role === roleFilter);
+        }
+
+        // Apply status filter
+        if (statusFilter !== "all") {
+          users = users.filter((u) => u.status === statusFilter);
+        }
+
+        renderUsersTable(users);
+      }
+
+      function refreshUsers() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("roleFilter").value = "all";
+        document.getElementById("statusFilter").value = "all";
+        loadUsers();
+        updateStats();
+        showToast("Users list refreshed", "success");
+      }
+
+      function toggleRoleFields() {
+        const role = document.getElementById("newUserRole").value;
+        const staffFields = document.getElementById("staffFields");
+        const specialtyField = document.getElementById("specialtyField");
+
+        if (role === "officer" || role === "technician") {
+          staffFields.style.display = "block";
+          specialtyField.style.display =
+            role === "technician" ? "block" : "none";
+        } else {
+          staffFields.style.display = "none";
+        }
+      }
+
+      async function addNewUser() {
+        const name = document.getElementById("newUserName").value.trim();
+        const email = document.getElementById("newUserEmail").value.trim();
+        const phone = document.getElementById("newUserPhone").value.trim();
+        const role = document.getElementById("newUserRole").value;
+        const password = document.getElementById("newUserPassword").value;
+        const department = document.getElementById("newUserDepartment").value;
+        const specialty = document
+          .getElementById("newUserSpecialty")
+          .value.trim();
+
+        const errorDiv = document.getElementById("addUserError");
+        const submitBtn = document.querySelector("#addUserModal .btn-primary");
+        const originalText = submitBtn ? submitBtn.textContent : "";
+
+        if (!name || !email) {
+          errorDiv.textContent = "Please fill in all required fields.";
+          errorDiv.style.display = "block";
+          return;
+        }
+
+        // Show loading state
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin me-1"></i> Adding...';
+        }
+
+        try {
+          let result;
+          if (role === "citizen") {
+            result = await ApiService.registerCitizen({
+              name,
+              email,
+              phone,
+              password,
+            });
+          } else {
+            result = await ApiService.registerStaff({
+              name,
+              email,
+              phone,
+              password,
+              role,
+              department,
+              specialty,
+            });
+          }
+
+          if (result.success) {
+            // Close modal and reset form
+            bootstrap.Modal.getInstance(
+              document.getElementById("addUserModal")
+            ).hide();
+            document.getElementById("addUserForm").reset();
+            document.getElementById("newUserPassword").value = "password123";
+            errorDiv.style.display = "none";
+
+            await loadUsers();
+            await updateStats();
+            showToast(`User "${name}" created successfully!`, "success");
+          } else {
+            errorDiv.textContent = result.error;
+            errorDiv.style.display = "block";
+          }
+        } catch (err) {
+          errorDiv.textContent = "Failed to add user. Please try again.";
+          errorDiv.style.display = "block";
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+          }
+        }
+      }
+
+      async function editUser(userId) {
+        try {
+          const user = await ApiService.getUserById(userId);
+          if (!user) {
+            showToast("User not found", "danger");
+            return;
+          }
+
+          document.getElementById("editUserId").value = user.id || user._id;
+          document.getElementById("editUserName").value = user.name;
+          document.getElementById("editUserEmail").value = user.email;
+          document.getElementById("editUserPhone").value = user.phone || "";
+          document.getElementById("editUserRole").value = capitalizeFirst(
+            user.role
+          );
+
+          const deptField = document.getElementById("editDepartmentField");
+          if (user.role === "officer" || user.role === "technician") {
+            deptField.style.display = "block";
+            document.getElementById("editUserDepartment").value =
+              user.department || "General";
+          } else {
+            deptField.style.display = "none";
+          }
+
+          document.getElementById("editUserError").style.display = "none";
+          new bootstrap.Modal(document.getElementById("editUserModal")).show();
+        } catch (err) {
+          console.error("Error loading user:", err);
+          showToast("Failed to load user details", "danger");
+        }
+      }
+
+      async function saveUserChanges() {
+        const userId = document.getElementById("editUserId").value;
+        const name = document.getElementById("editUserName").value.trim();
+        const email = document.getElementById("editUserEmail").value.trim();
+        const phone = document.getElementById("editUserPhone").value.trim();
+        const department = document.getElementById("editUserDepartment").value;
+        const role = document
+          .getElementById("editUserRole")
+          .value.toLowerCase();
+
+        const errorDiv = document.getElementById("editUserError");
+        const submitBtn = document.querySelector("#editUserModal .btn-primary");
+        const originalText = submitBtn ? submitBtn.innerHTML : "";
+
+        if (!name || !email) {
+          errorDiv.textContent = "Please fill in all required fields.";
+          errorDiv.style.display = "block";
+          return;
+        }
+
+        // Show loading state
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin me-1"></i> Saving...';
+        }
+
+        try {
+          const updates = { name, email, phone };
+
+          if (role === "officer" || role === "technician") {
+            updates.department = department;
+          }
+
+          const updatedUser = await ApiService.updateUser(userId, updates);
+
+          if (updatedUser) {
+            bootstrap.Modal.getInstance(
+              document.getElementById("editUserModal")
+            ).hide();
+            await loadUsers();
+            showToast(`User "${name}" updated successfully!`, "success");
+          } else {
+            errorDiv.textContent = "Failed to update user.";
+            errorDiv.style.display = "block";
+          }
+        } catch (err) {
+          errorDiv.textContent = "Failed to update user. Please try again.";
+          errorDiv.style.display = "block";
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+          }
+        }
+      }
+
+      async function toggleStatus(userId) {
+        try {
+          const user = await ApiService.toggleUserStatus(userId);
+          if (user) {
+            await loadUsers();
+            showToast(
+              `User "${user.name}" ${
+                user.status === "active" ? "activated" : "deactivated"
+              }!`,
+              "info"
+            );
+          }
+        } catch (err) {
+          console.error("Error toggling status:", err);
+          showToast("Failed to update user status", "danger");
+        }
+      }
+
+      function deleteUser(userId, userName) {
+        document.getElementById("deleteUserId").value = userId;
+        document.getElementById("deleteUserName").textContent = userName;
+        new bootstrap.Modal(document.getElementById("deleteUserModal")).show();
+      }
+
+      async function confirmDeleteUser() {
+        const userId = document.getElementById("deleteUserId").value;
+        const deleteBtn = document.querySelector(
+          "#deleteUserModal .btn-danger"
+        );
+        const originalText = deleteBtn ? deleteBtn.innerHTML : "";
+
+        if (deleteBtn) {
+          deleteBtn.disabled = true;
+          deleteBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin me-1"></i> Deleting...';
+        }
+
+        try {
+          const result = await ApiService.deleteUser(userId);
+
+          bootstrap.Modal.getInstance(
+            document.getElementById("deleteUserModal")
+          ).hide();
+
+          if (result.success) {
+            await loadUsers();
+            await updateStats();
+            showToast("User deleted successfully!", "success");
+          } else {
+            showToast(result.error, "danger");
+          }
+        } catch (err) {
+          bootstrap.Modal.getInstance(
+            document.getElementById("deleteUserModal")
+          ).hide();
+          showToast("Failed to delete user", "danger");
+        } finally {
+          if (deleteBtn) {
+            deleteBtn.disabled = false;
+            deleteBtn.innerHTML = originalText;
+          }
+        }
+      }
+
+      function showToast(message, type = "info") {
+        const toast = document.createElement("div");
+        toast.className = `alert alert-${type} position-fixed`;
+        toast.style.cssText =
+          "top: 80px; right: 20px; z-index: 9999; min-width: 300px; animation: slideIn 0.3s ease;";
+        toast.innerHTML = `
+                <i class="fas fa-${
+                  type === "success"
+                    ? "check-circle"
+                    : type === "danger"
+                    ? "exclamation-circle"
+                    : "info-circle"
+                } me-2"></i>
+                ${message}
+            `;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+
+      function capitalizeFirst(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      }
+
+      function logout() {
+        sessionStorage.clear();
+        window.location.href = "index.html";
+      }
     </script>
-</body>
+  </body>
 </html>

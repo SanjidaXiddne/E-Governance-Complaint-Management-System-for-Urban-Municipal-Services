@@ -1,0 +1,43 @@
+{
+  "name": "e-governance-complaint-management-system",
+  "version": "1.0.0",
+  "description": "E-Governance Complaint Management System for Urban Municipal Services",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js",
+    "seed": "node server/seed.js",
+    "seed:complaints": "node server/seedComplaints.js",
+    "seed:all": "node server/seed.js && node server/seedComplaints.js",
+    "test": "jest --coverage --detectOpenHandles",
+    "test:watch": "jest --watch",
+    "lint": "eslint server/**/*.js"
+  },
+  "keywords": [
+    "e-governance",
+    "complaint-management",
+    "municipal-services",
+    "express",
+    "mongodb",
+    "mongoose"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "helmet": "^7.2.0",
+    "mongoose": "^8.20.2",
+    "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^9.5.0",
+    "nodemon": "^3.1.11",
+    "supertest": "^6.3.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

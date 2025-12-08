@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Citizen Dashboard - Municipal Services</title>
+    <title>Citizen Dashboard - Citizen Portal</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -77,6 +77,297 @@
           transform: rotate(360deg);
         }
       }
+
+      /* Profile Drawer Styles */
+      .profile-drawer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .profile-drawer-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .profile-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 420px;
+        max-width: 100%;
+        height: 100%;
+        background: white;
+        z-index: 1050;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .profile-drawer.active {
+        transform: translateX(0);
+      }
+
+      .drawer-header {
+        background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+        color: white;
+        padding: 1.5rem;
+        position: relative;
+      }
+
+      .drawer-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .drawer-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .drawer-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 1rem;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+      }
+
+      .drawer-section-title {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--secondary-color);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .drawer-form-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .drawer-form-group label {
+        display: block;
+        font-weight: 500;
+        color: #334155;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .drawer-form-group label i {
+        width: 20px;
+        color: var(--secondary-color);
+        margin-right: 0.5rem;
+      }
+
+      .drawer-form-group input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .drawer-form-group input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .drawer-form-group input.is-invalid {
+        border-color: var(--danger-color);
+      }
+
+      .drawer-form-group input:disabled {
+        background: #f8fafc;
+        color: var(--secondary-color);
+        cursor: not-allowed;
+      }
+
+      .drawer-form-group .invalid-feedback {
+        color: var(--danger-color);
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        display: none;
+      }
+
+      .drawer-form-group input.is-invalid + .invalid-feedback {
+        display: block;
+      }
+
+      .password-toggle {
+        position: relative;
+      }
+
+      .password-toggle input {
+        padding-right: 45px;
+      }
+
+      .password-toggle button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--secondary-color);
+        cursor: pointer;
+        padding: 5px;
+      }
+
+      .password-toggle button:hover {
+        color: var(--primary-color);
+      }
+
+      .drawer-footer {
+        padding: 1rem 1.5rem;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .drawer-footer .btn {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .btn-save {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+      }
+
+      .btn-save:hover:not(:disabled) {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+      }
+
+      .btn-save:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn-cancel {
+        background: white;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+      }
+
+      .btn-cancel:hover {
+        background: #f1f5f9;
+        color: #334155;
+      }
+
+      .user-clickable {
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+      }
+
+      .user-clickable:hover {
+        opacity: 0.8;
+      }
+
+      /* Loading spinner for save button */
+      .btn-save .spinner-border {
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.5rem;
+      }
+
+      /* Toast notification for profile updates */
+      .profile-toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: var(--success-color);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: var(--shadow-lg);
+        z-index: 1060;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
+      .profile-toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .profile-toast.error {
+        background: var(--danger-color);
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 576px) {
+        .profile-drawer {
+          width: 100%;
+        }
+
+        .drawer-header {
+          padding: 1.25rem;
+        }
+
+        .drawer-avatar {
+          width: 60px;
+          height: 60px;
+          font-size: 1.5rem;
+        }
+
+        .drawer-body {
+          padding: 1rem;
+        }
+
+        .drawer-footer {
+          padding: 1rem;
+          flex-direction: column;
+        }
+
+        .drawer-footer .btn {
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -94,7 +385,7 @@
             height="32"
             class="me-2"
           />
-          Municipal Services
+          Citizen Portal
         </a>
         <button
           class="navbar-toggler"
@@ -150,7 +441,11 @@
               </ul>
             </li>
             <li class="nav-item ms-lg-3">
-              <div class="d-flex align-items-center">
+              <div
+                class="d-flex align-items-center user-clickable"
+                onclick="openProfileDrawer()"
+                title="Click to edit profile"
+              >
                 <div
                   class="user-avatar bg-secondary text-white me-2"
                   id="userInitials"
@@ -163,6 +458,10 @@
                     Citizen
                   </div>
                 </div>
+                <i
+                  class="fas fa-chevron-right ms-2 d-none d-lg-inline text-muted"
+                  style="font-size: 0.7rem"
+                ></i>
               </div>
             </li>
             <li class="nav-item ms-3">
@@ -316,9 +615,228 @@
       </div>
     </div>
 
+    <!-- Profile Drawer Overlay -->
+    <div
+      class="profile-drawer-overlay"
+      id="profileDrawerOverlay"
+      onclick="closeProfileDrawer()"
+    ></div>
+
+    <!-- Profile Drawer -->
+    <div class="profile-drawer" id="profileDrawer">
+      <div class="drawer-header">
+        <button
+          class="drawer-close"
+          onclick="closeProfileDrawer()"
+          aria-label="Close"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="drawer-avatar" id="drawerAvatar">JD</div>
+        <h5 class="mb-1" id="drawerName">John Doe</h5>
+        <p class="mb-0 opacity-75" style="font-size: 0.9rem">
+          <i class="fas fa-user-circle me-1"></i>Citizen Account
+        </p>
+      </div>
+
+      <div class="drawer-body">
+        <form id="profileForm" novalidate>
+          <!-- Personal Information -->
+          <h6 class="drawer-section-title">
+            <i class="fas fa-user me-2"></i>Personal Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileName">
+              <i class="fas fa-id-card"></i>Full Name
+            </label>
+            <input
+              type="text"
+              id="profileName"
+              name="name"
+              placeholder="Enter your full name"
+              required
+              minlength="2"
+              maxlength="50"
+            />
+            <div class="invalid-feedback">
+              Please enter a valid name (2-50 characters)
+            </div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileEmail">
+              <i class="fas fa-envelope"></i>Email Address
+            </label>
+            <input
+              type="email"
+              id="profileEmail"
+              name="email"
+              placeholder="Enter your email"
+              disabled
+              title="Email cannot be changed"
+            />
+            <small class="text-muted"
+              ><i class="fas fa-lock me-1"></i>Email cannot be changed</small
+            >
+          </div>
+
+          <!-- Contact Information -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-phone me-2"></i>Contact Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profilePhone">
+              <i class="fas fa-mobile-alt"></i>Phone Number
+            </label>
+            <input
+              type="tel"
+              id="profilePhone"
+              name="phone"
+              placeholder="Enter your phone number"
+              pattern="[\+]?[0-9\s\-]{10,15}"
+            />
+            <div class="invalid-feedback">
+              Please enter a valid phone number
+            </div>
+          </div>
+
+          <!-- Security -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-shield-alt me-2"></i>Security
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileCurrentPassword">
+              <i class="fas fa-key"></i>Current Password
+            </label>
+            <div class="password-toggle">
+              <input
+                type="password"
+                id="profileCurrentPassword"
+                name="currentPassword"
+                placeholder="Enter current password"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                onclick="togglePassword('profileCurrentPassword')"
+                aria-label="Toggle password visibility"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">Current password is incorrect</div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileNewPassword">
+              <i class="fas fa-lock"></i>New Password
+            </label>
+            <div class="password-toggle">
+              <input
+                type="password"
+                id="profileNewPassword"
+                name="newPassword"
+                placeholder="Enter new password (leave blank to keep current)"
+                minlength="6"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                onclick="togglePassword('profileNewPassword')"
+                aria-label="Toggle password visibility"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">
+              Password must be at least 6 characters
+            </div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileConfirmPassword">
+              <i class="fas fa-lock"></i>Confirm New Password
+            </label>
+            <div class="password-toggle">
+              <input
+                type="password"
+                id="profileConfirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm new password"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                onclick="togglePassword('profileConfirmPassword')"
+                aria-label="Toggle password visibility"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">Passwords do not match</div>
+          </div>
+
+          <!-- Account Info (Read Only) -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-info-circle me-2"></i>Account Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileUserId">
+              <i class="fas fa-hashtag"></i>User ID
+            </label>
+            <input type="text" id="profileUserId" name="userId" disabled />
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileCreatedAt">
+              <i class="fas fa-calendar-plus"></i>Member Since
+            </label>
+            <input
+              type="text"
+              id="profileCreatedAt"
+              name="createdAt"
+              disabled
+            />
+          </div>
+        </form>
+      </div>
+
+      <div class="drawer-footer">
+        <button
+          type="button"
+          class="btn btn-cancel"
+          onclick="closeProfileDrawer()"
+        >
+          <i class="fas fa-times me-1"></i>Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-save"
+          onclick="saveProfile()"
+          id="saveProfileBtn"
+        >
+          <i class="fas fa-save me-1"></i>Save Changes
+        </button>
+      </div>
+    </div>
+
+    <!-- Profile Toast Notification -->
+    <div class="profile-toast" id="profileToast">
+      <i class="fas fa-check-circle me-2"></i>
+      <span id="profileToastMessage">Profile updated successfully!</span>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- User Service -->
+    <script src="user-service.js"></script>
     <!-- Real-time Complaint Service -->
     <script src="complaint-service.js"></script>
+    <!-- API Service for MongoDB -->
+    <script src="api-service.js"></script>
     <script>
       // Dashboard state
       let currentUserEmail = "john@example.com";
@@ -329,31 +847,106 @@
       document.addEventListener("DOMContentLoaded", function () {
         // Get user info
         const userName = sessionStorage.getItem("userName") || "John Doe";
-        currentUserEmail =
-          sessionStorage.getItem("userEmail") || "john@example.com";
+        currentUserEmail = (
+          sessionStorage.getItem("userEmail") || "john@example.com"
+        ).toLowerCase();
+
+        console.log("Dashboard initialized for:", currentUserEmail);
 
         // Set user display
         document.getElementById("userName").textContent = userName;
         document.getElementById("welcomeName").textContent =
           userName.split(" ")[0];
         document.getElementById("userInitials").textContent =
-          ComplaintService.getInitials(userName);
+          ApiService.getInitials
+            ? ApiService.getInitials(userName)
+            : ComplaintService.getInitials(userName);
 
         // Load initial data
         loadDashboardData();
 
         // Subscribe to real-time updates
         ComplaintService.subscribe(handleRealtimeUpdate);
+        if (ApiService.subscribe) {
+          ApiService.subscribe(handleRealtimeUpdate);
+        }
       });
 
-      // Load dashboard data
-      function loadDashboardData() {
-        const complaints =
-          ComplaintService.getComplaintsForCitizen(currentUserEmail);
-        const stats = calculateStats(complaints);
+      // Load dashboard data - from MongoDB via API
+      async function loadDashboardData() {
+        const email = currentUserEmail.toLowerCase();
+        console.log("Loading complaints for email:", email);
 
-        updateStats(stats);
-        renderComplaintsTable(complaints);
+        try {
+          // Get complaints from MongoDB
+          const apiComplaints = await ApiService.getComplaintsByEmail(email);
+          console.log("API returned:", apiComplaints);
+
+          let complaints = [];
+
+          if (
+            apiComplaints &&
+            Array.isArray(apiComplaints) &&
+            apiComplaints.length > 0
+          ) {
+            // Map MongoDB format to display format
+            complaints = apiComplaints.map((c) => ({
+              id: c.complaintId || c._id || c.id,
+              category: c.category,
+              categoryLabel: c.categoryLabel || c.category,
+              description: c.description,
+              location: c.location,
+              status: c.status,
+              priority: c.priority,
+              citizen: c.citizen,
+              assignedTo: c.assignedTo,
+              timeline: c.timeline,
+              createdAt: c.createdAt,
+              updatedAt: c.updatedAt,
+              resolvedAt: c.resolvedAt,
+            }));
+            console.log("Mapped complaints:", complaints);
+          } else {
+            console.log("No complaints from API, checking localStorage...");
+            // Fallback to localStorage if API returns nothing
+            const localComplaints =
+              ComplaintService.getComplaintsForCitizen(email);
+            if (localComplaints && localComplaints.length > 0) {
+              complaints = localComplaints;
+              console.log("Using localStorage complaints:", complaints);
+            }
+          }
+
+          const stats = calculateStats(complaints);
+          updateStats(stats);
+
+          // Check if there's a newly created complaint to highlight
+          const lastCreated = sessionStorage.getItem("lastCreatedComplaint");
+          if (lastCreated) {
+            renderComplaintsTable(complaints, [lastCreated]);
+            sessionStorage.removeItem("lastCreatedComplaint");
+            ComplaintService.showNotification(
+              `Showing ${complaints.length} complaint(s) for your account`,
+              "info"
+            );
+          } else {
+            renderComplaintsTable(complaints);
+          }
+        } catch (err) {
+          console.error("Error loading complaints:", err);
+          // Fallback to localStorage on error
+          try {
+            const localComplaints =
+              ComplaintService.getComplaintsForCitizen(currentUserEmail) || [];
+            const stats = calculateStats(localComplaints);
+            updateStats(stats);
+            renderComplaintsTable(localComplaints);
+          } catch (e) {
+            const stats = calculateStats([]);
+            updateStats(stats);
+            renderComplaintsTable([]);
+          }
+        }
       }
 
       // Calculate stats for citizen
@@ -447,8 +1040,8 @@
         }, 3000);
       }
 
-      // Handle real-time updates
-      function handleRealtimeUpdate(type, data) {
+      // Handle real-time updates - loads from MongoDB
+      async function handleRealtimeUpdate(type, data) {
         console.log("Real-time update:", type, data);
 
         // Helper to check if complaint belongs to current user
@@ -463,12 +1056,12 @@
         switch (type) {
           case "NEW_COMPLAINT":
             if (data.citizen.email === currentUserEmail) {
-              // This user's complaint - refresh data
-              const complaints =
-                ComplaintService.getComplaintsForCitizen(currentUserEmail);
-              const stats = calculateStats(complaints);
-              updateStats(stats, true);
-              renderComplaintsTable(complaints, [data.id]);
+              // This user's complaint - refresh data from MongoDB
+              await loadDashboardData();
+              ComplaintService.showNotification(
+                `Your complaint #${data.id} has been submitted successfully!`,
+                "success"
+              );
             }
             break;
 
@@ -610,17 +1203,20 @@
         }
       }
 
-      // Refresh data manually
-      function refreshData() {
+      // Refresh data manually from MongoDB
+      async function refreshData() {
         const btn = document.getElementById("refreshBtn");
         const icon = btn.querySelector("i");
         icon.classList.add("refresh-spin");
 
-        setTimeout(() => {
-          loadDashboardData();
-          icon.classList.remove("refresh-spin");
+        try {
+          await loadDashboardData();
           ComplaintService.showNotification("Dashboard refreshed!", "success");
-        }, 500);
+        } catch (err) {
+          ComplaintService.showNotification("Failed to refresh data", "danger");
+        } finally {
+          icon.classList.remove("refresh-spin");
+        }
       }
 
       // View complaint details
@@ -633,6 +1229,407 @@
         sessionStorage.clear();
         window.location.href = "index.html";
       }
+
+      // ============================================
+      // PROFILE DRAWER FUNCTIONALITY
+      // ============================================
+
+      let currentUserData = null;
+      let isDrawerOpen = false;
+
+      // Open profile drawer
+      async function openProfileDrawer() {
+        const drawer = document.getElementById("profileDrawer");
+        const overlay = document.getElementById("profileDrawerOverlay");
+
+        // Load current user data from MongoDB
+        await loadUserDataToDrawer();
+
+        // Show overlay and drawer with animation
+        overlay.classList.add("active");
+        drawer.classList.add("active");
+        isDrawerOpen = true;
+
+        // Prevent body scroll
+        document.body.style.overflow = "hidden";
+
+        // Add escape key listener
+        document.addEventListener("keydown", handleEscapeKey);
+      }
+
+      // Close profile drawer
+      function closeProfileDrawer() {
+        const drawer = document.getElementById("profileDrawer");
+        const overlay = document.getElementById("profileDrawerOverlay");
+
+        // Hide with animation
+        drawer.classList.remove("active");
+        overlay.classList.remove("active");
+        isDrawerOpen = false;
+
+        // Restore body scroll
+        document.body.style.overflow = "";
+
+        // Remove escape key listener
+        document.removeEventListener("keydown", handleEscapeKey);
+
+        // Reset form validation states
+        resetFormValidation();
+      }
+
+      // Handle escape key to close drawer
+      function handleEscapeKey(e) {
+        if (e.key === "Escape" && isDrawerOpen) {
+          closeProfileDrawer();
+        }
+      }
+
+      // Load user data into the drawer form
+      async function loadUserDataToDrawer() {
+        const userId = sessionStorage.getItem("userId");
+        const userEmail =
+          sessionStorage.getItem("userEmail") || currentUserEmail;
+        const userName = sessionStorage.getItem("userName") || "John Doe";
+
+        // Try to load from MongoDB first
+        if (userId && typeof ApiService !== "undefined") {
+          try {
+            const userData = await ApiService.getUserById(userId);
+            if (userData) {
+              currentUserData = userData;
+              console.log("Loaded user from MongoDB:", currentUserData);
+            }
+          } catch (err) {
+            console.error("Error loading user from API:", err);
+          }
+        }
+
+        // Fallback to session storage data if API fails
+        if (!currentUserData) {
+          currentUserData = {
+            id: userId || "USR-001",
+            name: userName,
+            email: userEmail,
+            phone: sessionStorage.getItem("userPhone") || "",
+            password: "",
+            createdAt:
+              sessionStorage.getItem("userCreatedAt") ||
+              new Date().toISOString(),
+          };
+        }
+
+        // Populate form fields
+        document.getElementById("profileName").value =
+          currentUserData.name || "";
+        document.getElementById("profileEmail").value =
+          currentUserData.email || "";
+        document.getElementById("profilePhone").value =
+          currentUserData.phone || "";
+        document.getElementById("profileUserId").value =
+          currentUserData.id || currentUserData._id || "";
+        document.getElementById("profileCreatedAt").value = formatMemberSince(
+          currentUserData.createdAt
+        );
+
+        // Update drawer header
+        const initials =
+          typeof ApiService !== "undefined"
+            ? ApiService.getInitials(currentUserData.name)
+            : getInitials(currentUserData.name);
+        document.getElementById("drawerAvatar").textContent = initials;
+        document.getElementById("drawerName").textContent =
+          currentUserData.name;
+
+        // Clear password fields
+        document.getElementById("profileCurrentPassword").value = "";
+        document.getElementById("profileNewPassword").value = "";
+        document.getElementById("profileConfirmPassword").value = "";
+      }
+
+      // Get initials from name
+      function getInitials(name) {
+        if (!name) return "NA";
+        return name
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase())
+          .slice(0, 2)
+          .join("");
+      }
+
+      // Format member since date
+      function formatMemberSince(isoString) {
+        if (!isoString) return "N/A";
+        const date = new Date(isoString);
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        return date.toLocaleDateString("en-US", options);
+      }
+
+      // Toggle password visibility
+      function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = input.nextElementSibling.querySelector("i");
+
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          input.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+      }
+
+      // Validate form
+      function validateProfileForm() {
+        let isValid = true;
+        resetFormValidation();
+
+        // Validate name
+        const nameInput = document.getElementById("profileName");
+        const nameValue = nameInput.value.trim();
+        if (!nameValue || nameValue.length < 2 || nameValue.length > 50) {
+          nameInput.classList.add("is-invalid");
+          isValid = false;
+        }
+
+        // Validate phone (optional, but if provided must be valid)
+        const phoneInput = document.getElementById("profilePhone");
+        const phoneValue = phoneInput.value.trim();
+        if (
+          phoneValue &&
+          !/^[\+]?[0-9\s\-]{10,15}$/.test(phoneValue.replace(/\s/g, ""))
+        ) {
+          phoneInput.classList.add("is-invalid");
+          isValid = false;
+        }
+
+        // Validate password fields
+        const currentPassword = document.getElementById(
+          "profileCurrentPassword"
+        ).value;
+        const newPassword = document.getElementById("profileNewPassword").value;
+        const confirmPassword = document.getElementById(
+          "profileConfirmPassword"
+        ).value;
+
+        // If user wants to change password
+        if (newPassword || confirmPassword) {
+          // Current password is required to change password
+          if (!currentPassword) {
+            document
+              .getElementById("profileCurrentPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          } else if (
+            currentUserData &&
+            currentPassword !== currentUserData.password
+          ) {
+            document
+              .getElementById("profileCurrentPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          }
+
+          // New password must be at least 6 characters
+          if (newPassword && newPassword.length < 6) {
+            document
+              .getElementById("profileNewPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          }
+
+          // Passwords must match
+          if (newPassword !== confirmPassword) {
+            document
+              .getElementById("profileConfirmPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          }
+        }
+
+        return isValid;
+      }
+
+      // Reset form validation states
+      function resetFormValidation() {
+        const inputs = document.querySelectorAll("#profileForm input");
+        inputs.forEach((input) => {
+          input.classList.remove("is-invalid");
+        });
+      }
+
+      // Save profile to MongoDB
+      async function saveProfile() {
+        // Validate form
+        if (!validateProfileForm()) {
+          showProfileToast("Please fix the errors in the form", "error");
+          return;
+        }
+
+        const saveBtn = document.getElementById("saveProfileBtn");
+        const originalContent = saveBtn.innerHTML;
+
+        // Show loading state
+        saveBtn.disabled = true;
+        saveBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status"></span> Saving...';
+
+        // Collect form data
+        const updates = {
+          name: document.getElementById("profileName").value.trim(),
+          phone: document.getElementById("profilePhone").value.trim(),
+        };
+
+        // Check if password is being updated
+        const newPassword = document.getElementById("profileNewPassword").value;
+        if (newPassword) {
+          updates.password = newPassword;
+        }
+
+        try {
+          // Get user ID from session
+          const userId = sessionStorage.getItem("userId");
+
+          if (!userId) {
+            throw new Error("User ID not found. Please log in again.");
+          }
+
+          // Update via API (saves to MongoDB)
+          const result = await ApiService.updateUser(userId, updates);
+
+          if (result) {
+            console.log("Profile updated in MongoDB:", result);
+
+            // Update local data
+            if (currentUserData) {
+              currentUserData = { ...currentUserData, ...updates };
+            }
+
+            // Update session storage
+            sessionStorage.setItem("userName", updates.name);
+            if (updates.phone) {
+              sessionStorage.setItem("userPhone", updates.phone);
+            }
+
+            // Update UI elements
+            document.getElementById("userName").textContent = updates.name;
+            document.getElementById("welcomeName").textContent =
+              updates.name.split(" ")[0];
+            const newInitials = getInitials(updates.name);
+            document.getElementById("userInitials").textContent = newInitials;
+            document.getElementById("drawerAvatar").textContent = newInitials;
+            document.getElementById("drawerName").textContent = updates.name;
+
+            // Show success message
+            showProfileToast(
+              "Profile saved to database successfully!",
+              "success"
+            );
+
+            // Clear password fields
+            document.getElementById("profileCurrentPassword").value = "";
+            document.getElementById("profileNewPassword").value = "";
+            document.getElementById("profileConfirmPassword").value = "";
+
+            // Close drawer after short delay
+            setTimeout(() => {
+              closeProfileDrawer();
+            }, 1000);
+          } else {
+            throw new Error("Failed to update profile in database");
+          }
+        } catch (error) {
+          console.error("Error saving profile:", error);
+          showProfileToast(
+            error.message || "Failed to save profile. Please try again.",
+            "error"
+          );
+        } finally {
+          // Reset save button
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = originalContent;
+        }
+      }
+
+      // Show toast notification
+      function showProfileToast(message, type = "success") {
+        const toast = document.getElementById("profileToast");
+        const toastMessage = document.getElementById("profileToastMessage");
+        const toastIcon = toast.querySelector("i");
+
+        // Update content
+        toastMessage.textContent = message;
+
+        // Update style based on type
+        toast.classList.remove("error");
+        toastIcon.className = "fas fa-check-circle me-2";
+
+        if (type === "error") {
+          toast.classList.add("error");
+          toastIcon.className = "fas fa-exclamation-circle me-2";
+        }
+
+        // Show toast
+        toast.classList.add("show");
+
+        // Hide after 3 seconds
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // Add input event listeners for real-time validation feedback
+      document.addEventListener("DOMContentLoaded", function () {
+        // Name field validation
+        const nameInput = document.getElementById("profileName");
+        if (nameInput) {
+          nameInput.addEventListener("input", function () {
+            if (this.value.trim().length >= 2) {
+              this.classList.remove("is-invalid");
+            }
+          });
+        }
+
+        // Phone field validation
+        const phoneInput = document.getElementById("profilePhone");
+        if (phoneInput) {
+          phoneInput.addEventListener("input", function () {
+            const value = this.value.trim().replace(/\s/g, "");
+            if (!value || /^[\+]?[0-9\s\-]{10,15}$/.test(value)) {
+              this.classList.remove("is-invalid");
+            }
+          });
+        }
+
+        // Password fields validation
+        const newPasswordInput = document.getElementById("profileNewPassword");
+        const confirmPasswordInput = document.getElementById(
+          "profileConfirmPassword"
+        );
+
+        if (newPasswordInput) {
+          newPasswordInput.addEventListener("input", function () {
+            if (!this.value || this.value.length >= 6) {
+              this.classList.remove("is-invalid");
+            }
+            // Check if confirm password matches
+            if (confirmPasswordInput && confirmPasswordInput.value) {
+              if (this.value === confirmPasswordInput.value) {
+                confirmPasswordInput.classList.remove("is-invalid");
+              }
+            }
+          });
+        }
+
+        if (confirmPasswordInput) {
+          confirmPasswordInput.addEventListener("input", function () {
+            if (newPasswordInput && this.value === newPasswordInput.value) {
+              this.classList.remove("is-invalid");
+            }
+          });
+        }
+      });
     </script>
   </body>
 </html>

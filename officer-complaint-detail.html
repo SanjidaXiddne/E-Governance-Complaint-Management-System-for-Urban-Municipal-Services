@@ -206,7 +206,7 @@
             height="32"
             class="me-2"
           />
-          Municipal Services
+          Officers Portal
         </a>
         <button
           class="navbar-toggler"
@@ -505,108 +505,14 @@
             </div>
 
             <div class="technician-list" id="technicianList">
-              <div
-                class="card technician-card mb-3 position-relative"
-                data-tech-id="TECH-001"
-                data-name="Mohammad Rafiq"
-                data-phone="+880 1712 345678"
-                data-specialty="plumbing"
-                onclick="selectTechnician(this)"
-              >
-                <div class="card-body p-3">
-                  <div class="d-flex align-items-center">
-                    <div class="user-avatar bg-success text-white me-3">MR</div>
-                    <div class="flex-grow-1">
-                      <div class="fw-bold">Mohammad Rafiq</div>
-                      <div class="small text-muted">
-                        <i class="fas fa-wrench me-1"></i>Plumbing Specialist
-                      </div>
-                      <div class="small text-muted">
-                        <i class="fas fa-phone me-1"></i>+880 1712 345678
-                      </div>
-                    </div>
-                    <div class="text-end">
-                      <span class="badge bg-success availability-badge"
-                        >Available</span
-                      >
-                      <div class="small text-muted mt-1">
-                        <i class="fas fa-tasks me-1"></i>2 Active Tasks
-                      </div>
-                    </div>
-                    <div class="check-icon ms-3">
-                      <i class="fas fa-check"></i>
-                    </div>
-                  </div>
+              <!-- Technicians will be loaded from MongoDB -->
+              <div class="text-center py-4" id="technicianLoading">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading technicians...</span>
                 </div>
-              </div>
-              <div
-                class="card technician-card mb-3 position-relative"
-                data-tech-id="TECH-002"
-                data-name="Abdul Karim"
-                data-phone="+880 1718 987654"
-                data-specialty="plumbing"
-                onclick="selectTechnician(this)"
-              >
-                <div class="card-body p-3">
-                  <div class="d-flex align-items-center">
-                    <div class="user-avatar bg-primary text-white me-3">AK</div>
-                    <div class="flex-grow-1">
-                      <div class="fw-bold">Abdul Karim</div>
-                      <div class="small text-muted">
-                        <i class="fas fa-wrench me-1"></i>Plumbing Specialist
-                      </div>
-                      <div class="small text-muted">
-                        <i class="fas fa-phone me-1"></i>+880 1718 987654
-                      </div>
-                    </div>
-                    <div class="text-end">
-                      <span class="badge bg-success availability-badge"
-                        >Available</span
-                      >
-                      <div class="small text-muted mt-1">
-                        <i class="fas fa-tasks me-1"></i>1 Active Task
-                      </div>
-                    </div>
-                    <div class="check-icon ms-3">
-                      <i class="fas fa-check"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="card technician-card mb-3 position-relative"
-                data-tech-id="TECH-003"
-                data-name="Fazlur Rahman"
-                data-phone="+880 1755 112233"
-                data-specialty="electrical"
-                onclick="selectTechnician(this)"
-              >
-                <div class="card-body p-3">
-                  <div class="d-flex align-items-center">
-                    <div class="user-avatar bg-warning text-dark me-3">FR</div>
-                    <div class="flex-grow-1">
-                      <div class="fw-bold">Fazlur Rahman</div>
-                      <div class="small text-muted">
-                        <i class="fas fa-bolt me-1"></i>Electrical Specialist
-                      </div>
-                      <div class="small text-muted">
-                        <i class="fas fa-phone me-1"></i>+880 1755 112233
-                      </div>
-                    </div>
-                    <div class="text-end">
-                      <span
-                        class="badge bg-warning text-dark availability-badge"
-                        >Busy</span
-                      >
-                      <div class="small text-muted mt-1">
-                        <i class="fas fa-tasks me-1"></i>4 Active Tasks
-                      </div>
-                    </div>
-                    <div class="check-icon ms-3">
-                      <i class="fas fa-check"></i>
-                    </div>
-                  </div>
-                </div>
+                <p class="text-muted mt-2">
+                  Loading technicians from database...
+                </p>
               </div>
             </div>
 
@@ -771,6 +677,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Real-time Complaint Service -->
     <script src="complaint-service.js"></script>
+    <!-- API Service for MongoDB -->
+    <script src="api-service.js"></script>
     <script>
       // State management
       let currentComplaintId = "CMPT-130";
@@ -798,15 +706,61 @@
           document.getElementById("updateStatusModal")
         );
 
-        // Load complaint data
+        // Load complaint data from MongoDB
         loadComplaintData();
 
         // Subscribe to real-time updates
         ComplaintService.subscribe(handleRealtimeUpdate);
       });
 
-      // Load complaint data
-      function loadComplaintData() {
+      // Load complaint data from MongoDB via API
+      async function loadComplaintData() {
+        try {
+          // Fetch from MongoDB API
+          const complaint = await ApiService.getComplaintById(
+            currentComplaintId
+          );
+
+          if (complaint) {
+            // Map MongoDB format to local format
+            currentComplaint = {
+              id: complaint.complaintId || complaint.id,
+              category: complaint.category,
+              categoryLabel: complaint.categoryLabel,
+              description: complaint.description,
+              location: complaint.location,
+              status: complaint.status,
+              priority: complaint.priority,
+              citizen: {
+                name: complaint.citizen?.name || "Unknown",
+                email: complaint.citizen?.email || "",
+                phone: complaint.citizen?.phone || "",
+                initials: ApiService.getInitials(
+                  complaint.citizen?.name || "U"
+                ),
+              },
+              assignedTo: complaint.assignedTo,
+              timeline: complaint.timeline || [],
+              createdAt: complaint.createdAt,
+              updatedAt: complaint.updatedAt,
+              resolvedAt: complaint.resolvedAt,
+            };
+            currentComplaintId = currentComplaint.id;
+            updateComplaintDisplay();
+            renderTimeline();
+          } else {
+            // Fallback to localStorage
+            loadFromLocalStorage();
+          }
+        } catch (err) {
+          console.error("Error loading complaint from API:", err);
+          // Fallback to localStorage
+          loadFromLocalStorage();
+        }
+      }
+
+      // Fallback to load from localStorage
+      function loadFromLocalStorage() {
         currentComplaint =
           ComplaintService.getComplaintById(currentComplaintId);
 
@@ -863,9 +817,12 @@
         updateActionButtons();
       }
 
-      // Render timeline with real-time data
+      // Render timeline with real-time data from MongoDB
       function renderTimeline() {
-        const timeline = ComplaintService.getTimeline(currentComplaintId);
+        // Use timeline from currentComplaint (from MongoDB) or fallback to local
+        const timeline =
+          currentComplaint?.timeline ||
+          ComplaintService.getTimeline(currentComplaintId);
         const container = document.getElementById("statusTimeline");
 
         if (timeline.length === 0) {
@@ -914,14 +871,14 @@
           .join("");
       }
 
-      // Handle real-time updates
-      function handleRealtimeUpdate(type, data) {
+      // Handle real-time updates - reload from MongoDB
+      async function handleRealtimeUpdate(type, data) {
         console.log("Officer Detail - Real-time update:", type, data);
 
         switch (type) {
           case "TIMELINE_UPDATED":
             if (data.complaintId === currentComplaintId) {
-              renderTimeline();
+              await loadComplaintData();
               ComplaintService.showNotification(
                 "Timeline updated with new entry",
                 "info"
@@ -931,9 +888,7 @@
 
           case "STATUS_CHANGED":
             if (data.complaintId === currentComplaintId) {
-              currentComplaint = data.complaint;
-              updateComplaintDisplay();
-              renderTimeline();
+              await loadComplaintData();
               ComplaintService.showNotification(
                 `Status changed to ${ComplaintService.getStatusLabel(
                   data.newStatus
@@ -945,17 +900,14 @@
 
           case "COMPLAINT_UPDATED":
             if (data.id === currentComplaintId) {
-              currentComplaint = data;
-              updateComplaintDisplay();
+              await loadComplaintData();
             }
             break;
 
           case "TASK_STARTED":
           case "PROGRESS_UPDATE":
             if (data.complaintId === currentComplaintId) {
-              currentComplaint = data.complaint;
-              updateComplaintDisplay();
-              renderTimeline();
+              await loadComplaintData();
               ComplaintService.showNotification(
                 type === "TASK_STARTED"
                   ? "Technician has started working on this task!"
@@ -967,9 +919,7 @@
 
           case "TASK_COMPLETED":
             if (data.complaintId === currentComplaintId) {
-              currentComplaint = data.complaint;
-              updateComplaintDisplay();
-              renderTimeline();
+              await loadComplaintData();
               ComplaintService.showNotification(
                 "🎉 Task has been marked as complete by the technician!",
                 "success"
@@ -978,7 +928,7 @@
             break;
 
           case "DATA_RESET":
-            loadComplaintData();
+            await loadComplaintData();
             break;
         }
       }
@@ -1026,18 +976,191 @@
         card.style.display = "block";
       }
 
-      // Open technician modal
-      function openTechnicianModal() {
+      // Load technicians from MongoDB
+      let allTechnicians = [];
+
+      async function loadTechnicians() {
+        const listContainer = document.getElementById("technicianList");
+
+        // Show loading state
+        listContainer.innerHTML = `
+          <div class="text-center py-4" id="technicianLoading">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading technicians...</span>
+            </div>
+            <p class="text-muted mt-2">Loading technicians from database...</p>
+          </div>
+        `;
+
+        try {
+          // Fetch technicians from API
+          allTechnicians = await ApiService.getUsersByRole("technician");
+          console.log("Loaded technicians from MongoDB:", allTechnicians);
+
+          if (!allTechnicians || allTechnicians.length === 0) {
+            listContainer.innerHTML = `
+              <div class="text-center py-4 text-muted">
+                <i class="fas fa-user-slash fa-2x mb-3"></i>
+                <p>No technicians found in the database.</p>
+              </div>
+            `;
+            return;
+          }
+
+          // Fetch task counts for each technician (in parallel)
+          const taskCountPromises = allTechnicians.map(async (tech) => {
+            const techId = tech.technicianId || tech.id || tech._id;
+            try {
+              const complaints = await ApiService.getComplaintsByTechnician(
+                techId
+              );
+              // Count tasks by status
+              const inProgress = complaints.filter(
+                (c) => c.status === "in-progress" || c.status === "assigned"
+              ).length;
+              const total = complaints.length;
+              return { techId, inProgress, total };
+            } catch (err) {
+              console.error(`Error fetching tasks for ${techId}:`, err);
+              return { techId, inProgress: 0, total: 0 };
+            }
+          });
+
+          const taskCounts = await Promise.all(taskCountPromises);
+
+          // Create a map for quick lookup
+          const taskCountMap = {};
+          taskCounts.forEach((tc) => {
+            taskCountMap[tc.techId] = tc;
+          });
+
+          // Attach task counts to technicians
+          allTechnicians = allTechnicians.map((tech) => {
+            const techId = tech.technicianId || tech.id || tech._id;
+            const counts = taskCountMap[techId] || { inProgress: 0, total: 0 };
+            return {
+              ...tech,
+              tasksInProgress: counts.inProgress,
+              totalTasks: counts.total,
+            };
+          });
+
+          console.log("Technicians with task counts:", allTechnicians);
+
+          // Render technician cards
+          renderTechnicianList(allTechnicians);
+        } catch (err) {
+          console.error("Error loading technicians:", err);
+          listContainer.innerHTML = `
+            <div class="text-center py-4 text-danger">
+              <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+              <p>Failed to load technicians. Please try again.</p>
+            </div>
+          `;
+        }
+      }
+
+      function renderTechnicianList(technicians) {
+        const listContainer = document.getElementById("technicianList");
+        const colors = [
+          "bg-success",
+          "bg-primary",
+          "bg-warning",
+          "bg-info",
+          "bg-secondary",
+        ];
+
+        listContainer.innerHTML = technicians
+          .map((tech, index) => {
+            const initials = ApiService.getInitials
+              ? ApiService.getInitials(tech.name)
+              : tech.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()
+                  .slice(0, 2);
+            const colorClass = colors[index % colors.length];
+            const textClass =
+              colorClass === "bg-warning" ? "text-dark" : "text-white";
+
+            // Task count display
+            const tasksInProgress = tech.tasksInProgress || 0;
+            const taskBadgeClass =
+              tasksInProgress === 0
+                ? "bg-light text-dark"
+                : tasksInProgress <= 2
+                ? "bg-info text-white"
+                : "bg-danger text-white";
+
+            return `
+            <div
+              class="card technician-card mb-3 position-relative"
+              data-tech-id="${tech.technicianId || tech.id || tech._id}"
+              data-name="${tech.name}"
+              data-phone="${tech.phone || ""}"
+              data-specialty="${(tech.specialty || "general").toLowerCase()}"
+              onclick="selectTechnician(this)"
+            >
+              <div class="card-body p-3">
+                <div class="d-flex align-items-center">
+                  <div class="user-avatar ${colorClass} ${textClass} me-3">${initials}</div>
+                  <div class="flex-grow-1">
+                    <div class="fw-bold">${tech.name}</div>
+                    <div class="small text-muted">
+                      <i class="fas fa-tools me-1"></i>${
+                        tech.specialty || "General"
+                      }
+                    </div>
+                    <div class="small text-muted">
+                      <i class="fas fa-phone me-1"></i>${tech.phone || "N/A"}
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge ${
+                      tech.status === "active"
+                        ? "bg-success"
+                        : "bg-warning text-dark"
+                    } availability-badge">
+                      ${tech.status === "active" ? "Available" : "Busy"}
+                    </span>
+                    <div class="small mt-1">
+                      <span class="badge ${taskBadgeClass}" title="Tasks currently in progress">
+                        <i class="fas fa-tasks me-1"></i>${tasksInProgress} task${
+              tasksInProgress !== 1 ? "s" : ""
+            } in progress
+                      </span>
+                    </div>
+                    <div class="small text-muted mt-1">
+                      <i class="fas fa-id-badge me-1"></i>${
+                        tech.technicianId || "N/A"
+                      }
+                    </div>
+                  </div>
+                  <div class="check-icon ms-3">
+                    <i class="fas fa-check"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          })
+          .join("");
+      }
+
+      // Open technician modal - loads from MongoDB
+      async function openTechnicianModal() {
         selectedTechnician = null;
-        document
-          .querySelectorAll(".technician-card")
-          .forEach((card) => card.classList.remove("selected"));
         document.getElementById("confirmAssignBtn").disabled = true;
         document.getElementById("assignmentNotes").value = "";
         document.getElementById("technicianSearch").value = "";
         document.getElementById("specialtyFilter").value = "";
-        filterTechnicians();
+
+        // Show modal first
         technicianModal.show();
+
+        // Load technicians from MongoDB
+        await loadTechnicians();
       }
 
       // Select technician
@@ -1067,12 +1190,12 @@
         let visibleCount = 0;
 
         cards.forEach((card) => {
-          const name = card.dataset.name.toLowerCase();
-          const specialty = card.dataset.specialty.toLowerCase();
+          const name = (card.dataset.name || "").toLowerCase();
+          const specialty = (card.dataset.specialty || "").toLowerCase();
           const matchesSearch =
             name.includes(searchTerm) || specialty.includes(searchTerm);
           const matchesSpecialty =
-            !specialtyFilter || specialty === specialtyFilter;
+            !specialtyFilter || specialty.includes(specialtyFilter);
 
           if (matchesSearch && matchesSpecialty) {
             card.style.display = "block";
@@ -1086,8 +1209,8 @@
           visibleCount === 0 ? "block" : "none";
       }
 
-      // Confirm assignment
-      function confirmAssignment() {
+      // Confirm assignment - saves to MongoDB
+      async function confirmAssignment() {
         if (!selectedTechnician) return;
 
         const btn = document.getElementById("confirmAssignBtn");
@@ -1099,34 +1222,33 @@
         btn.classList.add("btn-loading");
         btn.disabled = true;
 
-        setTimeout(() => {
-          let result;
+        try {
+          // Assign via API (saves to MongoDB)
+          const result = await ApiService.assignComplaint(
+            currentComplaintId,
+            selectedTechnician.id,
+            selectedTechnician.name,
+            officerName,
+            "officer"
+          );
 
-          if (isReassignment) {
-            // Use reassign function if already assigned
-            result = ComplaintService.reassignTask(
-              currentComplaintId,
-              selectedTechnician,
-              officerName
-            );
-          } else {
-            // Use assign function for new assignment
-            result = ComplaintService.assignTaskToTechnician(
-              currentComplaintId,
-              selectedTechnician,
-              officerName
-            );
-          }
+          if (result && result.success) {
+            console.log("Assignment saved to MongoDB:", result);
 
-          if (result) {
             // Update local state
-            currentComplaint = result.complaint;
+            currentComplaint.assignedTo = {
+              id: selectedTechnician.id,
+              name: selectedTechnician.name,
+            };
+            currentComplaint.status = "in-progress";
 
             // Update UI
             showAssignmentInfo(currentComplaint.assignedTo);
             updateStatusBadge("in-progress");
             updateActionButtons();
-            renderTimeline();
+
+            // Reload to get fresh timeline
+            await loadComplaintData();
 
             ComplaintService.showNotification(
               isReassignment
@@ -1135,41 +1257,63 @@
               "success"
             );
           } else {
-            ComplaintService.showNotification(
-              "Failed to assign complaint. Please try again.",
-              "danger"
-            );
+            throw new Error(result?.error || "Assignment failed");
           }
-
+        } catch (err) {
+          console.error("Error assigning complaint:", err);
+          ComplaintService.showNotification(
+            "Failed to assign complaint. Please try again.",
+            "danger"
+          );
+        } finally {
           btn.classList.remove("btn-loading");
           btn.disabled = false;
           technicianModal.hide();
-        }, 1000);
+        }
       }
 
-      // Update status
-      function updateStatus() {
+      // Update status - saves to MongoDB
+      async function updateStatus() {
         const newStatus = document.getElementById("newStatusSelect").value;
         const comments = document.getElementById("statusComments").value;
+        const actorName = sessionStorage.getItem("userName") || "Officer Jane";
 
-        ComplaintService.updateComplaintStatus(currentComplaintId, newStatus, {
-          description:
+        try {
+          // Update via API (saves to MongoDB)
+          const result = await ApiService.updateComplaintStatus(
+            currentComplaintId,
+            newStatus,
+            actorName,
+            "officer",
             comments ||
-            `Status updated to ${ComplaintService.getStatusLabel(newStatus)}`,
-          actor: sessionStorage.getItem("userName") || "Officer Jane",
-          actorRole: "officer",
-        });
+              `Status updated to ${ComplaintService.getStatusLabel(newStatus)}`
+          );
 
-        currentComplaint.status = newStatus;
-        updateStatusBadge(newStatus);
-        updateActionButtons();
-        renderTimeline();
+          if (result && result.success) {
+            console.log("Status updated in MongoDB:", result);
 
-        updateStatusModal.hide();
-        ComplaintService.showNotification(
-          "Status updated successfully!",
-          "success"
-        );
+            currentComplaint.status = newStatus;
+            updateStatusBadge(newStatus);
+            updateActionButtons();
+
+            // Reload to get fresh timeline
+            await loadComplaintData();
+
+            updateStatusModal.hide();
+            ComplaintService.showNotification(
+              "Status updated in database successfully!",
+              "success"
+            );
+          } else {
+            throw new Error(result?.error || "Status update failed");
+          }
+        } catch (err) {
+          console.error("Error updating status:", err);
+          ComplaintService.showNotification(
+            "Failed to update status. Please try again.",
+            "danger"
+          );
+        }
       }
 
       // Reject complaint
@@ -1179,10 +1323,11 @@
         rejectModal.show();
       }
 
-      // Confirm rejection
-      function confirmRejection() {
+      // Confirm rejection - saves to MongoDB
+      async function confirmRejection() {
         const reason = document.getElementById("rejectionReason").value;
         const notes = document.getElementById("rejectionNotes").value;
+        const actorName = sessionStorage.getItem("userName") || "Officer Jane";
 
         if (!reason) {
           ComplaintService.showNotification(
@@ -1192,22 +1337,41 @@
           return;
         }
 
-        ComplaintService.updateComplaintStatus(currentComplaintId, "rejected", {
-          description: `Reason: ${reason}${notes ? " - " + notes : ""}`,
-          actor: sessionStorage.getItem("userName") || "Officer Jane",
-          actorRole: "officer",
-        });
+        try {
+          // Update via API (saves to MongoDB)
+          const result = await ApiService.updateComplaintStatus(
+            currentComplaintId,
+            "rejected",
+            actorName,
+            "officer",
+            `Reason: ${reason}${notes ? " - " + notes : ""}`
+          );
 
-        currentComplaint.status = "rejected";
-        updateStatusBadge("rejected");
-        updateActionButtons();
-        renderTimeline();
+          if (result && result.success) {
+            console.log("Rejection saved to MongoDB:", result);
 
-        rejectModal.hide();
-        ComplaintService.showNotification(
-          "Complaint has been rejected.",
-          "warning"
-        );
+            currentComplaint.status = "rejected";
+            updateStatusBadge("rejected");
+            updateActionButtons();
+
+            // Reload to get fresh timeline
+            await loadComplaintData();
+
+            rejectModal.hide();
+            ComplaintService.showNotification(
+              "Complaint has been rejected and saved to database.",
+              "warning"
+            );
+          } else {
+            throw new Error(result?.error || "Rejection failed");
+          }
+        } catch (err) {
+          console.error("Error rejecting complaint:", err);
+          ComplaintService.showNotification(
+            "Failed to reject complaint. Please try again.",
+            "danger"
+          );
+        }
       }
 
       // Logout

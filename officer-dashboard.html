@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Officer Dashboard - Municipal Services</title>
+    <title>Officer Dashboard - Officers Portal</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -132,6 +132,294 @@
       .priority-low {
         background: #10b981;
       }
+
+      /* Profile Drawer Styles */
+      .profile-drawer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .profile-drawer-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .profile-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 420px;
+        max-width: 100%;
+        height: 100%;
+        background: white;
+        z-index: 1050;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .profile-drawer.active {
+        transform: translateX(0);
+      }
+
+      .drawer-header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        padding: 1.5rem;
+        position: relative;
+      }
+
+      .drawer-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .drawer-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .drawer-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 1rem;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+      }
+
+      .drawer-section-title {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .drawer-form-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .drawer-form-group label {
+        display: block;
+        font-weight: 500;
+        color: #334155;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .drawer-form-group label i {
+        width: 20px;
+        color: #64748b;
+        margin-right: 0.5rem;
+      }
+
+      .drawer-form-group input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .drawer-form-group input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .drawer-form-group input.is-invalid {
+        border-color: #ef4444;
+      }
+
+      .drawer-form-group input:disabled {
+        background: #f8fafc;
+        color: #64748b;
+        cursor: not-allowed;
+      }
+
+      .drawer-form-group .invalid-feedback {
+        color: #ef4444;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        display: none;
+      }
+
+      .drawer-form-group input.is-invalid + .invalid-feedback {
+        display: block;
+      }
+
+      .password-toggle {
+        position: relative;
+      }
+
+      .password-toggle input {
+        padding-right: 45px;
+      }
+
+      .password-toggle button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #64748b;
+        cursor: pointer;
+        padding: 5px;
+      }
+
+      .password-toggle button:hover {
+        color: #3b82f6;
+      }
+
+      .drawer-footer {
+        padding: 1rem 1.5rem;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .drawer-footer .btn {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .btn-save {
+        background: #3b82f6;
+        color: white;
+        border: none;
+      }
+
+      .btn-save:hover:not(:disabled) {
+        background: #1e3a8a;
+        transform: translateY(-1px);
+      }
+
+      .btn-save:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn-cancel {
+        background: white;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+      }
+
+      .btn-cancel:hover {
+        background: #f1f5f9;
+        color: #334155;
+      }
+
+      .user-clickable {
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+      }
+
+      .user-clickable:hover {
+        opacity: 0.8;
+      }
+
+      .btn-save .spinner-border {
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.5rem;
+      }
+
+      .profile-toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: #10b981;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        z-index: 1060;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
+      .profile-toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .profile-toast.error {
+        background: #ef4444;
+      }
+
+      @media (max-width: 576px) {
+        .profile-drawer {
+          width: 100%;
+        }
+
+        .drawer-header {
+          padding: 1.25rem;
+        }
+
+        .drawer-avatar {
+          width: 60px;
+          height: 60px;
+          font-size: 1.5rem;
+        }
+
+        .drawer-body {
+          padding: 1rem;
+        }
+
+        .drawer-footer {
+          padding: 1rem;
+          flex-direction: column;
+        }
+
+        .drawer-footer .btn {
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -149,7 +437,7 @@
             height="32"
             class="me-2"
           />
-          Municipal Services
+          Officers Portal
         </a>
         <button
           class="navbar-toggler"
@@ -211,14 +499,27 @@
               </ul>
             </li>
             <li class="nav-item ms-lg-3">
-              <div class="d-flex align-items-center">
-                <div class="user-avatar bg-primary text-white me-2">OJ</div>
+              <div
+                class="d-flex align-items-center user-clickable"
+                onclick="openProfileDrawer()"
+                title="Click to edit profile"
+              >
+                <div
+                  class="user-avatar bg-primary text-white me-2"
+                  id="userInitials"
+                >
+                  OJ
+                </div>
                 <div class="d-none d-lg-block">
                   <div class="small fw-bold" id="officerName">Officer Jane</div>
                   <div class="small text-muted" style="font-size: 0.7rem">
-                    ID: OFF-001
+                    ID: <span id="officerId">OFF-001</span>
                   </div>
                 </div>
+                <i
+                  class="fas fa-chevron-right ms-2 d-none d-lg-inline text-muted"
+                  style="font-size: 0.7rem"
+                ></i>
               </div>
             </li>
             <li class="nav-item ms-3">
@@ -599,9 +900,257 @@
       </div>
     </div>
 
+    <!-- Profile Drawer Overlay -->
+    <div
+      class="profile-drawer-overlay"
+      id="profileDrawerOverlay"
+      onclick="closeProfileDrawer()"
+    ></div>
+
+    <!-- Profile Drawer -->
+    <div class="profile-drawer" id="profileDrawer">
+      <div class="drawer-header">
+        <button
+          class="drawer-close"
+          onclick="closeProfileDrawer()"
+          aria-label="Close"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="drawer-avatar" id="drawerAvatar">OJ</div>
+        <h5 class="mb-1" id="drawerName">Officer Jane</h5>
+        <p class="mb-0 opacity-75" style="font-size: 0.9rem">
+          <i class="fas fa-user-shield me-1"></i>Officer Account
+        </p>
+      </div>
+
+      <div class="drawer-body">
+        <form id="profileForm" novalidate>
+          <!-- Personal Information -->
+          <h6 class="drawer-section-title">
+            <i class="fas fa-user me-2"></i>Personal Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileName">
+              <i class="fas fa-id-card"></i>Full Name
+            </label>
+            <input
+              type="text"
+              id="profileName"
+              name="name"
+              placeholder="Enter your full name"
+              required
+              minlength="2"
+              maxlength="50"
+            />
+            <div class="invalid-feedback">
+              Please enter a valid name (2-50 characters)
+            </div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileEmail">
+              <i class="fas fa-envelope"></i>Email Address
+            </label>
+            <input
+              type="email"
+              id="profileEmail"
+              name="email"
+              placeholder="Enter your email"
+              disabled
+              title="Email cannot be changed"
+            />
+            <small class="text-muted"
+              ><i class="fas fa-lock me-1"></i>Email cannot be changed</small
+            >
+          </div>
+
+          <!-- Contact Information -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-phone me-2"></i>Contact Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profilePhone">
+              <i class="fas fa-mobile-alt"></i>Phone Number
+            </label>
+            <input
+              type="tel"
+              id="profilePhone"
+              name="phone"
+              placeholder="Enter your phone number"
+              pattern="[\+]?[0-9\s\-]{10,15}"
+            />
+            <div class="invalid-feedback">
+              Please enter a valid phone number
+            </div>
+          </div>
+
+          <!-- Officer Information -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-building me-2"></i>Officer Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileOfficerId">
+              <i class="fas fa-id-badge"></i>Officer ID
+            </label>
+            <input
+              type="text"
+              id="profileOfficerId"
+              name="officerId"
+              disabled
+            />
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileDepartment">
+              <i class="fas fa-briefcase"></i>Department
+            </label>
+            <input
+              type="text"
+              id="profileDepartment"
+              name="department"
+              placeholder="Enter your department"
+            />
+          </div>
+
+          <!-- Security -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-shield-alt me-2"></i>Security
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileCurrentPassword">
+              <i class="fas fa-key"></i>Current Password
+            </label>
+            <div class="password-toggle">
+              <input
+                type="password"
+                id="profileCurrentPassword"
+                name="currentPassword"
+                placeholder="Enter current password"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                onclick="togglePassword('profileCurrentPassword')"
+                aria-label="Toggle password visibility"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">Current password is incorrect</div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileNewPassword">
+              <i class="fas fa-lock"></i>New Password
+            </label>
+            <div class="password-toggle">
+              <input
+                type="password"
+                id="profileNewPassword"
+                name="newPassword"
+                placeholder="Enter new password (leave blank to keep current)"
+                minlength="6"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                onclick="togglePassword('profileNewPassword')"
+                aria-label="Toggle password visibility"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">
+              Password must be at least 6 characters
+            </div>
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileConfirmPassword">
+              <i class="fas fa-lock"></i>Confirm New Password
+            </label>
+            <div class="password-toggle">
+              <input
+                type="password"
+                id="profileConfirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm new password"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                onclick="togglePassword('profileConfirmPassword')"
+                aria-label="Toggle password visibility"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback">Passwords do not match</div>
+          </div>
+
+          <!-- Account Info -->
+          <h6 class="drawer-section-title mt-4">
+            <i class="fas fa-info-circle me-2"></i>Account Information
+          </h6>
+
+          <div class="drawer-form-group">
+            <label for="profileUserId">
+              <i class="fas fa-hashtag"></i>User ID
+            </label>
+            <input type="text" id="profileUserId" name="userId" disabled />
+          </div>
+
+          <div class="drawer-form-group">
+            <label for="profileCreatedAt">
+              <i class="fas fa-calendar-plus"></i>Member Since
+            </label>
+            <input
+              type="text"
+              id="profileCreatedAt"
+              name="createdAt"
+              disabled
+            />
+          </div>
+        </form>
+      </div>
+
+      <div class="drawer-footer">
+        <button
+          type="button"
+          class="btn btn-cancel"
+          onclick="closeProfileDrawer()"
+        >
+          <i class="fas fa-times me-1"></i>Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-save"
+          onclick="saveProfile()"
+          id="saveProfileBtn"
+        >
+          <i class="fas fa-save me-1"></i>Save Changes
+        </button>
+      </div>
+    </div>
+
+    <!-- Profile Toast Notification -->
+    <div class="profile-toast" id="profileToast">
+      <i class="fas fa-check-circle me-2"></i>
+      <span id="profileToastMessage">Profile updated successfully!</span>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- User Service -->
+    <script src="user-service.js"></script>
     <!-- Real-time Complaint Service -->
     <script src="complaint-service.js"></script>
+    <!-- API Service for MongoDB -->
+    <script src="api-service.js"></script>
     <script>
       // Dashboard state
       let allComplaints = [];
@@ -637,16 +1186,54 @@
         setupNotificationSound();
       });
 
-      // Load all dashboard data
-      function loadDashboardData() {
-        allComplaints = ComplaintService.getAllComplaints();
-        updateStats();
-        renderAllTables();
+      // Load all dashboard data from MongoDB via API
+      async function loadDashboardData() {
+        try {
+          // Fetch complaints from MongoDB
+          let complaints = await ApiService.getAllComplaints();
+
+          // If no complaints from API, fallback to local storage
+          if (!complaints || complaints.length === 0) {
+            complaints = ComplaintService.getAllComplaints();
+          } else {
+            // Map MongoDB format to local format
+            complaints = complaints.map((c) => ({
+              id: c.complaintId || c.id,
+              category: c.category,
+              categoryLabel: c.categoryLabel,
+              description: c.description,
+              location: c.location,
+              status: c.status,
+              priority: c.priority,
+              citizen: c.citizen,
+              assignedTo: c.assignedTo,
+              timeline: c.timeline,
+              createdAt: c.createdAt,
+              updatedAt: c.updatedAt,
+              resolvedAt: c.resolvedAt,
+            }));
+          }
+
+          allComplaints = complaints;
+          await updateStats();
+          renderAllTables();
+        } catch (err) {
+          console.error("Error loading complaints:", err);
+          // Fallback to local storage
+          allComplaints = ComplaintService.getAllComplaints();
+          updateStats();
+          renderAllTables();
+        }
       }
 
-      // Update statistics
-      function updateStats(animate = false) {
-        const stats = ComplaintService.getStats();
+      // Update statistics from MongoDB
+      async function updateStats(animate = false) {
+        let stats;
+        try {
+          stats = await ApiService.getComplaintStats();
+        } catch (err) {
+          stats = ComplaintService.getStats();
+        }
 
         const updates = [
           { id: "newCount", value: stats.new, card: "statNew" },
@@ -849,15 +1436,14 @@
         }, 3000);
       }
 
-      // Handle real-time updates
-      function handleRealtimeUpdate(type, data) {
+      // Handle real-time updates - reloads from MongoDB
+      async function handleRealtimeUpdate(type, data) {
         console.log("Officer Dashboard - Real-time update:", type, data);
 
         switch (type) {
           case "NEW_COMPLAINT":
-            // Reload data with animation
-            allComplaints = ComplaintService.getAllComplaints();
-            updateStats(true);
+            // Reload data with animation from MongoDB
+            await loadDashboardData();
             renderAllTables([data.id]);
 
             // Store for toast
@@ -877,9 +1463,7 @@
             break;
 
           case "COMPLAINT_UPDATED":
-            allComplaints = ComplaintService.getAllComplaints();
-            updateStats(false);
-            renderAllTables();
+            await loadDashboardData();
             addNotification(
               `Complaint #${
                 data.id
@@ -889,9 +1473,7 @@
             break;
 
           case "STATUS_CHANGED":
-            allComplaints = ComplaintService.getAllComplaints();
-            updateStats(true);
-            renderAllTables();
+            await loadDashboardData();
             addNotification(
               `Complaint #${
                 data.complaintId
@@ -904,9 +1486,7 @@
 
           case "TASK_ASSIGNED":
           case "TASK_REASSIGNED":
-            allComplaints = ComplaintService.getAllComplaints();
-            updateStats(false);
-            renderAllTables();
+            await loadDashboardData();
             addNotification(
               `Task #${data.complaintId} ${
                 type === "TASK_REASSIGNED" ? "reassigned" : "assigned"
@@ -916,9 +1496,7 @@
             break;
 
           case "TASK_STARTED":
-            allComplaints = ComplaintService.getAllComplaints();
-            updateStats(false);
-            renderAllTables();
+            await loadDashboardData();
             addNotification(
               `Technician started working on #${data.complaintId}`,
               "info"
@@ -926,15 +1504,12 @@
             break;
 
           case "PROGRESS_UPDATE":
-            allComplaints = ComplaintService.getAllComplaints();
-            renderAllTables();
+            await loadDashboardData();
             addNotification(`Progress update on #${data.complaintId}`, "info");
             break;
 
           case "TASK_COMPLETED":
-            allComplaints = ComplaintService.getAllComplaints();
-            updateStats(true);
-            renderAllTables();
+            await loadDashboardData();
             addNotification(
               `🎉 Task #${data.complaintId} completed by technician!`,
               "success"
@@ -1103,17 +1678,20 @@
         document.getElementById("showingCount").textContent = counts[tab] || 0;
       }
 
-      // Refresh data
-      function refreshData() {
+      // Refresh data from MongoDB
+      async function refreshData() {
         const btn = document.getElementById("refreshBtn");
         const icon = btn.querySelector("i");
         icon.classList.add("refresh-spin");
 
-        setTimeout(() => {
-          loadDashboardData();
-          icon.classList.remove("refresh-spin");
+        try {
+          await loadDashboardData();
           ComplaintService.showNotification("Dashboard refreshed!", "success");
-        }, 500);
+        } catch (err) {
+          ComplaintService.showNotification("Failed to refresh data", "danger");
+        } finally {
+          icon.classList.remove("refresh-spin");
+        }
       }
 
       // Export data placeholder
@@ -1195,6 +1773,367 @@
         sessionStorage.clear();
         window.location.href = "index.html";
       }
+
+      // ============================================
+      // PROFILE DRAWER FUNCTIONALITY
+      // ============================================
+
+      let currentUserData = null;
+      let isDrawerOpen = false;
+
+      // Open profile drawer
+      async function openProfileDrawer() {
+        const drawer = document.getElementById("profileDrawer");
+        const overlay = document.getElementById("profileDrawerOverlay");
+
+        // Load fresh data from MongoDB
+        await loadUserDataToDrawer();
+
+        overlay.classList.add("active");
+        drawer.classList.add("active");
+        isDrawerOpen = true;
+
+        document.body.style.overflow = "hidden";
+        document.addEventListener("keydown", handleEscapeKey);
+      }
+
+      // Close profile drawer
+      function closeProfileDrawer() {
+        const drawer = document.getElementById("profileDrawer");
+        const overlay = document.getElementById("profileDrawerOverlay");
+
+        drawer.classList.remove("active");
+        overlay.classList.remove("active");
+        isDrawerOpen = false;
+
+        document.body.style.overflow = "";
+        document.removeEventListener("keydown", handleEscapeKey);
+        resetFormValidation();
+      }
+
+      function handleEscapeKey(e) {
+        if (e.key === "Escape" && isDrawerOpen) {
+          closeProfileDrawer();
+        }
+      }
+
+      async function loadUserDataToDrawer() {
+        const userId = sessionStorage.getItem("userId");
+        const userEmail =
+          sessionStorage.getItem("userEmail") || "officer@demo.com";
+        const userName = sessionStorage.getItem("userName") || "Officer Jane";
+        const officerId = sessionStorage.getItem("officerId") || "OFF-001";
+
+        // Try to load from MongoDB first
+        if (userId && typeof ApiService !== "undefined") {
+          try {
+            const userData = await ApiService.getUserById(userId);
+            if (userData) {
+              currentUserData = userData;
+              console.log("Loaded user from MongoDB:", currentUserData);
+            }
+          } catch (err) {
+            console.error("Error loading user from API:", err);
+          }
+        }
+
+        // Fallback to sessionStorage if API fails
+        if (!currentUserData) {
+          currentUserData = {
+            id: userId || "USR-002",
+            name: userName,
+            email: userEmail,
+            phone: sessionStorage.getItem("userPhone") || "",
+            officerId: officerId,
+            department: sessionStorage.getItem("department") || "Water Works",
+            password: "",
+            createdAt:
+              sessionStorage.getItem("userCreatedAt") ||
+              new Date().toISOString(),
+          };
+        }
+
+        document.getElementById("profileName").value =
+          currentUserData.name || "";
+        document.getElementById("profileEmail").value =
+          currentUserData.email || "";
+        document.getElementById("profilePhone").value =
+          currentUserData.phone || "";
+        document.getElementById("profileOfficerId").value =
+          currentUserData.officerId || officerId || "";
+        document.getElementById("profileDepartment").value =
+          currentUserData.department || "";
+        document.getElementById("profileUserId").value =
+          currentUserData.id || currentUserData._id || "";
+        document.getElementById("profileCreatedAt").value = formatMemberSince(
+          currentUserData.createdAt
+        );
+
+        const initials = getInitialsLocal(currentUserData.name);
+        document.getElementById("drawerAvatar").textContent = initials;
+        document.getElementById("drawerName").textContent =
+          currentUserData.name;
+
+        document.getElementById("profileCurrentPassword").value = "";
+        document.getElementById("profileNewPassword").value = "";
+        document.getElementById("profileConfirmPassword").value = "";
+      }
+
+      function getInitialsLocal(name) {
+        if (!name) return "NA";
+        return name
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase())
+          .slice(0, 2)
+          .join("");
+      }
+
+      function formatMemberSince(isoString) {
+        if (!isoString) return "N/A";
+        const date = new Date(isoString);
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        return date.toLocaleDateString("en-US", options);
+      }
+
+      function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = input.nextElementSibling.querySelector("i");
+
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          input.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+      }
+
+      function validateProfileForm() {
+        let isValid = true;
+        resetFormValidation();
+
+        const nameInput = document.getElementById("profileName");
+        const nameValue = nameInput.value.trim();
+        if (!nameValue || nameValue.length < 2 || nameValue.length > 50) {
+          nameInput.classList.add("is-invalid");
+          isValid = false;
+        }
+
+        const phoneInput = document.getElementById("profilePhone");
+        const phoneValue = phoneInput.value.trim();
+        if (
+          phoneValue &&
+          !/^[\+]?[0-9\s\-]{10,15}$/.test(phoneValue.replace(/\s/g, ""))
+        ) {
+          phoneInput.classList.add("is-invalid");
+          isValid = false;
+        }
+
+        const currentPassword = document.getElementById(
+          "profileCurrentPassword"
+        ).value;
+        const newPassword = document.getElementById("profileNewPassword").value;
+        const confirmPassword = document.getElementById(
+          "profileConfirmPassword"
+        ).value;
+
+        if (newPassword || confirmPassword) {
+          if (!currentPassword) {
+            document
+              .getElementById("profileCurrentPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          } else if (
+            currentUserData &&
+            currentPassword !== currentUserData.password
+          ) {
+            document
+              .getElementById("profileCurrentPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          }
+
+          if (newPassword && newPassword.length < 6) {
+            document
+              .getElementById("profileNewPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          }
+
+          if (newPassword !== confirmPassword) {
+            document
+              .getElementById("profileConfirmPassword")
+              .classList.add("is-invalid");
+            isValid = false;
+          }
+        }
+
+        return isValid;
+      }
+
+      function resetFormValidation() {
+        const inputs = document.querySelectorAll("#profileForm input");
+        inputs.forEach((input) => {
+          input.classList.remove("is-invalid");
+        });
+      }
+
+      async function saveProfile() {
+        if (!validateProfileForm()) {
+          showProfileToast("Please fix the errors in the form", "error");
+          return;
+        }
+
+        const saveBtn = document.getElementById("saveProfileBtn");
+        const originalContent = saveBtn.innerHTML;
+
+        saveBtn.disabled = true;
+        saveBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status"></span> Saving...';
+
+        const updates = {
+          name: document.getElementById("profileName").value.trim(),
+          phone: document.getElementById("profilePhone").value.trim(),
+          department: document.getElementById("profileDepartment").value.trim(),
+        };
+
+        const newPassword = document.getElementById("profileNewPassword").value;
+        if (newPassword) {
+          updates.password = newPassword;
+        }
+
+        try {
+          // Get user ID from session
+          const userId = sessionStorage.getItem("userId");
+
+          if (!userId) {
+            throw new Error("User ID not found. Please log in again.");
+          }
+
+          // Update via API (saves to MongoDB)
+          const result = await ApiService.updateUser(userId, updates);
+
+          if (result) {
+            console.log("Profile updated in MongoDB:", result);
+
+            // Update local data
+            if (currentUserData) {
+              currentUserData = { ...currentUserData, ...updates };
+            }
+
+            sessionStorage.setItem("userName", updates.name);
+            if (updates.phone) {
+              sessionStorage.setItem("userPhone", updates.phone);
+            }
+            if (updates.department) {
+              sessionStorage.setItem("department", updates.department);
+            }
+
+            document.getElementById("officerName").textContent = updates.name;
+            document.getElementById("welcomeName").textContent = updates.name;
+            const newInitials = getInitialsLocal(updates.name);
+            document.getElementById("userInitials").textContent = newInitials;
+            document.getElementById("drawerAvatar").textContent = newInitials;
+            document.getElementById("drawerName").textContent = updates.name;
+
+            showProfileToast(
+              "Profile saved to database successfully!",
+              "success"
+            );
+
+            document.getElementById("profileCurrentPassword").value = "";
+            document.getElementById("profileNewPassword").value = "";
+            document.getElementById("profileConfirmPassword").value = "";
+
+            setTimeout(() => {
+              closeProfileDrawer();
+            }, 1000);
+          } else {
+            throw new Error("Failed to update profile in database");
+          }
+        } catch (error) {
+          console.error("Error saving profile:", error);
+          showProfileToast(
+            error.message || "Failed to save profile. Please try again.",
+            "error"
+          );
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = originalContent;
+        }
+      }
+
+      function showProfileToast(message, type = "success") {
+        const toast = document.getElementById("profileToast");
+        const toastMessage = document.getElementById("profileToastMessage");
+        const toastIcon = toast.querySelector("i");
+
+        toastMessage.textContent = message;
+
+        toast.classList.remove("error");
+        toastIcon.className = "fas fa-check-circle me-2";
+
+        if (type === "error") {
+          toast.classList.add("error");
+          toastIcon.className = "fas fa-exclamation-circle me-2";
+        }
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // Real-time validation listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        const nameInput = document.getElementById("profileName");
+        if (nameInput) {
+          nameInput.addEventListener("input", function () {
+            if (this.value.trim().length >= 2) {
+              this.classList.remove("is-invalid");
+            }
+          });
+        }
+
+        const phoneInput = document.getElementById("profilePhone");
+        if (phoneInput) {
+          phoneInput.addEventListener("input", function () {
+            const value = this.value.trim().replace(/\s/g, "");
+            if (!value || /^[\+]?[0-9\s\-]{10,15}$/.test(value)) {
+              this.classList.remove("is-invalid");
+            }
+          });
+        }
+
+        const newPasswordInput = document.getElementById("profileNewPassword");
+        const confirmPasswordInput = document.getElementById(
+          "profileConfirmPassword"
+        );
+
+        if (newPasswordInput) {
+          newPasswordInput.addEventListener("input", function () {
+            if (!this.value || this.value.length >= 6) {
+              this.classList.remove("is-invalid");
+            }
+            if (confirmPasswordInput && confirmPasswordInput.value) {
+              if (this.value === confirmPasswordInput.value) {
+                confirmPasswordInput.classList.remove("is-invalid");
+              }
+            }
+          });
+        }
+
+        if (confirmPasswordInput) {
+          confirmPasswordInput.addEventListener("input", function () {
+            if (newPasswordInput && this.value === newPasswordInput.value) {
+              this.classList.remove("is-invalid");
+            }
+          });
+        }
+      });
     </script>
   </body>
 </html>

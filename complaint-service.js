@@ -443,6 +443,19 @@ const ComplaintService = (function () {
     // Broadcast event
     broadcastEvent("NEW_COMPLAINT", newComplaint);
 
+    // Log activity for admin dashboard
+    if (typeof UserService !== "undefined" && UserService.logComplaintAction) {
+      UserService.logComplaintAction(
+        "Submitted new complaint",
+        newId,
+        {
+          name: newComplaint.citizen.name,
+          role: "citizen",
+        },
+        "new"
+      );
+    }
+
     // Update stats
     updateStats();
 
@@ -498,6 +511,32 @@ const ComplaintService = (function () {
         complaint: complaints[index],
         timelineEntry: timelineEntry,
       });
+
+      // Log activity for admin dashboard
+      if (
+        typeof UserService !== "undefined" &&
+        UserService.logComplaintAction
+      ) {
+        const actionText = {
+          acknowledged: "Acknowledged complaint",
+          "in-progress": "Started work on complaint",
+          resolved: "Resolved complaint",
+          rejected: "Rejected complaint",
+        };
+        UserService.logComplaintAction(
+          actionText[newStatus] || `Updated complaint to ${newStatus}`,
+          id,
+          {
+            name:
+              details.actor || sessionStorage.getItem("userName") || "System",
+            role:
+              details.actorRole ||
+              sessionStorage.getItem("userRole") ||
+              "system",
+          },
+          newStatus
+        );
+      }
 
       updateStats();
       return complaints[index];
@@ -824,9 +863,12 @@ const ComplaintService = (function () {
     const classes = {
       new: "bg-danger",
       acknowledged: "bg-info",
+      assigned: "bg-primary",
       "in-progress": "bg-warning text-dark",
       resolved: "bg-success",
+      completed: "bg-success",
       rejected: "bg-secondary",
+      closed: "bg-dark",
     };
     return classes[status] || "bg-secondary";
   }
@@ -835,9 +877,12 @@ const ComplaintService = (function () {
     const labels = {
       new: "New",
       acknowledged: "Acknowledged",
+      assigned: "Assigned",
       "in-progress": "In Progress",
       resolved: "Resolved",
+      completed: "Complete",
       rejected: "Rejected",
+      closed: "Closed",
     };
     return labels[status] || status;
   }
@@ -1227,6 +1272,22 @@ const ComplaintService = (function () {
         timelineEntry: timelineEntry,
       });
 
+      // Log activity for admin dashboard
+      if (
+        typeof UserService !== "undefined" &&
+        UserService.logComplaintAction
+      ) {
+        UserService.logComplaintAction(
+          "Completed task",
+          complaintId,
+          {
+            name: technicianName,
+            role: "technician",
+          },
+          "resolved"
+        );
+      }
+
       updateStats();
       return { complaint: complaints[index], timeline: timelineEntry };
     }
@@ -1305,6 +1366,22 @@ const ComplaintService = (function () {
         complaint: complaints[index],
         assignedTo: complaints[index].assignedTo,
       });
+
+      // Log activity for admin dashboard
+      if (
+        typeof UserService !== "undefined" &&
+        UserService.logComplaintAction
+      ) {
+        UserService.logComplaintAction(
+          `Assigned to ${technician.name}`,
+          complaintId,
+          {
+            name: officerName,
+            role: "officer",
+          },
+          "assigned"
+        );
+      }
 
       updateStats();
 
