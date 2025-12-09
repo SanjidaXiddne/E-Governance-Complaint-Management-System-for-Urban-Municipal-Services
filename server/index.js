@@ -11,6 +11,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const path = require("path");
+const mongoose = require("mongoose");
 
 // Import database connection
 const { connectDB } = require("./db");
@@ -174,10 +175,33 @@ const startServer = async () => {
   }
 };
 
-// Start the server if this file is run directly
+// Vercel serverless function handler
+// Ensures DB connection before handling requests (connection is reused across invocations)
+const handler = async (req, res) => {
+  try {
+    // Connect to database if not already connected
+    // In serverless, connections are reused, so this is efficient
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
+  } catch (err) {
+    console.error("Database connection error in serverless handler:", err);
+    return res.status(500).json({
+      error: "Database Connection Error",
+      message: "Failed to connect to database",
+    });
+  }
+  
+  return app(req, res);
+};
+
+// Start the server if this file is run directly (local development)
 if (require.main === module) {
   startServer();
 }
 
-// Export for testing
-module.exports = { app, startServer };
+// Export for Vercel serverless functions
+// Also export app and startServer for testing and local development
+module.exports = handler;
+handler.app = app;
+handler.startServer = startServer;
