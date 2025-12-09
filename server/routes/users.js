@@ -7,6 +7,18 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 
+// Helper to normalize user shape (adds id, strips _id/password/securityCode)
+const serializeUser = (user) => {
+  if (!user) return null;
+  const obj = user.toObject ? user.toObject() : { ...user };
+  obj.id = obj._id || obj.id;
+  delete obj._id;
+  delete obj.__v;
+  delete obj.password;
+  delete obj.securityCode;
+  return obj;
+};
+
 /**
  * GET /api/users
  * Get all users with optional filtering
@@ -34,15 +46,15 @@ router.get("/", async (req, res) => {
     const skipNum = Math.max(parseInt(skip) || 0, 0);
     const sortOrder = order === "asc" ? 1 : -1;
 
-    const [users, total] = await Promise.all([
+    const [usersRaw, total] = await Promise.all([
       User.find(query)
-        .select("-password -securityCode")
         .sort({ [sort]: sortOrder })
         .skip(skipNum)
-        .limit(limitNum)
-        .lean(),
+        .limit(limitNum),
       User.countDocuments(query),
     ]);
+
+    const users = usersRaw.map(serializeUser);
 
     res.json({
       success: true,
@@ -98,10 +110,8 @@ router.get("/role/:role", async (req, res) => {
       });
     }
 
-    const users = await User.find({ role })
-      .select("-password -securityCode")
-      .sort({ createdAt: -1 })
-      .lean();
+    const usersRaw = await User.find({ role }).sort({ createdAt: -1 });
+    const users = usersRaw.map(serializeUser);
 
     res.json({
       success: true,
@@ -123,11 +133,9 @@ router.get("/role/:role", async (req, res) => {
  */
 router.get("/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select(
-      "-password -securityCode"
-    );
+    const userDoc = await User.findById(req.params.id);
 
-    if (!user) {
+    if (!userDoc) {
       return res.status(404).json({
         success: false,
         error: "User not found",
@@ -136,7 +144,7 @@ router.get("/:id", async (req, res) => {
 
     res.json({
       success: true,
-      data: user,
+      data: serializeUser(userDoc),
     });
   } catch (err) {
     console.error("Error fetching user:", err);
@@ -221,7 +229,7 @@ router.post("/", async (req, res) => {
     res.status(201).json({
       success: true,
       message: "User created successfully",
-      data: newUser.toSafeObject(),
+      data: serializeUser(newUser),
     });
   } catch (err) {
     console.error("Error creating user:", err);
@@ -267,12 +275,12 @@ router.put("/:id", async (req, res) => {
     if (specialty !== undefined) updateData.specialty = specialty;
     if (password) updateData.password = password;
 
-    const user = await User.findByIdAndUpdate(req.params.id, updateData, {
+    const userDoc = await User.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true,
-    }).select("-password -securityCode");
+    });
 
-    if (!user) {
+    if (!userDoc) {
       return res.status(404).json({
         success: false,
         error: "User not found",
@@ -282,7 +290,7 @@ router.put("/:id", async (req, res) => {
     res.json({
       success: true,
       message: "User updated successfully",
-      data: user,
+      data: serializeUser(userDoc),
     });
   } catch (err) {
     console.error("Error updating user:", err);
@@ -323,9 +331,9 @@ router.put("/:id", async (req, res) => {
  */
 router.patch("/:id/status", async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const userDoc = await User.findById(req.params.id);
 
-    if (!user) {
+    if (!userDoc) {
       return res.status(404).json({
         success: false,
         error: "User not found",
@@ -333,15 +341,15 @@ router.patch("/:id/status", async (req, res) => {
     }
 
     // Toggle status
-    user.status = user.status === "active" ? "inactive" : "active";
-    await user.save();
+    userDoc.status = userDoc.status === "active" ? "inactive" : "active";
+    await userDoc.save();
 
     res.json({
       success: true,
       message: `User ${
-        user.status === "active" ? "activated" : "deactivated"
+        userDoc.status === "active" ? "activated" : "deactivated"
       } successfully`,
-      data: user.toSafeObject(),
+      data: serializeUser(userDoc),
     });
   } catch (err) {
     console.error("Error toggling user status:", err);
@@ -366,16 +374,16 @@ router.patch("/:id/status", async (req, res) => {
  */
 router.delete("/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const userDoc = await User.findById(req.params.id);
 
-    if (!user) {
+    if (!userDoc) {
       return res.status(404).json({
         success: false,
         error: "User not found",
       });
     }
 
-    if (user.isDefault) {
+    if (userDoc.isDefault) {
       return res.status(403).json({
         success: false,
         error: "Cannot delete default system users",

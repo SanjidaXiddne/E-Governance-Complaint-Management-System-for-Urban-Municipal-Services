@@ -1693,7 +1693,12 @@
         updateStats();
 
         // Subscribe to user events for real-time updates
-        ApiService.subscribe(handleUserEvent);
+        if (ApiService.subscribe) {
+          ApiService.subscribe(handleUserEvent);
+        }
+        if (UserService.subscribe) {
+          UserService.subscribe(handleUserEvent);
+        }
 
         // Setup filters
         document
@@ -1725,24 +1730,47 @@
 
       async function loadUsers() {
         try {
-          const users = await ApiService.getAllUsers();
+          let users = await ApiService.getAllUsers();
+          // Fallback to local storage if API fails or returns empty
+          if (!users || users.length === 0) {
+            users = UserService.getAllUsers();
+          }
           renderUsersTable(users);
         } catch (err) {
-          console.error("Error loading users:", err);
-          showToast("Failed to load users", "danger");
+          console.error("Error loading users (fallback to local):", err);
+          const users = UserService.getAllUsers();
+          renderUsersTable(users);
+          showToast(
+            "Loaded users from local data (API unavailable)",
+            "warning"
+          );
         }
       }
 
       async function updateStats() {
         try {
-          const stats = await ApiService.getStats();
+          let stats = await ApiService.getStats();
+          // Fallback if API fails
+          if (!stats || !stats.total) {
+            stats = UserService.getStats();
+          }
           document.getElementById("totalUsers").textContent = stats.total;
           document.getElementById("totalCitizens").textContent = stats.citizens;
           document.getElementById("totalOfficers").textContent = stats.officers;
           document.getElementById("totalTechnicians").textContent =
             stats.technicians;
         } catch (err) {
-          console.error("Error loading stats:", err);
+          console.error("Error loading stats (fallback to local):", err);
+          const stats = UserService.getStats();
+          document.getElementById("totalUsers").textContent = stats.total;
+          document.getElementById("totalCitizens").textContent = stats.citizens;
+          document.getElementById("totalOfficers").textContent = stats.officers;
+          document.getElementById("totalTechnicians").textContent =
+            stats.technicians;
+          showToast(
+            "Stats loaded from local data (API unavailable)",
+            "warning"
+          );
         }
       }
 
@@ -1996,7 +2024,12 @@
 
       async function editUser(userId) {
         try {
-          const user = await ApiService.getUserById(userId);
+          let user = await ApiService.getUserById(userId);
+          // Fallback to local data if API fails
+          if (!user) {
+            user = UserService.getUserById(userId);
+          }
+
           if (!user) {
             showToast("User not found", "danger");
             return;
@@ -2061,7 +2094,12 @@
             updates.department = department;
           }
 
-          const updatedUser = await ApiService.updateUser(userId, updates);
+          let updatedUser = await ApiService.updateUser(userId, updates);
+
+          // Fallback to local update if API fails
+          if (!updatedUser) {
+            updatedUser = UserService.updateUser(userId, updates);
+          }
 
           if (updatedUser) {
             bootstrap.Modal.getInstance(
@@ -2086,7 +2124,12 @@
 
       async function toggleStatus(userId) {
         try {
-          const user = await ApiService.toggleUserStatus(userId);
+          let user = await ApiService.toggleUserStatus(userId);
+          // Fallback to local toggle if API fails
+          if (!user) {
+            user = UserService.toggleUserStatus(userId);
+          }
+
           if (user) {
             await loadUsers();
             showToast(
@@ -2095,6 +2138,8 @@
               }!`,
               "info"
             );
+          } else {
+            showToast("User not found", "danger");
           }
         } catch (err) {
           console.error("Error toggling status:", err);
@@ -2122,18 +2167,26 @@
         }
 
         try {
-          const result = await ApiService.deleteUser(userId);
+          let result = await ApiService.deleteUser(userId);
+
+          // Fallback to local delete if API fails
+          if (!result || result.success === false) {
+            result = UserService.deleteUser(userId);
+          }
 
           bootstrap.Modal.getInstance(
             document.getElementById("deleteUserModal")
           ).hide();
 
-          if (result.success) {
+          if (result && result.success) {
             await loadUsers();
             await updateStats();
             showToast("User deleted successfully!", "success");
           } else {
-            showToast(result.error, "danger");
+            showToast(
+              (result && result.error) || "Failed to delete user",
+              "danger"
+            );
           }
         } catch (err) {
           bootstrap.Modal.getInstance(
