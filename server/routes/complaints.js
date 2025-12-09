@@ -233,43 +233,77 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Generate complaint ID
-    const complaintId = await Complaint.generateComplaintId();
+    // Generate complaint ID with retry logic for race conditions
+    let complaintId;
+    let newComplaint;
+    let retries = 0;
+    const maxRetries = 5;
 
-    // Create citizen initials
-    const initials = citizen.name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+    while (retries < maxRetries) {
+      try {
+        // Generate complaint ID
+        complaintId = await Complaint.generateComplaintId();
 
-    const newComplaint = new Complaint({
-      complaintId,
-      category,
-      categoryLabel: categoryLabel || category,
-      description,
-      location,
-      priority: priority || "normal",
-      status: "new",
-      citizen: {
-        ...citizen,
-        email: citizen.email.toLowerCase(),
-        initials,
-      },
-      timeline: [
-        {
-          type: "submitted",
-          title: "Complaint Submitted",
-          description: "Received from Citizen Portal",
-          actor: citizen.name,
-          actorRole: "citizen",
-          timestamp: new Date(),
-        },
-      ],
-    });
+        // Create citizen initials
+        const initials = citizen.name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
 
-    await newComplaint.save();
+        newComplaint = new Complaint({
+          complaintId,
+          category,
+          categoryLabel: categoryLabel || category,
+          description,
+          location,
+          priority: priority || "normal",
+          status: "new",
+          citizen: {
+            ...citizen,
+            email: citizen.email.toLowerCase(),
+            initials,
+          },
+          timeline: [
+            {
+              type: "submitted",
+              title: "Complaint Submitted",
+              description: "Received from Citizen Portal",
+              actor: citizen.name,
+              actorRole: "citizen",
+              timestamp: new Date(),
+            },
+          ],
+        });
+
+        await newComplaint.save();
+        break; // Success, exit retry loop
+      } catch (saveErr) {
+        // Handle duplicate key error (race condition)
+        if (saveErr.code === 11000 && saveErr.keyPattern?.complaintId) {
+          retries++;
+          if (retries >= maxRetries) {
+            console.error(
+              `Failed to create complaint after ${maxRetries} retries:`,
+              saveErr
+            );
+            throw {
+              ...saveErr,
+              message:
+                "Failed to generate unique complaint ID. Please try again.",
+            };
+          }
+          // Wait before retrying (exponential backoff)
+          await new Promise((resolve) =>
+            setTimeout(resolve, 100 * Math.pow(2, retries))
+          );
+          continue;
+        }
+        // If it's not a duplicate key error, throw immediately
+        throw saveErr;
+      }
+    }
 
     res.status(201).json({
       success: true,
@@ -288,9 +322,19 @@ router.post("/", async (req, res) => {
       });
     }
 
+    // Handle duplicate key error specifically
+    if (err.code === 11000 && err.keyPattern?.complaintId) {
+      return res.status(409).json({
+        success: false,
+        error: "Duplicate complaint ID detected. Please try again.",
+        message: err.message || "A complaint with this ID already exists",
+      });
+    }
+
     res.status(500).json({
       success: false,
-      error: "Failed to create complaint",
+      error: err.message || "Failed to create complaint",
+      message: process.env.NODE_ENV === "development" ? err.message : undefined,
     });
   }
 });

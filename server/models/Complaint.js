@@ -189,15 +189,52 @@ ComplaintSchema.index({ status: 1, createdAt: -1 });
 // ============================================
 
 /**
- * Generate next complaint ID
+ * Generate next complaint ID with retry logic to handle race conditions
  */
-ComplaintSchema.statics.generateComplaintId = async function () {
-  const lastComplaint = await this.findOne().sort({ createdAt: -1 });
-  if (!lastComplaint) {
-    return "CMPT-001";
+ComplaintSchema.statics.generateComplaintId = async function (maxRetries = 5) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      // Find the highest complaint ID number
+      const lastComplaint = await this.findOne()
+        .sort({ complaintId: -1 })
+        .select("complaintId")
+        .lean();
+
+      let nextNum = 1;
+      if (lastComplaint && lastComplaint.complaintId) {
+        const match = lastComplaint.complaintId.match(/CMPT-(\d+)/);
+        if (match) {
+          nextNum = parseInt(match[1], 10) + 1;
+        }
+      }
+
+      const newComplaintId = `CMPT-${String(nextNum).padStart(3, "0")}`;
+
+      // Check if this ID already exists (race condition check)
+      const exists = await this.findOne({ complaintId: newComplaintId }).lean();
+      if (!exists) {
+        return newComplaintId;
+      }
+
+      // If ID exists, wait a bit and retry
+      if (attempt < maxRetries - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 50 * (attempt + 1)));
+      }
+    } catch (err) {
+      console.error(
+        `Error generating complaint ID (attempt ${attempt + 1}):`,
+        err
+      );
+      if (attempt === maxRetries - 1) {
+        throw err;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 50 * (attempt + 1)));
+    }
   }
-  const lastNum = parseInt(lastComplaint.complaintId.replace("CMPT-", ""));
-  return `CMPT-${String(lastNum + 1).padStart(3, "0")}`;
+
+  // Fallback: use timestamp-based ID if all retries fail
+  const timestamp = Date.now().toString().slice(-6);
+  return `CMPT-${timestamp}`;
 };
 
 /**
