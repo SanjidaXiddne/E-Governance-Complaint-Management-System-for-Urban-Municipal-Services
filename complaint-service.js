@@ -901,20 +901,43 @@ const ComplaintService = (function () {
   // TOAST NOTIFICATIONS
   // ============================================
 
+  // Track active notifications for stacking
+  let notificationStack = [];
+  const MAX_NOTIFICATIONS = 3;
+
   function showNotification(message, type = "info") {
-    // Remove existing notifications
-    const existing = document.querySelector(".realtime-notification");
-    if (existing) existing.remove();
+    // Ensure notification container exists
+    let notificationContainer = document.getElementById(
+      "notification-container"
+    );
+    if (!notificationContainer) {
+      notificationContainer = document.createElement("div");
+      notificationContainer.id = "notification-container";
+      notificationContainer.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-width: 450px;
+        pointer-events: none;
+      `;
+      document.body.appendChild(notificationContainer);
+    }
+
+    // Create unique ID for this notification
+    const notificationId = `notif-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
 
     const notification = document.createElement("div");
+    notification.id = notificationId;
     notification.className = `realtime-notification alert alert-${
       type === "error" ? "danger" : type
     } alert-dismissible fade show`;
     notification.style.cssText = `
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            z-index: 9999;
             min-width: 320px;
             max-width: 450px;
             border-radius: 12px;
@@ -925,37 +948,54 @@ const ComplaintService = (function () {
                 ? "#10b981"
                 : type === "warning"
                 ? "#f59e0b"
+                : type === "danger" || type === "error"
+                ? "#ef4444"
                 : "#3b82f6"
             };
+            pointer-events: auto;
+            margin-bottom: 0;
         `;
 
     const icons = {
       success: "check-circle",
       warning: "exclamation-triangle",
       danger: "times-circle",
-      info: "bell",
+      error: "times-circle",
+      info: "info-circle",
+    };
+
+    const titles = {
+      success: "Success!",
+      warning: "Warning",
+      danger: "Error",
+      error: "Error",
+      info: "Notification",
     };
 
     notification.innerHTML = `
             <div class="d-flex align-items-start">
                 <i class="fas fa-${
                   icons[type] || "bell"
-                } me-3 mt-1" style="font-size: 1.25rem;"></i>
+                } me-3 mt-1" style="font-size: 1.25rem; color: ${
+      type === "success"
+        ? "#10b981"
+        : type === "warning"
+        ? "#f59e0b"
+        : type === "danger" || type === "error"
+        ? "#ef4444"
+        : "#3b82f6"
+    };"></i>
                 <div class="flex-grow-1">
                     <div class="fw-bold mb-1">${
-                      type === "success"
-                        ? "Success!"
-                        : type === "warning"
-                        ? "Status Update"
-                        : "Notification"
+                      titles[type] || "Notification"
                     }</div>
                     <div class="small">${message}</div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" onclick="this.closest('.realtime-notification').remove()"></button>
             </div>
         `;
 
-    // Add animation styles
+    // Add animation styles if not already added
     if (!document.getElementById("notification-styles")) {
       const style = document.createElement("style");
       style.id = "notification-styles";
@@ -963,6 +1003,10 @@ const ComplaintService = (function () {
                 @keyframes slideInRight {
                     from { transform: translateX(100%); opacity: 0; }
                     to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutRight {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
                 }
                 @keyframes pulse {
                     0%, 100% { transform: scale(1); }
@@ -982,15 +1026,47 @@ const ComplaintService = (function () {
       document.head.appendChild(style);
     }
 
-    document.body.appendChild(notification);
+    // Add to container (prepend so newest appears on top)
+    notificationContainer.insertBefore(
+      notification,
+      notificationContainer.firstChild
+    );
+    notificationStack.push(notificationId);
+
+    // Limit number of visible notifications
+    while (notificationStack.length > MAX_NOTIFICATIONS) {
+      const oldestId = notificationStack.pop();
+      const oldestNotif = document.getElementById(oldestId);
+      if (oldestNotif) {
+        oldestNotif.style.animation = "slideOutRight 0.3s ease";
+        setTimeout(() => oldestNotif.remove(), 300);
+      }
+    }
 
     // Auto-remove after 6 seconds
     setTimeout(() => {
-      if (notification && notification.parentNode) {
-        notification.style.animation = "slideInRight 0.3s ease reverse";
-        setTimeout(() => notification.remove(), 300);
+      const notif = document.getElementById(notificationId);
+      if (notif && notif.parentNode) {
+        notif.style.animation = "slideOutRight 0.3s ease";
+        setTimeout(() => {
+          if (notif.parentNode) {
+            notif.remove();
+          }
+          notificationStack = notificationStack.filter(
+            (id) => id !== notificationId
+          );
+        }, 300);
       }
     }, 6000);
+
+    // Play notification sound if available
+    try {
+      if (typeof playNotificationSound === "function") {
+        playNotificationSound();
+      }
+    } catch (e) {
+      // Sound function might not be available, ignore
+    }
   }
 
   // ============================================

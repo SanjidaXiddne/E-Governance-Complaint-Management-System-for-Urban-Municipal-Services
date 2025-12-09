@@ -1055,31 +1055,33 @@
 
         switch (type) {
           case "NEW_COMPLAINT":
-            if (data.citizen.email === currentUserEmail) {
+          case "COMPLAINT_CREATED":
+            const complaintId = data.complaintId || data.id || data._id;
+            if (data.citizen && data.citizen.email === currentUserEmail) {
               // This user's complaint - refresh data from MongoDB
               await loadDashboardData();
               ComplaintService.showNotification(
-                `Your complaint #${data.id} has been submitted successfully!`,
+                `Your complaint #${complaintId} has been submitted successfully!`,
                 "success"
+              );
+              addNotification(
+                `Complaint #${complaintId} submitted successfully`
               );
             }
             break;
 
           case "COMPLAINT_UPDATED":
-            if (data.citizen.email === currentUserEmail) {
+            const updatedComplaintId = data.complaintId || data.id || data._id;
+            if (data.citizen && data.citizen.email === currentUserEmail) {
               // Refresh data and show notification
-              loadDashboardData();
+              await loadDashboardData();
               addNotification(
-                `Complaint #${
-                  data.id
-                } status updated to ${ComplaintService.getStatusLabel(
+                `Complaint #${updatedComplaintId} status updated to ${ComplaintService.getStatusLabel(
                   data.status
                 )}`
               );
               ComplaintService.showNotification(
-                `Your complaint #${
-                  data.id
-                } has been updated to: ${ComplaintService.getStatusLabel(
+                `Your complaint #${updatedComplaintId} has been updated to: ${ComplaintService.getStatusLabel(
                   data.status
                 )}`,
                 "info"
@@ -1088,18 +1090,28 @@
             break;
 
           case "STATUS_CHANGED":
-            if (isMyComplaint(data.complaint)) {
-              loadDashboardData();
+          case "COMPLAINT_STATUS_CHANGED":
+            const statusComplaintId = data.complaintId || data.id || data._id;
+            const newStatus = data.newStatus || data.status;
+            const complaint = data.complaint || data;
+
+            // Check if this complaint belongs to current user
+            if (
+              (complaint && isMyComplaint(complaint)) ||
+              (data.citizen && data.citizen.email === currentUserEmail) ||
+              (complaint &&
+                complaint.citizen &&
+                complaint.citizen.email === currentUserEmail)
+            ) {
+              await loadDashboardData();
               addNotification(
-                `Complaint #${
-                  data.complaintId
-                } status: ${ComplaintService.getStatusLabel(data.newStatus)}`
+                `Complaint #${statusComplaintId} status: ${ComplaintService.getStatusLabel(
+                  newStatus
+                )}`
               );
               ComplaintService.showNotification(
-                `Your complaint #${
-                  data.complaintId
-                } status updated to: ${ComplaintService.getStatusLabel(
-                  data.newStatus
+                `Your complaint #${statusComplaintId} status updated to: ${ComplaintService.getStatusLabel(
+                  newStatus
                 )}`,
                 "info"
               );
@@ -1183,23 +1195,68 @@
         const dropdown = document.getElementById("notificationDropdown");
         const noNotif = document.getElementById("noNotifications");
 
+        if (!badge || !dropdown) {
+          console.warn("Notification elements not found");
+          return;
+        }
+
         badge.textContent = notificationCount;
         badge.style.display = notificationCount > 0 ? "block" : "none";
 
         if (notifications.length > 0) {
-          noNotif.style.display = "none";
+          if (noNotif) noNotif.style.display = "none";
 
-          // Keep header, remove old items, add new ones
-          const header =
-            dropdown.querySelector(".dropdown-header").parentElement;
+          // Clear existing items (keep header if it exists)
+          const header = dropdown.querySelector(".dropdown-header");
           dropdown.innerHTML = "";
-          dropdown.appendChild(header);
 
+          // Add header back if it existed
+          if (header) {
+            const headerLi = document.createElement("li");
+            headerLi.appendChild(header);
+            dropdown.appendChild(headerLi);
+          } else {
+            // Create header if it doesn't exist
+            const headerLi = document.createElement("li");
+            headerLi.innerHTML =
+              '<h6 class="dropdown-header">Notifications</h6>';
+            dropdown.appendChild(headerLi);
+          }
+
+          // Add notification items
           notifications.slice(0, 5).forEach((notif) => {
             const li = document.createElement("li");
-            li.innerHTML = `<a class="dropdown-item small" href="#">${notif.message}</a>`;
+            // Format time ago
+            let timeAgo = "Just now";
+            if (notif.time) {
+              const time =
+                notif.time instanceof Date ? notif.time : new Date(notif.time);
+              const seconds = Math.floor((new Date() - time) / 1000);
+              if (seconds < 60) {
+                timeAgo = "Just now";
+              } else if (seconds < 3600) {
+                timeAgo = Math.floor(seconds / 60) + " min ago";
+              } else if (seconds < 86400) {
+                timeAgo = Math.floor(seconds / 3600) + " hours ago";
+              } else {
+                timeAgo = Math.floor(seconds / 86400) + " days ago";
+              }
+            }
+            li.innerHTML = `
+              <a class="dropdown-item small py-2" href="#">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-circle text-primary me-2 mt-1" style="font-size: 0.5rem;"></i>
+                  <div>
+                    <div>${notif.message}</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">${timeAgo}</div>
+                  </div>
+                </div>
+              </a>
+            `;
             dropdown.appendChild(li);
           });
+        } else {
+          if (noNotif) noNotif.style.display = "block";
         }
       }
 

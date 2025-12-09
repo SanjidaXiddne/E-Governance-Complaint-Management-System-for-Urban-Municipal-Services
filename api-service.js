@@ -487,7 +487,9 @@ const ApiService = (function () {
       });
 
       if (result.success) {
+        // Broadcast multiple event types for compatibility
         broadcastEvent("COMPLAINT_CREATED", result.data);
+        broadcastEvent("NEW_COMPLAINT", result.data);
       }
 
       return result;
@@ -510,7 +512,14 @@ const ApiService = (function () {
       });
 
       if (result.success) {
+        // Broadcast multiple event types for compatibility
         broadcastEvent("COMPLAINT_STATUS_CHANGED", result.data);
+        broadcastEvent("STATUS_CHANGED", {
+          complaintId: id,
+          newStatus: status,
+          complaint: result.data,
+        });
+        broadcastEvent("COMPLAINT_UPDATED", result.data);
       }
 
       return result;
@@ -538,7 +547,17 @@ const ApiService = (function () {
       });
 
       if (result.success) {
+        // Broadcast multiple event types for compatibility
         broadcastEvent("COMPLAINT_ASSIGNED", result.data);
+        broadcastEvent("TASK_ASSIGNED", {
+          complaintId: id,
+          technician: {
+            id: technicianId,
+            name: technicianName,
+          },
+          complaint: result.data,
+        });
+        broadcastEvent("COMPLAINT_UPDATED", result.data);
       }
 
       return result;
