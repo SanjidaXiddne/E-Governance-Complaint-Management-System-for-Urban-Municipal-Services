@@ -47,6 +47,381 @@
         color: #f97316 !important;
       }
 
+      /* Emergency Alert Modal Styles */
+      .emergency-icon-wrapper {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        font-size: 1.5rem;
+        animation: pulse-emergency 2s infinite;
+      }
+
+      @keyframes pulse-emergency {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);
+        }
+      }
+
+      #charCount {
+        font-weight: 600;
+      }
+
+      /* Broadcast Announcement Modal Styles */
+      .announcement-icon-wrapper {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        font-size: 1.5rem;
+        animation: pulse-announcement 2s infinite;
+      }
+
+      @keyframes pulse-announcement {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+        }
+      }
+
+      #announcementCharCount {
+        font-weight: 600;
+      }
+
+      /* Quick Actions Buttons Styles */
+      .quick-actions-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .quick-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 14px;
+        text-decoration: none;
+        color: #1e293b;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .quick-action-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .quick-action-btn:hover::before {
+        left: 100%;
+      }
+
+      .quick-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        border-color: transparent;
+      }
+
+      .quick-action-btn:active {
+        transform: translateY(0);
+      }
+
+      .action-icon-wrapper {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+      }
+
+      .quick-action-btn-primary .action-icon-wrapper {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+      }
+
+      .quick-action-btn-info .action-icon-wrapper {
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        color: white;
+      }
+
+      .quick-action-btn-success .action-icon-wrapper {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+      }
+
+      .quick-action-btn-danger .action-icon-wrapper {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+      }
+
+      .quick-action-btn:hover .action-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .action-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .action-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        line-height: 1.2;
+      }
+
+      .action-subtitle {
+        font-size: 0.8rem;
+        color: #64748b;
+        line-height: 1.2;
+      }
+
+      .action-arrow {
+        color: #94a3b8;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+      }
+
+      .quick-action-btn:hover .action-arrow {
+        color: #3b82f6;
+        transform: translateX(4px);
+      }
+
+      /* Button-specific hover effects */
+      .quick-action-btn-primary:hover {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      }
+
+      .quick-action-btn-info:hover {
+        background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+      }
+
+      .quick-action-btn-success:hover {
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      }
+
+      .quick-action-btn-danger:hover {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      }
+
+      .quick-action-btn-primary:hover .action-title {
+        color: #2563eb;
+      }
+
+      .quick-action-btn-info:hover .action-title {
+        color: #0891b2;
+      }
+
+      .quick-action-btn-success:hover .action-title {
+        color: #059669;
+      }
+
+      .quick-action-btn-danger:hover .action-title {
+        color: #dc2626;
+      }
+
+      /* Complaints Overview Header Styles */
+      .complaints-header-modern {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 12px 12px 0 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .complaints-header-modern::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 70%
+        );
+        animation: pulse-header-bg 4s ease-in-out infinite;
+      }
+
+      @keyframes pulse-header-bg {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.3;
+        }
+        50% {
+          transform: scale(1.1);
+          opacity: 0.5;
+        }
+      }
+
+      .header-content-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .header-title-section {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+      }
+
+      .title-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 14px;
+        font-size: 1.75rem;
+        color: white;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      .header-subtitle {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0.25rem 0 0 0;
+        opacity: 0.95;
+      }
+
+      .header-actions-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .filter-wrapper {
+        position: relative;
+      }
+
+      .form-select-modern {
+        padding: 0.625rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #1e293b;
+        background: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 150px;
+      }
+
+      .form-select-modern:focus {
+        outline: none;
+        border-color: white;
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+      }
+
+      .btn-refresh-modern {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: white;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-refresh-modern:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-refresh-modern:active {
+        transform: translateY(0);
+      }
+
+      .btn-refresh-modern i {
+        transition: transform 0.3s ease;
+      }
+
+      .btn-refresh-modern:hover i {
+        transform: rotate(180deg);
+      }
+
+      @media (max-width: 768px) {
+        .header-content-wrapper {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .header-actions-wrapper {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .form-select-modern {
+          flex: 1;
+        }
+      }
+
       /* Admin Profile Drawer Styles */
       .profile-drawer-overlay {
         position: fixed;
@@ -776,32 +1151,43 @@
         <div class="row g-4 mb-4">
           <div class="col-12">
             <div class="table-card">
-              <div
-                class="p-4 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3"
-              >
-                <h5 class="fw-bold mb-0">
-                  <i class="fas fa-clipboard-list me-2 text-primary"></i>All
-                  Complaints Overview
-                </h5>
-                <div class="d-flex gap-2 flex-wrap">
-                  <select
-                    class="form-select form-select-sm"
-                    id="filterStatus"
-                    onchange="filterComplaints()"
-                  >
-                    <option value="all">All Status</option>
-                    <option value="new">New</option>
-                    <option value="assigned">Assigned</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="rejected">Rejected</option>
-                  </select>
-                  <button
-                    class="btn btn-outline-primary btn-sm"
-                    onclick="refreshComplaints()"
-                  >
-                    <i class="fas fa-sync-alt"></i> Refresh
-                  </button>
+              <div class="complaints-header-modern">
+                <div class="header-content-wrapper">
+                  <div class="header-title-section">
+                    <div class="title-icon-wrapper">
+                      <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div>
+                      <h5 class="header-title">All Complaints Overview</h5>
+                      <p class="header-subtitle">
+                        Manage and track all system complaints
+                      </p>
+                    </div>
+                  </div>
+                  <div class="header-actions-wrapper">
+                    <div class="filter-wrapper">
+                      <select
+                        class="form-select-modern"
+                        id="filterStatus"
+                        onchange="filterComplaints()"
+                      >
+                        <option value="all">All Status</option>
+                        <option value="new">New</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="rejected">Rejected</option>
+                      </select>
+                    </div>
+                    <button
+                      class="btn-refresh-modern"
+                      onclick="refreshComplaints()"
+                      title="Refresh complaints list"
+                    >
+                      <i class="fas fa-sync-alt"></i>
+                      <span>Refresh</span>
+                    </button>
+                  </div>
                 </div>
               </div>
               <div
@@ -1026,30 +1412,210 @@
                 <h5 class="fw-bold mb-0">Quick Actions</h5>
               </div>
               <div class="card-body p-4">
-                <div class="d-grid gap-3">
+                <div class="quick-actions-grid">
                   <a
                     href="admin-user-management.html"
-                    class="btn btn-outline-primary text-start p-3"
+                    class="quick-action-btn quick-action-btn-primary"
                   >
-                    <i class="fas fa-user-plus me-3"></i> Add New Officer
+                    <div class="action-icon-wrapper">
+                      <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="action-content">
+                      <span class="action-title">Add New Officer</span>
+                      <span class="action-subtitle">Manage users</span>
+                    </div>
+                    <i class="fas fa-chevron-right action-arrow"></i>
                   </a>
-                  <button class="btn btn-outline-primary text-start p-3">
-                    <i class="fas fa-bullhorn me-3"></i> Broadcast Announcement
+                  <button
+                    class="quick-action-btn quick-action-btn-info"
+                    onclick="openBroadcastAnnouncementModal()"
+                  >
+                    <div class="action-icon-wrapper">
+                      <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="action-content">
+                      <span class="action-title">Broadcast Announcement</span>
+                      <span class="action-subtitle">Share information</span>
+                    </div>
+                    <i class="fas fa-chevron-right action-arrow"></i>
                   </button>
                   <a
                     href="admin-reporting.html"
-                    class="btn btn-outline-primary text-start p-3"
+                    class="quick-action-btn quick-action-btn-success"
                   >
-                    <i class="fas fa-file-download me-3"></i> Generate Monthly
-                    Report
+                    <div class="action-icon-wrapper">
+                      <i class="fas fa-file-download"></i>
+                    </div>
+                    <div class="action-content">
+                      <span class="action-title">Generate Report</span>
+                      <span class="action-subtitle">Monthly analytics</span>
+                    </div>
+                    <i class="fas fa-chevron-right action-arrow"></i>
                   </a>
-                  <button class="btn btn-outline-danger text-start p-3">
-                    <i class="fas fa-exclamation-triangle me-3"></i> Emergency
-                    Alert
+                  <button
+                    class="quick-action-btn quick-action-btn-danger"
+                    onclick="openEmergencyAlertModal()"
+                  >
+                    <div class="action-icon-wrapper">
+                      <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="action-content">
+                      <span class="action-title">Emergency Alert</span>
+                      <span class="action-subtitle">Urgent notification</span>
+                    </div>
+                    <i class="fas fa-chevron-right action-arrow"></i>
                   </button>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Broadcast Announcement Modal -->
+    <div class="modal fade" id="broadcastAnnouncementModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header border-0 bg-primary text-white">
+            <div class="d-flex align-items-center">
+              <div class="announcement-icon-wrapper me-3">
+                <i class="fas fa-bullhorn"></i>
+              </div>
+              <div>
+                <h5 class="modal-title mb-0">Broadcast Announcement</h5>
+                <small class="opacity-75"
+                  >Share important information with users</small
+                >
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <form id="broadcastAnnouncementForm">
+              <div class="mb-3">
+                <label for="announcementTitle" class="form-label fw-semibold">
+                  Announcement Title <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="announcementTitle"
+                  placeholder="e.g., System Maintenance Notice"
+                  required
+                  maxlength="100"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="announcementMessage" class="form-label fw-semibold">
+                  Announcement Message <span class="text-danger">*</span>
+                </label>
+                <textarea
+                  class="form-control"
+                  id="announcementMessage"
+                  rows="6"
+                  placeholder="Enter your announcement message to broadcast to all users..."
+                  required
+                  maxlength="1000"
+                ></textarea>
+                <small class="text-muted">
+                  <span id="announcementCharCount">0</span>/1000 characters
+                </small>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="announcementType" class="form-label fw-semibold">
+                    Announcement Type
+                  </label>
+                  <select class="form-select" id="announcementType">
+                    <option value="general" selected>General</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="update">System Update</option>
+                    <option value="news">News</option>
+                    <option value="event">Event</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label
+                    for="announcementPriority"
+                    class="form-label fw-semibold"
+                  >
+                    Priority Level
+                  </label>
+                  <select class="form-select" id="announcementPriority">
+                    <option value="normal" selected>Normal</option>
+                    <option value="important">Important</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Target Audience</label>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="announceTargetCitizens"
+                    checked
+                  />
+                  <label class="form-check-label" for="announceTargetCitizens">
+                    Citizens
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="announceTargetOfficers"
+                    checked
+                  />
+                  <label class="form-check-label" for="announceTargetOfficers">
+                    Officers
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="announceTargetTechnicians"
+                    checked
+                  />
+                  <label
+                    class="form-check-label"
+                    for="announceTargetTechnicians"
+                  >
+                    Technicians
+                  </label>
+                </div>
+              </div>
+              <div
+                id="broadcastAnnouncementError"
+                class="alert alert-danger"
+                style="display: none"
+              ></div>
+            </form>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="sendBroadcastAnnouncement()"
+              id="sendAnnouncementBtn"
+            >
+              <i class="fas fa-paper-plane me-2"></i>Broadcast Announcement
+            </button>
           </div>
         </div>
       </div>
@@ -1482,6 +2048,134 @@
     <div class="profile-toast" id="profileToast">
       <i class="fas fa-check-circle me-2"></i>
       <span id="profileToastMessage">Profile updated successfully!</span>
+    </div>
+
+    <!-- Emergency Alert Modal -->
+    <div class="modal fade" id="emergencyAlertModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header border-0 bg-danger text-white">
+            <div class="d-flex align-items-center">
+              <div class="emergency-icon-wrapper me-3">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div>
+                <h5 class="modal-title mb-0">Emergency Alert</h5>
+                <small class="opacity-75"
+                  >Send urgent notification to all users</small
+                >
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <form id="emergencyAlertForm">
+              <div class="mb-3">
+                <label for="alertTitle" class="form-label fw-semibold">
+                  Alert Title <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="alertTitle"
+                  placeholder="e.g., Emergency Maintenance Required"
+                  required
+                  maxlength="100"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="alertMessage" class="form-label fw-semibold">
+                  Alert Message <span class="text-danger">*</span>
+                </label>
+                <textarea
+                  class="form-control"
+                  id="alertMessage"
+                  rows="5"
+                  placeholder="Enter the emergency message to broadcast to all users..."
+                  required
+                  maxlength="500"
+                ></textarea>
+                <small class="text-muted">
+                  <span id="charCount">0</span>/500 characters
+                </small>
+              </div>
+              <div class="mb-3">
+                <label for="alertPriority" class="form-label fw-semibold">
+                  Priority Level
+                </label>
+                <select class="form-select" id="alertPriority">
+                  <option value="high">High</option>
+                  <option value="critical" selected>Critical</option>
+                  <option value="urgent">Urgent</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Target Audience</label>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="targetCitizens"
+                    checked
+                  />
+                  <label class="form-check-label" for="targetCitizens">
+                    Citizens
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="targetOfficers"
+                    checked
+                  />
+                  <label class="form-check-label" for="targetOfficers">
+                    Officers
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="targetTechnicians"
+                    checked
+                  />
+                  <label class="form-check-label" for="targetTechnicians">
+                    Technicians
+                  </label>
+                </div>
+              </div>
+              <div
+                id="emergencyAlertError"
+                class="alert alert-danger"
+                style="display: none"
+              ></div>
+            </form>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              onclick="sendEmergencyAlert()"
+              id="sendAlertBtn"
+            >
+              <i class="fas fa-paper-plane me-2"></i>Send Emergency Alert
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -1977,6 +2671,257 @@
         } me-2"></i>${message}`;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
+      }
+
+      // ============================================
+      // EMERGENCY ALERT FUNCTIONALITY
+      // ============================================
+
+      function openEmergencyAlertModal() {
+        const modal = new bootstrap.Modal(
+          document.getElementById("emergencyAlertModal")
+        );
+        modal.show();
+
+        // Reset form
+        document.getElementById("emergencyAlertForm").reset();
+        document.getElementById("emergencyAlertError").style.display = "none";
+        document.getElementById("charCount").textContent = "0";
+
+        // Set default values
+        document.getElementById("targetCitizens").checked = true;
+        document.getElementById("targetOfficers").checked = true;
+        document.getElementById("targetTechnicians").checked = true;
+        document.getElementById("alertPriority").value = "critical";
+
+        // Character counter
+        const messageTextarea = document.getElementById("alertMessage");
+        const charCount = document.getElementById("charCount");
+        messageTextarea.addEventListener("input", function () {
+          charCount.textContent = this.value.length;
+        });
+      }
+
+      async function sendEmergencyAlert() {
+        const title = document.getElementById("alertTitle").value.trim();
+        const message = document.getElementById("alertMessage").value.trim();
+        const priority = document.getElementById("alertPriority").value;
+        const targetCitizens =
+          document.getElementById("targetCitizens").checked;
+        const targetOfficers =
+          document.getElementById("targetOfficers").checked;
+        const targetTechnicians =
+          document.getElementById("targetTechnicians").checked;
+
+        const errorDiv = document.getElementById("emergencyAlertError");
+        const sendBtn = document.getElementById("sendAlertBtn");
+        const originalText = sendBtn.innerHTML;
+
+        // Validation
+        if (!title || !message) {
+          errorDiv.textContent = "Please fill in all required fields.";
+          errorDiv.style.display = "block";
+          return;
+        }
+
+        if (!targetCitizens && !targetOfficers && !targetTechnicians) {
+          errorDiv.textContent = "Please select at least one target audience.";
+          errorDiv.style.display = "block";
+          return;
+        }
+
+        // Show loading state
+        sendBtn.disabled = true;
+        sendBtn.innerHTML =
+          '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+
+        try {
+          // Call API to send emergency alert
+          const response = await fetch("/api/admin/emergency-alert", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title,
+              message,
+              priority,
+              targetAudience: {
+                citizens: targetCitizens,
+                officers: targetOfficers,
+                technicians: targetTechnicians,
+              },
+            }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok && result.success) {
+            // Close modal
+            bootstrap.Modal.getInstance(
+              document.getElementById("emergencyAlertModal")
+            ).hide();
+
+            // Show success message
+            showToast(
+              `Emergency alert sent successfully to ${result.recipients} users!`,
+              "success"
+            );
+
+            // Add to activity log
+            UserService.addActivity({
+              type: "EMERGENCY_ALERT",
+              description: `Emergency alert "${title}" sent`,
+              timestamp: new Date().toISOString(),
+            });
+
+            // Refresh activity log
+            loadActivityLog();
+          } else {
+            errorDiv.textContent =
+              result.error ||
+              "Failed to send emergency alert. Please try again.";
+            errorDiv.style.display = "block";
+          }
+        } catch (err) {
+          console.error("Error sending emergency alert:", err);
+          errorDiv.textContent =
+            "Failed to send emergency alert. Please check your connection and try again.";
+          errorDiv.style.display = "block";
+        } finally {
+          sendBtn.disabled = false;
+          sendBtn.innerHTML = originalText;
+        }
+      }
+
+      // ============================================
+      // BROADCAST ANNOUNCEMENT FUNCTIONALITY
+      // ============================================
+
+      function openBroadcastAnnouncementModal() {
+        const modal = new bootstrap.Modal(
+          document.getElementById("broadcastAnnouncementModal")
+        );
+        modal.show();
+
+        // Reset form
+        document.getElementById("broadcastAnnouncementForm").reset();
+        document.getElementById("broadcastAnnouncementError").style.display =
+          "none";
+        document.getElementById("announcementCharCount").textContent = "0";
+
+        // Set default values
+        document.getElementById("announceTargetCitizens").checked = true;
+        document.getElementById("announceTargetOfficers").checked = true;
+        document.getElementById("announceTargetTechnicians").checked = true;
+        document.getElementById("announcementType").value = "general";
+        document.getElementById("announcementPriority").value = "normal";
+
+        // Character counter
+        const messageTextarea = document.getElementById("announcementMessage");
+        const charCount = document.getElementById("announcementCharCount");
+        messageTextarea.addEventListener("input", function () {
+          charCount.textContent = this.value.length;
+        });
+      }
+
+      async function sendBroadcastAnnouncement() {
+        const title = document.getElementById("announcementTitle").value.trim();
+        const message = document
+          .getElementById("announcementMessage")
+          .value.trim();
+        const type = document.getElementById("announcementType").value;
+        const priority = document.getElementById("announcementPriority").value;
+        const targetCitizens = document.getElementById(
+          "announceTargetCitizens"
+        ).checked;
+        const targetOfficers = document.getElementById(
+          "announceTargetOfficers"
+        ).checked;
+        const targetTechnicians = document.getElementById(
+          "announceTargetTechnicians"
+        ).checked;
+
+        const errorDiv = document.getElementById("broadcastAnnouncementError");
+        const sendBtn = document.getElementById("sendAnnouncementBtn");
+        const originalText = sendBtn.innerHTML;
+
+        // Validation
+        if (!title || !message) {
+          errorDiv.textContent = "Please fill in all required fields.";
+          errorDiv.style.display = "block";
+          return;
+        }
+
+        if (!targetCitizens && !targetOfficers && !targetTechnicians) {
+          errorDiv.textContent = "Please select at least one target audience.";
+          errorDiv.style.display = "block";
+          return;
+        }
+
+        // Show loading state
+        sendBtn.disabled = true;
+        sendBtn.innerHTML =
+          '<i class="fas fa-spinner fa-spin me-2"></i>Broadcasting...';
+
+        try {
+          // Call API to send broadcast announcement
+          const response = await fetch("/api/admin/broadcast-announcement", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title,
+              message,
+              type,
+              priority,
+              targetAudience: {
+                citizens: targetCitizens,
+                officers: targetOfficers,
+                technicians: targetTechnicians,
+              },
+            }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok && result.success) {
+            // Close modal
+            bootstrap.Modal.getInstance(
+              document.getElementById("broadcastAnnouncementModal")
+            ).hide();
+
+            // Show success message
+            showToast(
+              `Announcement broadcasted successfully to ${result.recipients} users!`,
+              "success"
+            );
+
+            // Add to activity log
+            UserService.addActivity({
+              type: "BROADCAST_ANNOUNCEMENT",
+              description: `Announcement "${title}" broadcasted`,
+              timestamp: new Date().toISOString(),
+            });
+
+            // Refresh activity log
+            loadActivityLog();
+          } else {
+            errorDiv.textContent =
+              result.error ||
+              "Failed to broadcast announcement. Please try again.";
+            errorDiv.style.display = "block";
+          }
+        } catch (err) {
+          console.error("Error broadcasting announcement:", err);
+          errorDiv.textContent =
+            "Failed to broadcast announcement. Please check your connection and try again.";
+          errorDiv.style.display = "block";
+        } finally {
+          sendBtn.disabled = false;
+          sendBtn.innerHTML = originalText;
+        }
       }
 
       function logout() {

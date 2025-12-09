@@ -6,6 +6,7 @@
 const express = require("express");
 const router = express.Router();
 const Citizen = require("../models/Citizen");
+const User = require("../models/User");
 const { validateCitizenMiddleware } = require("../middleware/validation");
 
 /**
@@ -276,6 +277,245 @@ router.delete("/citizens/:id", async (req, res) => {
     }
 
     res.status(500).json({
+      error: "Internal server error",
+      message: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
+  }
+});
+
+/**
+ * POST /api/admin/emergency-alert
+ * Send emergency alert to specified user groups
+ *
+ * Request body:
+ * {
+ *   title: string (required),
+ *   message: string (required),
+ *   priority: string (high, critical, urgent),
+ *   targetAudience: {
+ *     citizens: boolean,
+ *     officers: boolean,
+ *     technicians: boolean
+ *   }
+ * }
+ */
+router.post("/emergency-alert", async (req, res) => {
+  try {
+    const { title, message, priority, targetAudience } = req.body;
+
+    // Validation
+    if (!title || !message) {
+      return res.status(400).json({
+        success: false,
+        error: "Title and message are required",
+      });
+    }
+
+    if (!targetAudience) {
+      return res.status(400).json({
+        success: false,
+        error: "Target audience must be specified",
+      });
+    }
+
+    // Build query based on target audience
+    const roleQuery = [];
+    if (targetAudience.citizens) {
+      roleQuery.push("citizen");
+    }
+    if (targetAudience.officers) {
+      roleQuery.push("officer");
+    }
+    if (targetAudience.technicians) {
+      roleQuery.push("technician");
+    }
+
+    if (roleQuery.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: "At least one target audience must be selected",
+      });
+    }
+
+    // Find all users matching the role criteria
+    // For citizens, we check both Citizen and User models
+    const userQuery = { role: { $in: roleQuery }, status: "active" };
+
+    const users = await User.find(userQuery).lean();
+    let citizens = [];
+
+    // If citizens are targeted, also get from Citizen model
+    if (targetAudience.citizens) {
+      const citizenDocs = await Citizen.find({ status: "active" }).lean();
+      citizens = citizenDocs.map((cit) => ({
+        id: cit._id,
+        email: cit.email,
+        name: cit.name,
+        role: "citizen",
+      }));
+    }
+
+    // Combine all recipients
+    const recipients = [
+      ...users.map((u) => ({
+        id: u._id,
+        email: u.email,
+        name: u.name,
+        role: u.role,
+      })),
+      ...citizens,
+    ];
+
+    // Store emergency alert (you could save this to a database if needed)
+    const alertData = {
+      title,
+      message,
+      priority: priority || "critical",
+      recipients: recipients.length,
+      targetAudience,
+      sentAt: new Date(),
+      sentBy: req.body.sentBy || "admin",
+    };
+
+    // In a real application, you would:
+    // 1. Store this alert in a database
+    // 2. Send push notifications
+    // 3. Send emails/SMS
+    // 4. Broadcast via WebSocket/SSE for real-time updates
+
+    // For now, we'll just return success
+    // The frontend can broadcast this via localStorage events for demo purposes
+    console.log("Emergency Alert Sent:", alertData);
+
+    res.json({
+      success: true,
+      message: "Emergency alert sent successfully",
+      recipients: recipients.length,
+      alert: alertData,
+    });
+  } catch (err) {
+    console.error("Error sending emergency alert:", err);
+    res.status(500).json({
+      success: false,
+      error: "Internal server error",
+      message: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
+  }
+});
+
+/**
+ * POST /api/admin/broadcast-announcement
+ * Send broadcast announcement to specified user groups
+ *
+ * Request body:
+ * {
+ *   title: string (required),
+ *   message: string (required),
+ *   type: string (general, maintenance, update, news, event),
+ *   priority: string (normal, important, high),
+ *   targetAudience: {
+ *     citizens: boolean,
+ *     officers: boolean,
+ *     technicians: boolean
+ *   }
+ * }
+ */
+router.post("/broadcast-announcement", async (req, res) => {
+  try {
+    const { title, message, type, priority, targetAudience } = req.body;
+
+    // Validation
+    if (!title || !message) {
+      return res.status(400).json({
+        success: false,
+        error: "Title and message are required",
+      });
+    }
+
+    if (!targetAudience) {
+      return res.status(400).json({
+        success: false,
+        error: "Target audience must be specified",
+      });
+    }
+
+    // Build query based on target audience
+    const roleQuery = [];
+    if (targetAudience.citizens) {
+      roleQuery.push("citizen");
+    }
+    if (targetAudience.officers) {
+      roleQuery.push("officer");
+    }
+    if (targetAudience.technicians) {
+      roleQuery.push("technician");
+    }
+
+    if (roleQuery.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: "At least one target audience must be selected",
+      });
+    }
+
+    // Find all users matching the role criteria
+    const userQuery = { role: { $in: roleQuery }, status: "active" };
+
+    const users = await User.find(userQuery).lean();
+    let citizens = [];
+
+    // If citizens are targeted, also get from Citizen model
+    if (targetAudience.citizens) {
+      const citizenDocs = await Citizen.find({ status: "active" }).lean();
+      citizens = citizenDocs.map((cit) => ({
+        id: cit._id,
+        email: cit.email,
+        name: cit.name,
+        role: "citizen",
+      }));
+    }
+
+    // Combine all recipients
+    const recipients = [
+      ...users.map((u) => ({
+        id: u._id,
+        email: u.email,
+        name: u.name,
+        role: u.role,
+      })),
+      ...citizens,
+    ];
+
+    // Store announcement data (you could save this to a database if needed)
+    const announcementData = {
+      title,
+      message,
+      type: type || "general",
+      priority: priority || "normal",
+      recipients: recipients.length,
+      targetAudience,
+      sentAt: new Date(),
+      sentBy: req.body.sentBy || "admin",
+    };
+
+    // In a real application, you would:
+    // 1. Store this announcement in a database
+    // 2. Send push notifications
+    // 3. Send emails
+    // 4. Broadcast via WebSocket/SSE for real-time updates
+
+    console.log("Broadcast Announcement Sent:", announcementData);
+
+    res.json({
+      success: true,
+      message: "Announcement broadcasted successfully",
+      recipients: recipients.length,
+      announcement: announcementData,
+    });
+  } catch (err) {
+    console.error("Error broadcasting announcement:", err);
+    res.status(500).json({
+      success: false,
       error: "Internal server error",
       message: process.env.NODE_ENV === "development" ? err.message : undefined,
     });
