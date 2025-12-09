@@ -314,7 +314,9 @@
                     <div class="small text-muted" id="technicianContact">-</div>
                   </div>
                   <div class="text-end">
-                    <span class="badge bg-warning text-dark"
+                    <span
+                      class="badge bg-warning text-dark"
+                      id="technicianStatusBadge"
                       >Working on it</span
                     >
                   </div>
@@ -662,6 +664,26 @@
         document.getElementById("technicianName").textContent = technician.name;
         document.getElementById("technicianContact").textContent =
           technician.id + (technician.phone ? " • " + technician.phone : "");
+
+        // Update technician status badge based on complaint status
+        const statusBadge = document.getElementById("technicianStatusBadge");
+        if (statusBadge && currentComplaint && currentComplaint.status) {
+          const status = currentComplaint.status;
+          // Map status to label and style
+          const statusMap = {
+            resolved: { text: "Complete", class: "bg-success" },
+            "in-progress": {
+              text: "Working on it",
+              class: "bg-warning text-dark",
+            },
+            acknowledged: { text: "Acknowledged", class: "bg-info text-dark" },
+            new: { text: "Pending", class: "bg-secondary" },
+          };
+          const cfg = statusMap[status] || statusMap["new"];
+          statusBadge.textContent = cfg.text;
+          statusBadge.className = `badge ${cfg.class}`;
+        }
+
         card.style.display = "block";
       }
 

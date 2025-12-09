@@ -307,7 +307,11 @@
                     </div>
                   </div>
                   <div class="text-end">
-                    <span class="badge bg-warning text-dark">In Progress</span>
+                    <span
+                      class="badge bg-warning text-dark"
+                      id="assignedTechStatus"
+                      >In Progress</span
+                    >
                     <div class="small text-muted mt-1" id="assignedDate">-</div>
                   </div>
                 </div>
@@ -709,8 +713,9 @@
         // Load complaint data from MongoDB
         loadComplaintData();
 
-        // Subscribe to real-time updates
+        // Subscribe to real-time updates from both services
         ComplaintService.subscribe(handleRealtimeUpdate);
+        ApiService.subscribe(handleRealtimeUpdate);
       });
 
       // Load complaint data from MongoDB via API
@@ -875,9 +880,16 @@
       async function handleRealtimeUpdate(type, data) {
         console.log("Officer Detail - Real-time update:", type, data);
 
+        // Normalize ID across different event formats
+        const eventComplaintId = data.complaintId || data.id || data._id;
+        const isCurrentComplaint =
+          eventComplaintId === currentComplaintId ||
+          eventComplaintId === `CMPT-${currentComplaintId}` ||
+          `CMPT-${eventComplaintId}` === currentComplaintId;
+
         switch (type) {
           case "TIMELINE_UPDATED":
-            if (data.complaintId === currentComplaintId) {
+            if (isCurrentComplaint) {
               await loadComplaintData();
               ComplaintService.showNotification(
                 "Timeline updated with new entry",
@@ -887,11 +899,13 @@
             break;
 
           case "STATUS_CHANGED":
-            if (data.complaintId === currentComplaintId) {
+          case "COMPLAINT_STATUS_CHANGED":
+            if (isCurrentComplaint) {
               await loadComplaintData();
+              const newStatus = data.newStatus || data.status;
               ComplaintService.showNotification(
                 `Status changed to ${ComplaintService.getStatusLabel(
-                  data.newStatus
+                  newStatus
                 )}`,
                 "warning"
               );
@@ -899,14 +913,27 @@
             break;
 
           case "COMPLAINT_UPDATED":
-            if (data.id === currentComplaintId) {
+            if (isCurrentComplaint) {
               await loadComplaintData();
+            }
+            break;
+
+          case "TASK_ASSIGNED":
+          case "COMPLAINT_ASSIGNED":
+            if (isCurrentComplaint) {
+              await loadComplaintData();
+              const techName =
+                data.technician?.name || data.technicianName || "a technician";
+              ComplaintService.showNotification(
+                `Task assigned to ${techName}`,
+                "success"
+              );
             }
             break;
 
           case "TASK_STARTED":
           case "PROGRESS_UPDATE":
-            if (data.complaintId === currentComplaintId) {
+            if (isCurrentComplaint) {
               await loadComplaintData();
               ComplaintService.showNotification(
                 type === "TASK_STARTED"
@@ -918,7 +945,7 @@
             break;
 
           case "TASK_COMPLETED":
-            if (data.complaintId === currentComplaintId) {
+            if (isCurrentComplaint) {
               await loadComplaintData();
               ComplaintService.showNotification(
                 "🎉 Task has been marked as complete by the technician!",
@@ -973,6 +1000,26 @@
         document.getElementById("assignedDate").textContent =
           "Assigned " +
           ComplaintService.formatDateTime(currentComplaint.updatedAt);
+
+        // Update technician status badge based on complaint status
+        const statusBadge = document.getElementById("assignedTechStatus");
+        if (statusBadge && currentComplaint && currentComplaint.status) {
+          const status = currentComplaint.status;
+          const statusMap = {
+            resolved: { text: "Complete", class: "bg-success" },
+            "in-progress": {
+              text: "In Progress",
+              class: "bg-warning text-dark",
+            },
+            acknowledged: { text: "Acknowledged", class: "bg-info text-dark" },
+            new: { text: "Pending", class: "bg-secondary" },
+            rejected: { text: "Rejected", class: "bg-danger" },
+          };
+          const cfg = statusMap[status] || statusMap["new"];
+          statusBadge.textContent = cfg.text;
+          statusBadge.className = `badge ${cfg.class}`;
+        }
+
         card.style.display = "block";
       }
 

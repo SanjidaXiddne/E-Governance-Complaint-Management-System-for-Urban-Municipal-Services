@@ -715,6 +715,19 @@
               <button
                 class="nav-link active"
                 data-bs-toggle="tab"
+                data-bs-target="#all"
+                onclick="setActiveTab('all')"
+              >
+                All Complaints
+                <span class="badge bg-primary tab-badge" id="tabAllBadge"
+                  >0</span
+                >
+              </button>
+            </li>
+            <li class="nav-item">
+              <button
+                class="nav-link"
+                data-bs-toggle="tab"
                 data-bs-target="#new"
                 onclick="setActiveTab('new')"
               >
@@ -764,7 +777,34 @@
 
           <!-- Table Content -->
           <div class="tab-content">
-            <div class="tab-pane fade show active" id="new">
+            <!-- All Complaints Tab -->
+            <div class="tab-pane fade show active" id="all">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <thead>
+                    <tr>
+                      <th style="width: 4px"></th>
+                      <th>ID</th>
+                      <th>Citizen</th>
+                      <th>Category</th>
+                      <th>Status</th>
+                      <th>Priority</th>
+                      <th>Date</th>
+                      <th class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="allComplaintsBody">
+                    <tr>
+                      <td colspan="8" class="text-center py-4 text-muted">
+                        <i class="fas fa-spinner fa-spin me-2"></i>Loading...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="new">
               <div class="table-responsive">
                 <table class="table mb-0">
                   <thead>
@@ -1155,7 +1195,7 @@
       // Dashboard state
       let allComplaints = [];
       let filteredComplaints = [];
-      let activeTab = "new";
+      let activeTab = "all";
       let notifications = [];
       let latestNewComplaintId = null;
 
@@ -1179,47 +1219,57 @@
         // Load initial data
         loadDashboardData();
 
-        // Subscribe to real-time updates
+        // Subscribe to real-time updates from both services
         ComplaintService.subscribe(handleRealtimeUpdate);
+        ApiService.subscribe(handleRealtimeUpdate);
 
         // Play notification sound if available
         setupNotificationSound();
       });
 
-      // Load all dashboard data from MongoDB via API
+      // Load all dashboard data from MongoDB via API with fallback
       async function loadDashboardData() {
         try {
-          // Fetch complaints from MongoDB
+          // Try to fetch complaints from MongoDB API first
           let complaints = await ApiService.getAllComplaints();
 
-          // If no complaints from API, fallback to local storage
-          if (!complaints || complaints.length === 0) {
-            complaints = ComplaintService.getAllComplaints();
-          } else {
-            // Map MongoDB format to local format
+          // If API returns valid data, use it
+          if (
+            complaints &&
+            Array.isArray(complaints) &&
+            complaints.length > 0
+          ) {
+            // Map MongoDB format to local format for consistency
             complaints = complaints.map((c) => ({
-              id: c.complaintId || c.id,
+              id: c.complaintId || c.id || c._id,
               category: c.category,
               categoryLabel: c.categoryLabel,
               description: c.description,
               location: c.location,
               status: c.status,
-              priority: c.priority,
-              citizen: c.citizen,
-              assignedTo: c.assignedTo,
-              timeline: c.timeline,
+              priority: c.priority || "normal",
+              citizen: c.citizen || {},
+              assignedTo: c.assignedTo || null,
+              timeline: c.timeline || [],
               createdAt: c.createdAt,
               updatedAt: c.updatedAt,
               resolvedAt: c.resolvedAt,
             }));
+
+            console.log(`Loaded ${complaints.length} complaints from API`);
+            allComplaints = complaints;
+          } else {
+            // Fallback to local storage if API has no data
+            console.log("No API data, using local storage");
+            allComplaints = ComplaintService.getAllComplaints();
           }
 
-          allComplaints = complaints;
           await updateStats();
           renderAllTables();
         } catch (err) {
-          console.error("Error loading complaints:", err);
-          // Fallback to local storage
+          console.error("Error loading complaints from API:", err);
+          // Fallback to local storage on error
+          console.log("API error, falling back to local storage");
           allComplaints = ComplaintService.getAllComplaints();
           updateStats();
           renderAllTables();
@@ -1301,6 +1351,10 @@
           (c) => c.status === "resolved"
         );
 
+        // Render all complaints table
+        renderTable("allComplaintsBody", allComplaints, "all", newIds);
+
+        // Render status-specific tables
         renderTable("newComplaintsBody", newComplaints, "new", newIds);
         renderTable(
           "progressComplaintsBody",
@@ -1323,6 +1377,7 @@
 
         // Update showing count
         const activeComplaints = {
+          all: allComplaints,
           new: newComplaints,
           "in-progress": progressComplaints,
           acknowledged: acknowledgedComplaints,
@@ -1331,16 +1386,23 @@
         document.getElementById("showingCount").textContent = (
           activeComplaints[activeTab] || []
         ).length;
+
+        // Update tab badge for all complaints
+        document.getElementById("tabAllBadge").textContent =
+          allComplaints.length;
       }
 
       // Render a single table
       function renderTable(bodyId, complaints, type, newIds = []) {
         const tbody = document.getElementById(bodyId);
 
+        // Determine column count based on table type
+        const colSpan = type === "all" ? 8 : 7;
+
         if (complaints.length === 0) {
           tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">
+                        <td colspan="${colSpan}" class="text-center py-5 text-muted">
                             <i class="fas fa-inbox fa-2x mb-3"></i>
                             <p class="mb-0">No ${type} complaints</p>
                         </td>
@@ -1370,14 +1432,14 @@
                                 <div class="user-avatar me-2" style="background: ${getAvatarColor(
                                   c.citizen.name
                                 )}; color: white;">
-                                    ${c.citizen.initials}
+                                    ${c.citizen.initials || "U"}
                                 </div>
                                 <div>
                                     <div class="fw-medium">${
-                                      c.citizen.name
+                                      c.citizen.name || "Unknown"
                                     }</div>
                                     <div class="small text-muted">${
-                                      c.citizen.email
+                                      c.citizen.email || ""
                                     }</div>
                                 </div>
                             </div>
@@ -1385,6 +1447,19 @@
                         <td><span class="${ComplaintService.getCategoryBadgeClass(
                           c.category
                         )}">${c.categoryLabel}</span></td>
+                        ${
+                          type === "all"
+                            ? `
+                            <td>
+                                <span class="badge ${ComplaintService.getStatusBadgeClass(
+                                  c.status
+                                )}">
+                                    ${ComplaintService.getStatusLabel(c.status)}
+                                </span>
+                            </td>
+                        `
+                            : ""
+                        }
                         ${
                           type === "progress"
                             ? `
@@ -1440,23 +1515,35 @@
       async function handleRealtimeUpdate(type, data) {
         console.log("Officer Dashboard - Real-time update:", type, data);
 
+        // Normalize complaint ID across different event formats
+        const complaintId = data.complaintId || data.id || data._id;
+        const status = data.status || data.newStatus;
+
         switch (type) {
           case "NEW_COMPLAINT":
+          case "COMPLAINT_CREATED":
             // Reload data with animation from MongoDB
             await loadDashboardData();
-            renderAllTables([data.id]);
-
-            // Store for toast
-            latestNewComplaintId = data.id;
+            if (complaintId) {
+              renderAllTables([complaintId]);
+              latestNewComplaintId = complaintId;
+            }
 
             // Show toast notification
-            showNewComplaintToast(data);
+            if (data.citizen) {
+              showNewComplaintToast({
+                ...data,
+                id: complaintId,
+              });
 
-            // Add to notification dropdown
-            addNotification(
-              `New complaint #${data.id} from ${data.citizen.name}`,
-              "danger"
-            );
+              // Add to notification dropdown
+              addNotification(
+                `New complaint #${complaintId} from ${
+                  data.citizen.name || data.citizen.email
+                }`,
+                "danger"
+              );
+            }
 
             // Play sound
             playNotificationSound();
@@ -1465,20 +1552,19 @@
           case "COMPLAINT_UPDATED":
             await loadDashboardData();
             addNotification(
-              `Complaint #${
-                data.id
-              } updated to ${ComplaintService.getStatusLabel(data.status)}`,
+              `Complaint #${complaintId} updated to ${ComplaintService.getStatusLabel(
+                status
+              )}`,
               "info"
             );
             break;
 
           case "STATUS_CHANGED":
+          case "COMPLAINT_STATUS_CHANGED":
             await loadDashboardData();
             addNotification(
-              `Complaint #${
-                data.complaintId
-              } status changed to ${ComplaintService.getStatusLabel(
-                data.newStatus
+              `Complaint #${complaintId} status changed to ${ComplaintService.getStatusLabel(
+                status
               )}`,
               "info"
             );
@@ -1486,11 +1572,17 @@
 
           case "TASK_ASSIGNED":
           case "TASK_REASSIGNED":
+          case "COMPLAINT_ASSIGNED":
             await loadDashboardData();
+            const technicianName =
+              data.technician?.name ||
+              data.newTechnician?.name ||
+              data.technicianName ||
+              "a technician";
             addNotification(
-              `Task #${data.complaintId} ${
+              `Task #${complaintId} ${
                 type === "TASK_REASSIGNED" ? "reassigned" : "assigned"
-              } to ${data.technician?.name || data.newTechnician?.name}`,
+              } to ${technicianName}`,
               "success"
             );
             break;
@@ -1498,20 +1590,20 @@
           case "TASK_STARTED":
             await loadDashboardData();
             addNotification(
-              `Technician started working on #${data.complaintId}`,
+              `Technician started working on #${complaintId}`,
               "info"
             );
             break;
 
           case "PROGRESS_UPDATE":
             await loadDashboardData();
-            addNotification(`Progress update on #${data.complaintId}`, "info");
+            addNotification(`Progress update on #${complaintId}`, "info");
             break;
 
           case "TASK_COMPLETED":
             await loadDashboardData();
             addNotification(
-              `🎉 Task #${data.complaintId} completed by technician!`,
+              `🎉 Task #${complaintId} completed by technician!`,
               "success"
             );
             playNotificationSound();
@@ -1654,6 +1746,7 @@
           (c) => c.status === "resolved"
         );
 
+        renderTable("allComplaintsBody", filteredComplaints, "all");
         renderTable("newComplaintsBody", newComplaints, "new");
         renderTable("progressComplaintsBody", progressComplaints, "progress");
         renderTable(
@@ -1668,6 +1761,7 @@
       function setActiveTab(tab) {
         activeTab = tab;
         const counts = {
+          all: allComplaints.length,
           new: allComplaints.filter((c) => c.status === "new").length,
           "in-progress": allComplaints.filter((c) => c.status === "in-progress")
             .length,
