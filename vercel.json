@@ -6,10 +6,6 @@
       "destination": "/server/index.js"
     },
     {
-      "source": "/(.*\\.(html|css|js|png|jpg|jpeg|gif|svg|ico|json))",
-      "destination": "/$1"
-    },
-    {
       "source": "/(.*)",
       "destination": "/server/index.js"
     }
