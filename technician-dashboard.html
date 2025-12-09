@@ -1154,6 +1154,54 @@
                 </span>
               </div>
             </li>
+            <!-- Notifications Dropdown -->
+            <li class="nav-item dropdown ms-lg-2">
+              <a
+                class="nav-link position-relative"
+                href="#"
+                data-bs-toggle="dropdown"
+                id="notificationToggle"
+              >
+                <i class="fas fa-bell" style="font-size: 1.1rem"></i>
+                <span
+                  class="badge-notification bg-danger rounded-pill"
+                  id="notificationBadge"
+                  style="
+                    position: absolute;
+                    top: 0;
+                    right: -5px;
+                    font-size: 0.65rem;
+                    padding: 0.25rem 0.45rem;
+                    display: none;
+                  "
+                  >0</span
+                >
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-end shadow-sm border-0"
+                style="min-width: 320px; max-height: 400px; overflow-y: auto"
+                id="notificationDropdown"
+              >
+                <li>
+                  <h6
+                    class="dropdown-header d-flex justify-content-between align-items-center"
+                  >
+                    <span>Notifications</span>
+                    <button
+                      class="btn btn-link btn-sm p-0 text-decoration-none"
+                      onclick="clearNotifications()"
+                    >
+                      Clear all
+                    </button>
+                  </h6>
+                </li>
+                <li id="noNotifications">
+                  <div class="dropdown-item small text-muted text-center py-3">
+                    <i class="fas fa-bell-slash me-2"></i>No new notifications
+                  </div>
+                </li>
+              </ul>
+            </li>
             <li class="nav-item ms-lg-3">
               <div
                 class="d-flex align-items-center user-clickable"
@@ -1888,6 +1936,10 @@
         isAvailable: true,
       };
 
+      // Notification state
+      let notifications = [];
+      let notificationCount = 0;
+
       // Modal instances
       let taskDetailModal, progressModal, completeModal, startWorkModal;
 
@@ -1918,8 +1970,11 @@
         // Setup filter pills
         setupFilterPills();
 
-        // Subscribe to real-time updates
+        // Subscribe to real-time updates from both local (ComplaintService) and API
         ComplaintService.subscribe(handleRealTimeUpdate);
+        if (ApiService.subscribe) {
+          ApiService.subscribe(handleRealTimeUpdate);
+        }
 
         console.log("Technician Dashboard initialized");
       });
@@ -2696,21 +2751,24 @@
       function handleRealTimeUpdate(type, data) {
         console.log("Real-time update:", type, data);
 
+        // Normalize IDs and complaint object
+        const complaintId = data.complaintId || data.id || data._id;
+        const complaint = data.complaint || data;
+        const assignedTo = complaint?.assignedTo || data.technician;
+
         switch (type) {
           case "TASK_ASSIGNED":
-            // New task assigned to this technician
-            if (data.technician && data.technician.id === technicianState.id) {
+          case "COMPLAINT_ASSIGNED":
+            if (assignedTo && assignedTo.id === technicianState.id) {
               loadTasks();
-              ComplaintService.showNotification(
-                `🆕 New task assigned: ${
-                  data.complaint.categoryLabel || data.complaint.category
-                } - ${data.complaint.location}`,
-                "info"
-              );
-              // Highlight the new task card
+              const taskMsg = `🆕 New task assigned: ${
+                complaint.categoryLabel || complaint.category
+              } - ${complaint.location || ""}`;
+              ComplaintService.showNotification(taskMsg, "info");
+              addNotification(taskMsg, "primary");
               setTimeout(() => {
                 const taskCard = document.querySelector(
-                  `[data-task-id="${data.complaintId}"]`
+                  `[data-task-id="${complaintId}"]`
                 );
                 if (taskCard) {
                   taskCard.classList.add("new-highlight");
@@ -2724,33 +2782,27 @@
             break;
 
           case "TASK_REASSIGNED":
-            // Task reassigned - check if we're the old or new technician
             if (
               data.newTechnician &&
               data.newTechnician.id === technicianState.id
             ) {
-              // New task assigned to us
               loadTasks();
-              ComplaintService.showNotification(
-                `🔄 Task reassigned to you: ${
-                  data.complaint.categoryLabel || data.complaint.category
-                }`,
-                "info"
-              );
+              const reassignMsg = `🔄 Task reassigned to you: ${
+                complaint.categoryLabel || complaint.category
+              }`;
+              ComplaintService.showNotification(reassignMsg, "info");
+              addNotification(reassignMsg, "info");
             } else if (
               data.oldTechnician &&
               data.oldTechnician.id === technicianState.id
             ) {
-              // Task removed from us
               loadTasks();
-              ComplaintService.showNotification(
-                `Task ${data.complaintId} has been reassigned to another technician`,
-                "warning"
-              );
-              // Close modal if viewing this task
+              const removedMsg = `Task ${complaintId} has been reassigned to another technician`;
+              ComplaintService.showNotification(removedMsg, "warning");
+              addNotification(removedMsg, "warning");
               if (
                 technicianState.selectedTask &&
-                technicianState.selectedTask.id === data.complaintId
+                technicianState.selectedTask.id === complaintId
               ) {
                 taskDetailModal.hide();
                 technicianState.selectedTask = null;
@@ -2760,45 +2812,75 @@
 
           case "COMPLAINT_UPDATED":
           case "STATUS_CHANGED":
-            // Check if this affects our tasks
+          case "COMPLAINT_STATUS_CHANGED":
             if (
-              data.complaint &&
-              data.complaint.assignedTo &&
-              data.complaint.assignedTo.id === technicianState.id
+              complaint &&
+              complaint.assignedTo &&
+              complaint.assignedTo.id === technicianState.id
             ) {
               loadTasks();
-              // Update selected task if viewing it
+              const newStatus =
+                data.newStatus || data.status || complaint.status;
+              const statusMsg = `Task #${complaintId} status updated to ${ComplaintService.getStatusLabel(
+                newStatus
+              )}`;
+              ComplaintService.showNotification(statusMsg, "info");
+              addNotification(statusMsg, "info");
               if (
                 technicianState.selectedTask &&
                 technicianState.selectedTask.id ===
-                  (data.complaintId || data.complaint.id)
+                  (complaintId || complaint.id)
               ) {
-                technicianState.selectedTask = data.complaint;
-                viewTaskDetail(data.complaint.id);
+                technicianState.selectedTask = complaint;
+                viewTaskDetail(complaint.id);
               }
             }
             break;
 
           case "TASK_STARTED":
-          case "TASK_COMPLETED":
-          case "PROGRESS_UPDATE":
-            // Check if this affects our tasks
             if (
-              data.complaint &&
-              data.complaint.assignedTo &&
-              data.complaint.assignedTo.id === technicianState.id
+              complaint &&
+              complaint.assignedTo &&
+              complaint.assignedTo.id === technicianState.id
             ) {
               loadTasks();
+              addNotification(`Task #${complaintId} work started`, "success");
+            }
+            break;
+
+          case "TASK_COMPLETED":
+            if (
+              complaint &&
+              complaint.assignedTo &&
+              complaint.assignedTo.id === technicianState.id
+            ) {
+              loadTasks();
+              const completeMsg = `🎉 Task #${complaintId} completed successfully!`;
+              ComplaintService.showNotification(completeMsg, "success");
+              addNotification(completeMsg, "success");
+            }
+            break;
+
+          case "PROGRESS_UPDATE":
+            if (
+              complaint &&
+              complaint.assignedTo &&
+              complaint.assignedTo.id === technicianState.id
+            ) {
+              loadTasks();
+              addNotification(
+                `Progress update on task #${complaintId}`,
+                "info"
+              );
             }
             break;
 
           case "TIMELINE_UPDATED":
-            // Refresh timeline in modal if viewing the same task
             if (
               technicianState.selectedTask &&
-              data.complaintId === technicianState.selectedTask.id
+              complaintId === technicianState.selectedTask.id
             ) {
-              renderModalTimeline(data.complaintId);
+              renderModalTimeline(complaintId);
             }
             break;
 
@@ -2820,6 +2902,80 @@
       function logout() {
         sessionStorage.clear();
         window.location.href = "index.html";
+      }
+
+      // ============================================
+      // NOTIFICATION FUNCTIONS
+      // ============================================
+
+      // Add notification to dropdown
+      function addNotification(message, type = "info") {
+        notifications.unshift({ message, type, time: new Date() });
+        notificationCount++;
+        updateNotificationDropdown();
+      }
+
+      // Update notification dropdown
+      function updateNotificationDropdown() {
+        const badge = document.getElementById("notificationBadge");
+        const dropdown = document.getElementById("notificationDropdown");
+        const noNotif = document.getElementById("noNotifications");
+
+        if (!badge || !dropdown) {
+          console.warn("Notification elements not found");
+          return;
+        }
+
+        badge.textContent = notificationCount;
+        badge.style.display = notificationCount > 0 ? "flex" : "none";
+
+        if (notifications.length > 0) {
+          if (noNotif) noNotif.style.display = "none";
+
+          // Clear old items (keep header)
+          const items = dropdown.querySelectorAll(".notification-item");
+          items.forEach((item) => item.remove());
+
+          // Add new items
+          notifications.slice(0, 5).forEach((notif) => {
+            const li = document.createElement("li");
+            li.className = "notification-item";
+            li.innerHTML = `
+              <div class="dropdown-item small py-2">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-circle text-${
+                    notif.type
+                  } me-2 mt-1" style="font-size: 0.5rem;"></i>
+                  <div>
+                    <div>${notif.message}</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">
+                      ${formatTimeAgo(notif.time)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+            dropdown.appendChild(li);
+          });
+        } else {
+          if (noNotif) noNotif.style.display = "block";
+        }
+      }
+
+      // Clear notifications
+      function clearNotifications() {
+        notifications = [];
+        notificationCount = 0;
+        updateNotificationDropdown();
+      }
+
+      // Format time ago helper
+      function formatTimeAgo(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+        if (seconds < 60) return "Just now";
+        if (seconds < 3600) return Math.floor(seconds / 60) + " min ago";
+        if (seconds < 86400) return Math.floor(seconds / 3600) + " hours ago";
+        return Math.floor(seconds / 86400) + " days ago";
       }
 
       // ============================================

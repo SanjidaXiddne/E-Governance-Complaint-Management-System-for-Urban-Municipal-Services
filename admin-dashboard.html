@@ -1023,6 +1023,47 @@
                 <i class="fas fa-file-invoice"></i> Reports
               </a>
             </li>
+            <!-- Notifications Dropdown -->
+            <li class="nav-item dropdown ms-lg-3">
+              <a
+                class="nav-link position-relative"
+                href="#"
+                data-bs-toggle="dropdown"
+                id="notificationToggle"
+              >
+                <i class="fas fa-bell"></i>
+                <span
+                  class="badge-notification bg-danger rounded-pill"
+                  id="notificationBadge"
+                  style="display: none;"
+                  >0</span
+                >
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-end shadow-sm border-0"
+                style="min-width: 320px; max-height: 400px; overflow-y: auto;"
+                id="notificationDropdown"
+              >
+                <li>
+                  <h6
+                    class="dropdown-header d-flex justify-content-between align-items-center"
+                  >
+                    <span>System Notifications</span>
+                    <button
+                      class="btn btn-link btn-sm p-0 text-decoration-none"
+                      onclick="clearNotifications()"
+                    >
+                      Clear all
+                    </button>
+                  </h6>
+                </li>
+                <li id="noNotifications">
+                  <div class="dropdown-item small text-muted text-center py-3">
+                    <i class="fas fa-bell-slash me-2"></i>No new notifications
+                  </div>
+                </li>
+              </ul>
+            </li>
             <li class="nav-item ms-lg-3">
               <div
                 class="d-flex align-items-center user-clickable"
@@ -2229,6 +2270,9 @@
         // Subscribe to real-time updates
         UserService.subscribe(handleEvent);
         ComplaintService.subscribe(handleEvent);
+        if (typeof ApiService !== "undefined" && ApiService.subscribe) {
+          ApiService.subscribe(handleEvent);
+        }
 
         // Refresh every 5 seconds for real-time feel
         setInterval(() => {
@@ -2238,9 +2282,52 @@
       });
 
       function handleEvent(type, data) {
-        console.log("Event received:", type);
+        console.log("Admin Dashboard Event received:", type, data);
         loadStats();
         loadActivityLog();
+
+        // Add notification for important events
+        const complaintId = data?.complaintId || data?.id || data?._id;
+        switch (type) {
+          case "NEW_COMPLAINT":
+          case "COMPLAINT_CREATED":
+            if (complaintId) {
+              addNotification(`New complaint #${complaintId} submitted`, "danger");
+            }
+            break;
+          case "STATUS_CHANGED":
+          case "COMPLAINT_STATUS_CHANGED":
+            const newStatus = data?.newStatus || data?.status;
+            if (complaintId && newStatus) {
+              addNotification(`Complaint #${complaintId} → ${ComplaintService.getStatusLabel(newStatus)}`, "info");
+            }
+            break;
+          case "TASK_ASSIGNED":
+          case "COMPLAINT_ASSIGNED":
+            const techName = data?.technician?.name || data?.assignedTo?.name;
+            if (complaintId && techName) {
+              addNotification(`Task #${complaintId} assigned to ${techName}`, "primary");
+            }
+            break;
+          case "TASK_COMPLETED":
+            if (complaintId) {
+              addNotification(`🎉 Task #${complaintId} completed!`, "success");
+            }
+            break;
+          case "USER_CREATED":
+            const userName = data?.name || data?.email;
+            if (userName) {
+              addNotification(`New user registered: ${userName}`, "success");
+            }
+            break;
+          case "USER_UPDATED":
+          case "USER_STATUS_CHANGED":
+            const updatedUser = data?.name || data?.email;
+            if (updatedUser) {
+              addNotification(`User updated: ${updatedUser}`, "info");
+            }
+            break;
+        }
       }
 
       function loadStats() {
@@ -2927,6 +3014,80 @@
       function logout() {
         sessionStorage.clear();
         window.location.href = "index.html";
+      }
+
+      // ============================================
+      // NOTIFICATION FUNCTIONS
+      // ============================================
+      let notifications = [];
+      let notificationCount = 0;
+
+      // Add notification to dropdown
+      function addNotification(message, type = "info") {
+        notifications.unshift({ message, type, time: new Date() });
+        notificationCount++;
+        updateNotificationDropdown();
+      }
+
+      // Update notification dropdown
+      function updateNotificationDropdown() {
+        const badge = document.getElementById("notificationBadge");
+        const dropdown = document.getElementById("notificationDropdown");
+        const noNotif = document.getElementById("noNotifications");
+
+        if (!badge || !dropdown) {
+          console.warn("Notification elements not found");
+          return;
+        }
+
+        badge.textContent = notificationCount;
+        badge.style.display = notificationCount > 0 ? "flex" : "none";
+
+        if (notifications.length > 0) {
+          if (noNotif) noNotif.style.display = "none";
+
+          // Clear old items (keep header)
+          const items = dropdown.querySelectorAll(".notification-item");
+          items.forEach((item) => item.remove());
+
+          // Add new items
+          notifications.slice(0, 8).forEach((notif) => {
+            const li = document.createElement("li");
+            li.className = "notification-item";
+            li.innerHTML = `
+              <div class="dropdown-item small py-2">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-circle text-${notif.type} me-2 mt-1" style="font-size: 0.5rem;"></i>
+                  <div>
+                    <div>${notif.message}</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">
+                      ${formatTimeAgoAdmin(notif.time)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+            dropdown.appendChild(li);
+          });
+        } else {
+          if (noNotif) noNotif.style.display = "block";
+        }
+      }
+
+      // Clear notifications
+      function clearNotifications() {
+        notifications = [];
+        notificationCount = 0;
+        updateNotificationDropdown();
+      }
+
+      // Format time ago helper
+      function formatTimeAgoAdmin(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+        if (seconds < 60) return "Just now";
+        if (seconds < 3600) return Math.floor(seconds / 60) + " min ago";
+        if (seconds < 86400) return Math.floor(seconds / 3600) + " hours ago";
+        return Math.floor(seconds / 86400) + " days ago";
       }
 
       // ============================================
