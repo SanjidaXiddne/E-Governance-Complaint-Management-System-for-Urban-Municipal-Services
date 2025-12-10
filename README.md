@@ -93,7 +93,7 @@ A comprehensive web-based complaint management system designed for urban municip
 
 1. **Clone the repository**
    ```bash
-   git clone [https://github.com/your-username/E-Governance-Complaint-Management-System-for-Urban-Municipal-Services.git](https://github.com/SanjidaXiddne/E-Governance-Complaint-Management-System-for-Urban-Municipal-Services.git)
+   git clone https://github.com/SanjidaXiddne/E-Governance-Complaint-Management-System-for-Urban-Municipal-Services.git
    cd E-Governance-Complaint-Management-System-for-Urban-Municipal-Services
    ```
 
