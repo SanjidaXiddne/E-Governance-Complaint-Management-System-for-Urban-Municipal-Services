@@ -88,8 +88,8 @@ A comprehensive web-based complaint management system designed for urban municip
 
 ### Prerequisites
 - Node.js 18.0.0 or higher
-- npm or yarn
-- MongoDB Atlas account (or local MongoDB instance)
+- npm 
+- MongoDB Atlas account
 
 ### Steps
 
@@ -329,25 +329,12 @@ npm run test:watch
 
 Tests use `mongodb-memory-server`, so no external database is needed.
 
-## 🌐 Deployment
 
-### Vercel (Recommended)
-
-This project is configured for seamless deployment on Vercel:
-
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy!
-
-The `vercel.json` configuration handles routing and serverless function setup.
-
-### Manual Deployment
-
-1. Set `NODE_ENV=production`
-2. Configure your MongoDB production database
-3. Run `npm start`
 
 ## 📸 Screenshots
+
+<img width="1902" height="860" alt="image" src="https://github.com/user-attachments/assets/72486e8d-d909-492d-8859-61f9eeba6f3f" />
+
 
 ### Landing Page
 The landing page provides secure authentication for all user roles with a modern, intuitive interface.
@@ -361,21 +348,6 @@ Officers can manage complaints, assign technicians, and update complaint statuse
 ### Admin Panel
 Administrators have full control over users, complaints, and system analytics.
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the ISC License.
-
-## 📞 Support
-
-For support, please open an issue in the GitHub repository.
 
 ---
 
