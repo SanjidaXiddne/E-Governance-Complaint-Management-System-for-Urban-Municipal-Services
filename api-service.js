@@ -779,6 +779,29 @@ const ApiService = (function () {
   }
 
   // ============================================
+  // NOTIFICATIONS (Mongo-backed)
+  // ============================================
+  async function getNotifications(role = "officer") {
+    try {
+      return await apiRequest(`/notifications?role=${role}`, { method: "GET" });
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+      return { success: false, error: err.message || "Failed to load notifications" };
+    }
+  }
+
+  async function clearNotifications(role = "officer") {
+    try {
+      return await apiRequest(`/notifications/clear?role=${role}`, {
+        method: "DELETE",
+      });
+    } catch (err) {
+      console.error("Error clearing notifications:", err);
+      return { success: false, error: err.message || "Failed to clear notifications" };
+    }
+  }
+
+  // ============================================
   // PUBLIC API
   // ============================================
 
@@ -833,6 +856,9 @@ const ApiService = (function () {
     logComplaintAction,
     logUserAction,
     clearActivityLog,
+    // Notifications
+    getNotifications,
+    clearNotifications,
   };
 })();
 

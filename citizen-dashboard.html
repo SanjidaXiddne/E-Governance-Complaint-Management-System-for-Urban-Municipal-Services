@@ -339,6 +339,251 @@
         background: var(--danger-color);
       }
 
+      /* Beautiful Notification Icon Styles */
+      .notification-btn {
+        position: relative;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+
+      .notification-btn:hover {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.3);
+      }
+
+      .notification-btn .fa-bell {
+        font-size: 1.2rem;
+        color: #475569;
+        transition: all 0.3s ease;
+      }
+
+      .notification-btn:hover .fa-bell {
+        color: #3b82f6;
+        animation: bellRing 0.5s ease;
+      }
+
+      @keyframes bellRing {
+        0%,
+        100% {
+          transform: rotate(0);
+        }
+        20% {
+          transform: rotate(15deg);
+        }
+        40% {
+          transform: rotate(-15deg);
+        }
+        60% {
+          transform: rotate(10deg);
+        }
+        80% {
+          transform: rotate(-10deg);
+        }
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: white;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+        animation: badgePulse 2s infinite;
+      }
+
+      .notification-badge.hidden {
+        display: none;
+      }
+
+      @keyframes badgePulse {
+        0%,
+        100% {
+          box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+        }
+        50% {
+          box-shadow: 0 2px 15px rgba(239, 68, 68, 0.6);
+        }
+      }
+
+      .notification-dropdown {
+        min-width: 360px;
+        max-width: 400px;
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        padding: 0;
+        overflow: hidden;
+        animation: dropdownSlide 0.3s ease;
+      }
+
+      @keyframes dropdownSlide {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .notification-header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .notification-header h6 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .notification-header .clear-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .notification-header .clear-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      .notification-body {
+        max-height: 350px;
+        overflow-y: auto;
+        padding: 0.5rem;
+      }
+
+      .notification-body::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .notification-body::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+
+      .notification-body::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+
+      .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        margin-bottom: 4px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        background: white;
+      }
+
+      .notification-item:hover {
+        background: #f8fafc;
+      }
+
+      .notification-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .notification-icon-wrapper.danger {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        color: #ef4444;
+      }
+
+      .notification-icon-wrapper.success {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        color: #10b981;
+      }
+
+      .notification-icon-wrapper.info {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        color: #3b82f6;
+      }
+
+      .notification-icon-wrapper.warning {
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        color: #f59e0b;
+      }
+
+      .notification-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .notification-content .message {
+        font-size: 0.875rem;
+        color: #1e293b;
+        font-weight: 500;
+        line-height: 1.4;
+        margin-bottom: 4px;
+      }
+
+      .notification-content .time {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .notification-empty {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: #94a3b8;
+      }
+
+      .notification-empty i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      .notification-empty p {
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
       /* Responsive Styles */
       @media (max-width: 576px) {
         .profile-drawer {
@@ -414,28 +659,30 @@
             </li>
             <li class="nav-item dropdown ms-lg-3">
               <a
-                class="nav-link position-relative"
+                class="nav-link p-0 notification-btn"
                 href="#"
                 data-bs-toggle="dropdown"
+                id="notificationToggle"
               >
                 <i class="fas fa-bell"></i>
-                <span
-                  class="badge-notification bg-danger rounded-pill"
-                  id="notificationBadge"
+                <span class="notification-badge hidden" id="notificationBadge"
                   >0</span
                 >
               </a>
               <ul
-                class="dropdown-menu dropdown-menu-end shadow-sm border-0"
+                class="dropdown-menu dropdown-menu-end notification-dropdown"
                 id="notificationDropdown"
               >
-                <li><h6 class="dropdown-header">Notifications</h6></li>
-                <li>
-                  <div
-                    class="dropdown-item small text-muted"
-                    id="noNotifications"
-                  >
-                    No new notifications
+                <li class="notification-header">
+                  <h6><i class="fas fa-bell"></i> Notifications</h6>
+                  <button class="clear-btn" onclick="clearNotifications()">
+                    <i class="fas fa-trash-alt me-1"></i>Clear all
+                  </button>
+                </li>
+                <li class="notification-body" id="notificationBody">
+                  <div class="notification-empty" id="noNotifications">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>No new notifications</p>
                   </div>
                 </li>
               </ul>
@@ -842,6 +1089,8 @@
       let currentUserEmail = "john@example.com";
       let notificationCount = 0;
       let notifications = [];
+      let processedNotificationKeys = new Set(); // Track notification messages to prevent duplicates
+      const NOTIFICATIONS_STORAGE_KEY = "citizen_notifications"; // localStorage key
 
       // Initialize dashboard
       document.addEventListener("DOMContentLoaded", function () {
@@ -864,6 +1113,7 @@
 
         // Load initial data
         loadDashboardData();
+        loadNotifications(); // Load notifications from localStorage
 
         // Subscribe to real-time updates
         ComplaintService.subscribe(handleRealtimeUpdate);
@@ -1065,25 +1315,34 @@
                 "success"
               );
               addNotification(
-                `Complaint #${complaintId} submitted successfully`
+                `Complaint #${complaintId} submitted successfully`,
+                "success",
+                `new_${complaintId}`
               );
             }
             break;
 
           case "COMPLAINT_UPDATED":
             const updatedComplaintId = data.complaintId || data.id || data._id;
+            const updatedStatus = data.status || data.newStatus;
             if (data.citizen && data.citizen.email === currentUserEmail) {
               // Refresh data and show notification
               await loadDashboardData();
+              const statusLabel =
+                ComplaintService.getStatusLabel(updatedStatus);
+              const notifType =
+                updatedStatus === "resolved"
+                  ? "success"
+                  : updatedStatus === "in-progress"
+                  ? "info"
+                  : "info";
               addNotification(
-                `Complaint #${updatedComplaintId} status updated to ${ComplaintService.getStatusLabel(
-                  data.status
-                )}`
+                `Complaint #${updatedComplaintId} status updated to ${statusLabel}`,
+                notifType,
+                `upd_${updatedComplaintId}_${updatedStatus}`
               );
               ComplaintService.showNotification(
-                `Your complaint #${updatedComplaintId} has been updated to: ${ComplaintService.getStatusLabel(
-                  data.status
-                )}`,
+                `Your complaint #${updatedComplaintId} has been updated to: ${statusLabel}`,
                 "info"
               );
             }
@@ -1104,65 +1363,90 @@
                 complaint.citizen.email === currentUserEmail)
             ) {
               await loadDashboardData();
+              const statusLabel = ComplaintService.getStatusLabel(newStatus);
+              const notifType =
+                newStatus === "resolved"
+                  ? "success"
+                  : newStatus === "in-progress"
+                  ? "info"
+                  : newStatus === "acknowledged"
+                  ? "info"
+                  : "info";
               addNotification(
-                `Complaint #${statusComplaintId} status: ${ComplaintService.getStatusLabel(
-                  newStatus
-                )}`
+                `Complaint #${statusComplaintId} status: ${statusLabel}`,
+                notifType,
+                `status_${statusComplaintId}_${newStatus}`
               );
               ComplaintService.showNotification(
-                `Your complaint #${statusComplaintId} status updated to: ${ComplaintService.getStatusLabel(
-                  newStatus
-                )}`,
+                `Your complaint #${statusComplaintId} status updated to: ${statusLabel}`,
                 "info"
               );
             }
             break;
 
           case "TASK_ASSIGNED":
-            if (isMyComplaint(data.complaint)) {
-              loadDashboardData();
+          case "COMPLAINT_ASSIGNED":
+            const assignedComplaintId = data.complaintId || data.id || data._id;
+            const technicianName =
+              data.technician?.name || data.assignedTo?.name || "a technician";
+            if (isMyComplaint(data.complaint || data)) {
+              await loadDashboardData();
               addNotification(
-                `Technician ${data.technician.name} assigned to complaint #${data.complaintId}`
+                `Technician ${technicianName} assigned to complaint #${assignedComplaintId}`,
+                "success",
+                `assigned_${assignedComplaintId}`
               );
               ComplaintService.showNotification(
-                `Good news! A technician has been assigned to your complaint #${data.complaintId}`,
+                `Good news! A technician has been assigned to your complaint #${assignedComplaintId}`,
                 "success"
               );
             }
             break;
 
           case "TASK_STARTED":
-            if (isMyComplaint(data.complaint)) {
-              loadDashboardData();
-              addNotification(`Work started on complaint #${data.complaintId}`);
+            const startedComplaintId = data.complaintId || data.id || data._id;
+            if (isMyComplaint(data.complaint || data)) {
+              await loadDashboardData();
+              addNotification(
+                `Work started on complaint #${startedComplaintId}`,
+                "info",
+                `started_${startedComplaintId}`
+              );
               ComplaintService.showNotification(
-                `🔧 Work has started on your complaint #${data.complaintId}!`,
+                `🔧 Work has started on your complaint #${startedComplaintId}!`,
                 "info"
               );
             }
             break;
 
           case "PROGRESS_UPDATE":
-            if (isMyComplaint(data.complaint)) {
-              loadDashboardData();
+            const progressComplaintId = data.complaintId || data.id || data._id;
+            if (isMyComplaint(data.complaint || data)) {
+              await loadDashboardData();
               addNotification(
-                `Progress update on complaint #${data.complaintId}`
+                `Progress update on complaint #${progressComplaintId}`,
+                "info",
+                `progress_${progressComplaintId}_${Date.now()}`
               );
               ComplaintService.showNotification(
-                `Progress update on your complaint #${data.complaintId}`,
+                `Progress update on your complaint #${progressComplaintId}`,
                 "info"
               );
             }
             break;
 
           case "TASK_COMPLETED":
-            if (isMyComplaint(data.complaint)) {
-              loadDashboardData();
+            const completedComplaintId =
+              data.complaintId || data.id || data._id;
+            if (isMyComplaint(data.complaint || data)) {
+              await loadDashboardData();
               addNotification(
-                `🎉 Complaint #${data.complaintId} has been resolved!`
+                `🎉 Complaint #${completedComplaintId} has been resolved!`,
+                "success",
+                `completed_${completedComplaintId}`
               );
               ComplaintService.showNotification(
-                `🎉 Great news! Your complaint #${data.complaintId} has been resolved!`,
+                `🎉 Great news! Your complaint #${completedComplaintId} has been resolved!`,
                 "success"
               );
             }
@@ -1179,85 +1463,140 @@
         }
       }
 
+      // Save notifications to localStorage
+      function saveNotificationsToLocal() {
+        try {
+          const notificationsToSave = notifications.map((n) => ({
+            message: n.message,
+            type: n.type || "info",
+            time: n.time instanceof Date ? n.time.toISOString() : n.time,
+          }));
+          localStorage.setItem(
+            NOTIFICATIONS_STORAGE_KEY,
+            JSON.stringify(notificationsToSave)
+          );
+        } catch (err) {
+          console.error("Failed to save notifications to localStorage:", err);
+        }
+      }
+
+      // Load notifications from localStorage
+      function loadNotificationsFromLocal() {
+        try {
+          const stored = localStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            notifications = parsed.map((n) => ({
+              message: n.message,
+              type: n.type || "info",
+              time: n.time ? new Date(n.time) : new Date(),
+            }));
+            notificationCount = notifications.length;
+            updateNotificationUI();
+            return true;
+          }
+        } catch (err) {
+          console.error("Failed to load notifications from localStorage:", err);
+        }
+        return false;
+      }
+
+      // Load notifications (from localStorage)
+      function loadNotifications() {
+        loadNotificationsFromLocal();
+      }
+
       // Add notification
-      function addNotification(message) {
+      function addNotification(message, type = "info", key = null) {
+        // Prevent duplicates
+        if (key && processedNotificationKeys.has(key)) return;
+        if (key) {
+          processedNotificationKeys.add(key);
+          setTimeout(() => processedNotificationKeys.delete(key), 30000);
+        }
+
         notifications.unshift({
           message: message,
+          type: type,
           time: new Date(),
         });
-        notificationCount++;
+        notificationCount = notifications.length;
         updateNotificationUI();
+        saveNotificationsToLocal(); // Save to localStorage
+      }
+
+      // Clear notifications
+      function clearNotifications() {
+        notifications = [];
+        notificationCount = 0;
+        updateNotificationUI();
+        localStorage.removeItem(NOTIFICATIONS_STORAGE_KEY);
       }
 
       // Update notification UI
       function updateNotificationUI() {
         const badge = document.getElementById("notificationBadge");
-        const dropdown = document.getElementById("notificationDropdown");
+        const notifBody = document.getElementById("notificationBody");
         const noNotif = document.getElementById("noNotifications");
 
-        if (!badge || !dropdown) {
+        if (!badge || !notifBody) {
           console.warn("Notification elements not found");
           return;
         }
 
+        // Update badge
         badge.textContent = notificationCount;
-        badge.style.display = notificationCount > 0 ? "flex" : "none";
+        if (notificationCount > 0) {
+          badge.classList.remove("hidden");
+        } else {
+          badge.classList.add("hidden");
+        }
 
         if (notifications.length > 0) {
-          if (noNotif) noNotif.style.display = "none";
+          noNotif.style.display = "none";
 
-          // Clear existing items (keep header if it exists)
-          const header = dropdown.querySelector(".dropdown-header");
-          dropdown.innerHTML = "";
+          // Clear old items
+          const items = notifBody.querySelectorAll(".notification-item");
+          items.forEach((item) => item.remove());
 
-          // Add header back if it existed
-          if (header) {
-            const headerLi = document.createElement("li");
-            headerLi.appendChild(header);
-            dropdown.appendChild(headerLi);
-          } else {
-            // Create header if it doesn't exist
-            const headerLi = document.createElement("li");
-            headerLi.innerHTML =
-              '<h6 class="dropdown-header">Notifications</h6>';
-            dropdown.appendChild(headerLi);
-          }
+          // Add new items with beautiful styling
+          notifications.slice(0, 10).forEach((notif) => {
+            const iconMap = {
+              danger: { icon: "fa-exclamation-circle", class: "danger" },
+              success: { icon: "fa-check-circle", class: "success" },
+              info: { icon: "fa-info-circle", class: "info" },
+              warning: { icon: "fa-exclamation-triangle", class: "warning" },
+            };
+            const iconData = iconMap[notif.type] || iconMap.info;
 
-          // Add notification items
-          notifications.slice(0, 5).forEach((notif) => {
-            const li = document.createElement("li");
-            // Format time ago
-            let timeAgo = "Just now";
-            if (notif.time) {
-              const time =
-                notif.time instanceof Date ? notif.time : new Date(notif.time);
-              const seconds = Math.floor((new Date() - time) / 1000);
-              if (seconds < 60) {
-                timeAgo = "Just now";
-              } else if (seconds < 3600) {
-                timeAgo = Math.floor(seconds / 60) + " min ago";
-              } else if (seconds < 86400) {
-                timeAgo = Math.floor(seconds / 3600) + " hours ago";
-              } else {
-                timeAgo = Math.floor(seconds / 86400) + " days ago";
-              }
-            }
-            li.innerHTML = `
-              <a class="dropdown-item small py-2" href="#">
-                <div class="d-flex align-items-start">
-                  <i class="fas fa-circle text-primary me-2 mt-1" style="font-size: 0.5rem;"></i>
-                  <div>
-                    <div>${notif.message}</div>
-                    <div class="text-muted" style="font-size: 0.7rem;">${timeAgo}</div>
-                  </div>
+            const div = document.createElement("div");
+            div.className = "notification-item";
+            div.innerHTML = `
+              <div class="notification-icon-wrapper ${iconData.class}">
+                <i class="fas ${iconData.icon}"></i>
+              </div>
+              <div class="notification-content">
+                <div class="message">${notif.message}</div>
+                <div class="time">
+                  <i class="far fa-clock"></i>
+                  ${formatTimeAgo(notif.time)}
                 </div>
-              </a>
+              </div>
             `;
-            dropdown.appendChild(li);
+            notifBody.appendChild(div);
           });
         } else {
-          if (noNotif) noNotif.style.display = "block";
+          noNotif.style.display = "block";
         }
+      }
+
+      // Format time ago helper
+      function formatTimeAgo(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+        if (seconds < 60) return "Just now";
+        if (seconds < 3600) return Math.floor(seconds / 60) + " min ago";
+        if (seconds < 86400) return Math.floor(seconds / 3600) + " hours ago";
+        return Math.floor(seconds / 86400) + " days ago";
       }
 
       // Refresh data manually from MongoDB
