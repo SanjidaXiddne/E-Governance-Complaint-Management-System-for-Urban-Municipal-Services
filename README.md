@@ -20,8 +20,6 @@ A comprehensive web-based complaint management system designed for urban municip
 - [Testing](#-testing)
 - [Deployment](#-deployment)
 - [Screenshots](#-screenshots)
-- [Contributing](#-contributing)
-- [License](#-license)
 
 ## ✨ Features
 
