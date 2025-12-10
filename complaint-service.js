@@ -655,7 +655,7 @@ const ComplaintService = (function () {
         bgColor: "rgba(139, 92, 246, 0.1)",
       },
       "in-progress": {
-        icon: "fa-spinner",
+        icon: "fa-clock",
         color: "#f59e0b",
         bgColor: "rgba(245, 158, 11, 0.1)",
       },

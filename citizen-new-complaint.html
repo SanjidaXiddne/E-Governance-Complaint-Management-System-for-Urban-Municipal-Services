@@ -586,9 +586,20 @@
         }
       }
 
+      // Flag to prevent double submission
+      let isSubmitting = false;
+
       // Form submission - saves to MongoDB via API
       async function submitComplaint(e) {
         e.preventDefault();
+
+        // Prevent double-click submission
+        if (isSubmitting) {
+          console.log(
+            "Submission already in progress, ignoring duplicate click"
+          );
+          return;
+        }
 
         // Validate
         const description = document.getElementById("description").value.trim();
@@ -614,7 +625,8 @@
           return;
         }
 
-        // Show loading state
+        // Set submission flag and show loading state
+        isSubmitting = true;
         const btn = document.getElementById("submitBtn");
         btn.querySelector(".btn-text").style.display = "none";
         btn.querySelector(".btn-loading").style.display = "inline";
@@ -662,20 +674,6 @@
 
             console.log("Complaint created successfully:", complaintId);
 
-            // Also add to local storage for real-time sync
-            try {
-              ComplaintService.addComplaint({
-                category: category,
-                description: description,
-                location: location,
-                priority: priority,
-                citizenName: citizenName,
-                citizenEmail: citizenEmail,
-              });
-            } catch (e) {
-              console.log("LocalStorage sync failed (non-critical):", e);
-            }
-
             // Show success
             document.getElementById("complaintRefId").textContent =
               "#" + complaintId;
@@ -705,10 +703,11 @@
             "danger"
           );
         } finally {
-          // Reset button
+          // Reset button and submission flag
           btn.querySelector(".btn-text").style.display = "inline";
           btn.querySelector(".btn-loading").style.display = "none";
           btn.disabled = false;
+          isSubmitting = false;
         }
       }
 
@@ -719,6 +718,7 @@
         document.getElementById("successCard").style.display = "none";
         selectedFiles = [];
         updateFilePreview();
+        isSubmitting = false; // Reset submission flag
       }
 
       // Logout

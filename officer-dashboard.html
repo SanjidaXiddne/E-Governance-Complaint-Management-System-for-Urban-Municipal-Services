@@ -602,7 +602,7 @@
                   <div class="stat-value" id="progressCount">0</div>
                 </div>
                 <div class="stat-icon bg-warning-soft">
-                  <i class="fas fa-spinner"></i>
+                  <i class="fas fa-clock"></i>
                 </div>
               </div>
               <div class="mt-3 small text-muted">Active tasks</div>
@@ -1198,6 +1198,7 @@
       let activeTab = "all";
       let notifications = [];
       let latestNewComplaintId = null;
+      let processedComplaintIds = new Set(); // Track processed complaints to prevent duplicates
 
       // Initialize
       document.addEventListener("DOMContentLoaded", function () {
@@ -1219,8 +1220,7 @@
         // Load initial data
         loadDashboardData();
 
-        // Subscribe to real-time updates from both services
-        ComplaintService.subscribe(handleRealtimeUpdate);
+        // Subscribe to real-time updates - only ApiService to avoid duplicates
         ApiService.subscribe(handleRealtimeUpdate);
 
         // Play notification sound if available
@@ -1522,6 +1522,19 @@
         switch (type) {
           case "NEW_COMPLAINT":
           case "COMPLAINT_CREATED":
+            // Prevent duplicate notifications for the same complaint
+            const notificationKey = `new_${complaintId}`;
+            if (processedComplaintIds.has(notificationKey)) {
+              console.log("Skipping duplicate notification for:", complaintId);
+              return;
+            }
+            processedComplaintIds.add(notificationKey);
+
+            // Clear old entries after 30 seconds to prevent memory buildup
+            setTimeout(() => {
+              processedComplaintIds.delete(notificationKey);
+            }, 30000);
+
             // Reload data with animation from MongoDB
             await loadDashboardData();
             if (complaintId) {
