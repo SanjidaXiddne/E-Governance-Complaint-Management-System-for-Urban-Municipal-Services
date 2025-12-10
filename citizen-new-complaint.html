@@ -466,34 +466,81 @@
 
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
-            function (position) {
-              // Simulate reverse geocoding
-              const locations = [
-                "Gulshan-2, Dhaka",
-                "Dhanmondi-27, Dhaka",
-                "Banani Block-C, Dhaka",
-                "Uttara Sector-7, Dhaka",
-                "Mirpur-10, Dhaka",
-              ];
-              const randomLocation =
-                locations[Math.floor(Math.random() * locations.length)];
-              document.getElementById("location").value = randomLocation;
-              btn.innerHTML = originalHTML;
-              btn.disabled = false;
-              ComplaintService.showNotification(
-                "Location detected successfully!",
-                "success"
-              );
+            async function (position) {
+              const lat = position.coords.latitude;
+              const lon = position.coords.longitude;
+
+              try {
+                // Use OpenStreetMap Nominatim API for reverse geocoding
+                const response = await fetch(
+                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`,
+                  {
+                    headers: {
+                      "Accept-Language": "en",
+                    },
+                  }
+                );
+
+                if (response.ok) {
+                  const data = await response.json();
+                  let locationText = "";
+
+                  // Build a readable address from the response
+                  const addr = data.address || {};
+                  const parts = [];
+
+                  // Add relevant address components
+                  if (addr.road || addr.street)
+                    parts.push(addr.road || addr.street);
+                  if (addr.neighbourhood || addr.suburb)
+                    parts.push(addr.neighbourhood || addr.suburb);
+                  if (addr.city || addr.town || addr.village)
+                    parts.push(addr.city || addr.town || addr.village);
+                  if (addr.state || addr.county)
+                    parts.push(addr.state || addr.county);
+
+                  locationText =
+                    parts.length > 0 ? parts.join(", ") : data.display_name;
+
+                  document.getElementById("location").value = locationText;
+                  btn.innerHTML = originalHTML;
+                  btn.disabled = false;
+                  ComplaintService.showNotification(
+                    "Location detected successfully!",
+                    "success"
+                  );
+                } else {
+                  throw new Error("Geocoding failed");
+                }
+              } catch (error) {
+                // Fallback: show coordinates if reverse geocoding fails
+                document.getElementById("location").value = `Lat: ${lat.toFixed(
+                  6
+                )}, Lon: ${lon.toFixed(6)}`;
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                ComplaintService.showNotification(
+                  "Location detected (coordinates). You may add more details.",
+                  "info"
+                );
+              }
             },
             function (error) {
               btn.innerHTML = originalHTML;
               btn.disabled = false;
-              ComplaintService.showNotification(
-                "Could not detect location. Please enter manually.",
-                "warning"
-              );
+              let errorMsg =
+                "Could not detect location. Please enter manually.";
+              if (error.code === 1) {
+                errorMsg =
+                  "Location access denied. Please enable location permissions.";
+              } else if (error.code === 2) {
+                errorMsg = "Location unavailable. Please enter manually.";
+              } else if (error.code === 3) {
+                errorMsg = "Location request timed out. Please try again.";
+              }
+              ComplaintService.showNotification(errorMsg, "warning");
             },
-            { timeout: 10000 }
+            { timeout: 10000, enableHighAccuracy: true }
           );
         } else {
           btn.innerHTML = originalHTML;
