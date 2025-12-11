@@ -774,6 +774,7 @@
                     id="newName"
                     placeholder="Full Name"
                     aria-label="Full Name"
+                    required
                   />
                   <label for="newName">
                     <i class="fas fa-user me-2"></i>Full Name
@@ -786,6 +787,7 @@
                     id="newEmail"
                     placeholder="Email"
                     aria-label="Email Address"
+                    required
                   />
                   <label for="newEmail">
                     <i class="fas fa-envelope me-2"></i>Email Address
@@ -798,6 +800,7 @@
                     id="newPhone"
                     placeholder="Phone"
                     aria-label="Phone Number"
+                    required
                   />
                   <label for="newPhone">
                     <i class="fas fa-phone me-2"></i>Phone Number
@@ -810,10 +813,16 @@
                     id="newPass"
                     placeholder="Password"
                     aria-label="Password"
+                    required
+                    oninput="checkPasswordStrength(this.value)"
                   />
                   <label for="newPass">
                     <i class="fas fa-lock me-2"></i>Password
                   </label>
+                </div>
+                <div id="passwordWarning" class="password-warning" style="display: none;">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  <span id="passwordWarningText"></span>
                 </div>
                 <button
                   type="button"
@@ -1524,10 +1533,16 @@
         const phone = document.getElementById("newPhone").value.trim();
         const password = document.getElementById("newPass").value;
 
-        // Validation
-        if (!name || !email || !password) {
+        // Validation - Check all fields are filled
+        if (!name || !email || !phone || !password) {
+          const missingFields = [];
+          if (!name) missingFields.push("Full Name");
+          if (!email) missingFields.push("Email");
+          if (!phone) missingFields.push("Phone Number");
+          if (!password) missingFields.push("Password");
+          
           showAuthError(
-            "Please fill in all required fields (Name, Email, Password)."
+            `Please fill in all required fields: ${missingFields.join(", ")}.`
           );
           return;
         }
@@ -1537,8 +1552,16 @@
           return;
         }
 
-        if (password.length < 6) {
-          showAuthError("Password must be at least 6 characters long.");
+        // Validate phone number
+        if (!isValidPhone(phone)) {
+          showAuthError("Please enter a valid phone number (at least 10 digits).");
+          return;
+        }
+
+        // Check password strength
+        const passwordStrength = validatePasswordStrength(password);
+        if (!passwordStrength.isStrong) {
+          showAuthError(passwordStrength.message);
           return;
         }
 
@@ -1592,6 +1615,73 @@
         return emailRegex.test(email);
       }
 
+      // Helper function to validate phone number
+      function isValidPhone(phone) {
+        // Remove spaces, dashes, and other non-digit characters
+        const cleanedPhone = phone.replace(/\D/g, '');
+        // Check if phone has at least 10 digits
+        return cleanedPhone.length >= 10;
+      }
+
+      // Function to validate password strength
+      function validatePasswordStrength(password) {
+        const requirements = {
+          minLength: password.length >= 8,
+          hasUpperCase: /[A-Z]/.test(password),
+          hasLowerCase: /[a-z]/.test(password),
+          hasNumber: /[0-9]/.test(password),
+          hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+        };
+
+        const missingRequirements = [];
+        if (!requirements.minLength) {
+          missingRequirements.push("at least 8 characters");
+        }
+        if (!requirements.hasUpperCase) {
+          missingRequirements.push("one uppercase letter");
+        }
+        if (!requirements.hasLowerCase) {
+          missingRequirements.push("one lowercase letter");
+        }
+        if (!requirements.hasNumber) {
+          missingRequirements.push("one number");
+        }
+        if (!requirements.hasSpecialChar) {
+          missingRequirements.push("one special character");
+        }
+
+        const isStrong = Object.values(requirements).every(req => req === true);
+
+        return {
+          isStrong: isStrong,
+          message: isStrong 
+            ? "" 
+            : `Password must contain: ${missingRequirements.join(", ")}.`,
+          requirements: requirements
+        };
+      }
+
+      // Function to check password strength in real-time and show warning
+      function checkPasswordStrength(password) {
+        const warningDiv = document.getElementById("passwordWarning");
+        const warningText = document.getElementById("passwordWarningText");
+        
+        if (!password || password.length === 0) {
+          warningDiv.style.display = "none";
+          return;
+        }
+
+        const strength = validatePasswordStrength(password);
+        
+        if (!strength.isStrong) {
+          warningDiv.style.display = "block";
+          warningText.textContent = strength.message;
+          warningDiv.className = "password-warning password-warning-weak";
+        } else {
+          warningDiv.style.display = "none";
+        }
+      }
+
       // Show error message in auth modal
       function showAuthError(message) {
         removeAuthMessages();
@@ -1642,6 +1732,24 @@
               border-radius: 8px;
               font-size: 0.9rem;
               animation: slideDown 0.3s ease;
+            }
+            .password-warning {
+              margin-top: 0.5rem;
+              padding: 0.75rem;
+              border-radius: 6px;
+              font-size: 0.85rem;
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              animation: slideDown 0.3s ease;
+            }
+            .password-warning-weak {
+              background-color: #fff3cd;
+              color: #856404;
+              border: 1px solid #ffc107;
+            }
+            .password-warning i {
+              font-size: 1rem;
             }
             @keyframes slideDown {
               from { opacity: 0; transform: translateY(-10px); }

@@ -786,7 +786,10 @@ const ApiService = (function () {
       return await apiRequest(`/notifications?role=${role}`, { method: "GET" });
     } catch (err) {
       console.error("Error fetching notifications:", err);
-      return { success: false, error: err.message || "Failed to load notifications" };
+      return {
+        success: false,
+        error: err.message || "Failed to load notifications",
+      };
     }
   }
 
@@ -797,7 +800,10 @@ const ApiService = (function () {
       });
     } catch (err) {
       console.error("Error clearing notifications:", err);
-      return { success: false, error: err.message || "Failed to clear notifications" };
+      return {
+        success: false,
+        error: err.message || "Failed to clear notifications",
+      };
     }
   }
 
