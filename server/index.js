@@ -1,6 +1,7 @@
 /**
  * E-Governance Complaint Management System - Server Entry Point
  * Express.js server with MongoDB integration
+ * Vercel Web Analytics integrated for performance monitoring
  */
 
 // Load environment variables from .env file (for local development only)
@@ -12,6 +13,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const path = require("path");
 const mongoose = require("mongoose");
+const { inject } = require("@vercel/analytics");
 
 // Import database connection
 const { connectDB } = require("./db");
@@ -31,6 +33,15 @@ const app = express();
 // ============================================
 // MIDDLEWARE CONFIGURATION
 // ============================================
+
+// Initialize Vercel Web Analytics
+// Note: This must run on the client side for effectiveness
+try {
+  inject();
+} catch (err) {
+  // Analytics initialization is non-critical; log but don't fail the app
+  console.warn("Vercel Web Analytics initialization warning:", err.message);
+}
 
 // Security headers
 app.use(
